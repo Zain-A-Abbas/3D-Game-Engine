@@ -1,0 +1,14 @@
+Transfer some stuff from the player to Character3D
+
+One functioning enemy
+
+Idea:
+When enemy is spawned, gets given a point on the map where it walks around a certain radius. When the player is a certain distance from it,
+the enemy will approach the player. If the player is too far, the enemy will make their current point the new epicenter for wandering around.
+
+
+	One functioning gun UI
+
+	One functioning randomly generated map piece
+
+	Pickups

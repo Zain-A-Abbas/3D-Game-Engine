@@ -7,17 +7,19 @@
 #include "gf3d_camera.h"
 #include "Weapon.h"
 #include "gf3d_draw.h"
+#include "Character3D.h"
 
 #define FAR_CAMERA_OFFSET gfc_vector3d(-8, 32, 4)
 #define CAMERA_ROTATION gfc_vector3d(M_PI, 0, M_PI)
 
 typedef struct PlayerData_S {
-    Camera          *camera;    // Pointer to camera
-    GFC_Vector3D    playerRotation;
-    GFC_Vector3D    playerVelocity;
-    Weapon          *playerWeapons;
-    GFC_Edge3D      raycastTest;
-    GFC_Color       raycastColor;
+    Camera              *camera;    // Pointer to camera
+    GFC_Vector3D        playerRotation;
+    GFC_Vector3D        playerVelocity;
+    Weapon              *playerWeapons;
+    GFC_Edge3D          raycastTest;
+    GFC_Color           raycastColor;
+    Character3DData     character3dData;
 } PlayerData;
 
 
@@ -48,12 +50,7 @@ PlayerData* getPlayerData(Entity* self);
  */
 GFC_Vector3D getCameraPosition(Entity *self);
 
-/**
-* @brief Checks if player is on ground or not.
-* @param The player entity
-* @param The angle of the ground, if the player is on the floor
-*/
-int isOnFloor(Entity* self, GFC_Vector3D * floorNormal, GFC_Vector3D * contact);
+
 
 /**
 * @brief Interacts with all objects in a radius in front of the player

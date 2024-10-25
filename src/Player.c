@@ -173,27 +173,7 @@ void _playerControls(Entity * self, float delta) {
     // Attacking
     if (gf2d_mouse_button_held(0)) {
         playerData->playerWeapons[0].shoot(&playerData->playerWeapons[0], self->position, playerData->playerRotation, getCameraPosition(self));
-        /*
-        GFC_Vector3D raycastPosition = self->position;
-        GFC_Vector3D raycastAdd = gfc_vector3d(0, -32, 0);
-        gfc_vector3d_rotate_about_z(&raycastAdd, playerData->playerRotation.z);
-        raycastPosition = gfc_vector3d_added(raycastPosition, raycastAdd);
 
-        GFC_Edge3D raycast = gfc_edge3d_from_vectors(self->position, raycastPosition);
-        //slog("Current Position: %f, %f, %f", self->position.x, self->position.y, self->position.z);
-        //slog("Raycast End: %f, %f, %f", raycastPosition.x, raycastPosition.y, raycastPosition.z);
-
-
-        playerData->raycastTest = raycast;
-        playerData->raycastColor = gfc_color(1, 0, 0, 1);
-
-        int collided = shotCollided(self, raycast);
-        if (collided) {
-            slog("Hit");
-            playerData->raycastColor = gfc_color(0, 0, 1, 1);
-        }
-
-    }*/
     }
 }
 
@@ -221,57 +201,38 @@ void _playerUpdate(Entity * self, float delta) {
         GFC_Edge3D movementRaycast;
         GFC_Vector3D contact;
         GFC_Triangle3D t;
+        GFC_Vector3D raycastStart;
+        GFC_Vector3D raycastEnd;
+        GFC_Vector3D normalizedVelocity;
+        GFC_Vector3D triangleNormal;
+        GFC_Vector3D velocitySubtract;
+        float angle = M_PI / 8 * i;
+        float dot;
+        float absdot;
+        float velocityMagnitude;
+
 
         //slog("Velocity start: %f, %f", velocity.x, velocity.y);
         for (int i = 0; i < 16; i++) {
-            float angle = M_PI / 8 * i;
-            GFC_Vector3D raycastStart = gfc_vector3d(0, HORIZONTAL_COLLISION_RADIUS, 0);
+            angle = M_PI / 8 * i;
+            raycastStart = gfc_vector3d(0, HORIZONTAL_COLLISION_RADIUS, 0);
             gfc_vector3d_rotate_about_z(&raycastStart, angle);
             raycastStart = gfc_vector3d_added(raycastStart, self->position);
-            GFC_Vector3D raycastEnd = gfc_vector3d_added(raycastStart, velocity);
+            raycastEnd = gfc_vector3d_added(raycastStart, velocity);
             movementRaycast = gfc_edge3d_from_vectors(raycastStart, raycastEnd);
-            GFC_Vector3D normalizedVelocity = velocity;
-            GFC_Vector3D triangleNormal;
-            GFC_Vector3D velocitySubtract;
-            float velocityMagnitude = gfc_vector3d_magnitude(velocity);
+            normalizedVelocity = velocity;
+            velocityMagnitude = gfc_vector3d_magnitude(velocity);
 
 
             if (entityRaycastTest(currEntity, movementRaycast, &contact, &t, NULL)) {
                 gfc_vector3d_normalize(&normalizedVelocity);
                 triangleNormal = gfc_trigfc_angle_get_normal(t);
-                float dot = gfc_vector3d_dot_product(normalizedVelocity, triangleNormal);
+                dot = gfc_vector3d_dot_product(normalizedVelocity, triangleNormal);
+                absdot = fabsf(dot);
                 velocitySubtract = gfc_vector3d_multiply(triangleNormal, gfc_vector3d(dot * velocityMagnitude, dot * velocityMagnitude, dot * velocityMagnitude));
                 
-                //slog("Vel: %f, %f, %f", velocity.x, velocity.y, velocity.z);
-                //log("Vel sub: %f, %f, %f", velocitySubtract.x, velocitySubtract.y, velocitySubtract.z);
                 velocity = gfc_vector3d_subbed(velocity, velocitySubtract);
-                //slog("New vel: %f, %f, %f", velocity.x, velocity.y, velocity.z);
-
-                /*GFC_Vector2D diff;
-                diff.x = movementRaycast.b.x - contact.x;
-                diff.y = movementRaycast.b.y - contact.y;
-                if (velocity.x > 0) {
-                    if (diff.x > 0) {
-                        velocity.x = 0;
-                    }
-                }
-                else if (velocity.x < 0) {
-                    if (diff.x < 0) {
-                        velocity.x = 0;
-                    }
-                }
-
-                if (velocity.y > 0) {
-                    if (diff.y > 0) {
-                        velocity.y = 0;
-                    }
-                }
-                else if (velocity.y < 0) {
-                    if (diff.y < 0) {
-                        velocity.y = 0;
-                    }
-                }*/
-
+                velocity = gfc_vector3d_multiply(velocity, gfc_vector3d(absdot, absdot, absdot));
 
             }
 
@@ -337,30 +298,7 @@ void _playerUpdate(Entity * self, float delta) {
 
 }
 
-int isOnFloor(Entity* self, GFC_Vector3D * floorNormal, GFC_Vector3D * contact) {
-    GFC_Triangle3D t = {0};
-    GFC_Vector3D gravityRaycastDir = gfc_vector3d(0, 0, -PLAYER_GRAVITY_RAYCAST_HEIGHT);
-    GFC_Edge3D gravityRaycast = gfc_edge3d_from_vectors(self->position, gfc_vector3d_added(self->position, gravityRaycastDir));
-    for (int i = 0; i < entityManager.entityMax; i++) {
-        // Get ground entitiesentities
-        if (!entityManager.entityList[i]._in_use) {
-            continue;
-        }
-        if (!isOnLayer(&entityManager.entityList[i], 1)) {
-            continue;
-        }
 
-        // Found terrain
-        if (entityRaycastTest(&entityManager.entityList[i], gravityRaycast, contact, &t, NULL)) {
-            /*slog("%f, %f, %f", t.a.x, t.a.y, t.a.z);
-            slog("%f, %f, %f", t.b.x, t.b.y, t.b.z);
-            slog("%f, %f, %f", t.c.x, t.c.y, t.c.z);*/
-            *floorNormal = gfc_trigfc_angle_get_normal(t);
-            return true;
-            }
-    }
-    return false;
-}
 
 void interact(Entity* self) {
     GFC_Vector3D interactPoint = gfc_vector3d(0, -INTERACT_DISTANCE, 0);

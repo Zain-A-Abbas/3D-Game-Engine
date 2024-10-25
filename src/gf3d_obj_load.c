@@ -594,6 +594,10 @@ Uint8 gf3d_entity_obj_line_test(ObjData* obj, Entity* ent, GFC_Edge3D e, GFC_Vec
         t->b = gfc_vector3d_multiply(t->b, ent->scale);
         t->c = gfc_vector3d_multiply(t->c, ent->scale);
 
+        gfc_vector3d_rotate_about_z(&t->a, ent->rotation.z);
+        gfc_vector3d_rotate_about_z(&t->b, ent->rotation.z);
+        gfc_vector3d_rotate_about_z(&t->c, ent->rotation.z);
+
         t->a = gfc_vector3d_added(t->a, ent->position);
         t->b = gfc_vector3d_added(t->b, ent->position);
         t->c = gfc_vector3d_added(t->c, ent->position);

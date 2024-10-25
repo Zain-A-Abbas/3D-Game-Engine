@@ -123,8 +123,8 @@ int main(int argc,char *argv[])
     // Create interactable
     Entity* testInteractable = interactableNew(SPINNING_BOX);
     testInteractable->position = gfc_vector3d(0, -32, 0);
-    //testInteractable->scale = gfc_vector3d(4, 4, 4);
-    //testInteractable->rotation.z = 0.707;
+    testInteractable->scale = gfc_vector3d(4, 4, 4);
+    testInteractable->rotation.z = 0.707;
 
 
     //Delta time
