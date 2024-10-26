@@ -12,11 +12,10 @@ typedef struct {
     bool    hidden;
 } Reticle;
 
-/**
- * @brief Loads the reticle sprite
- * @param reticleFile The file used to load the reticle
- */
-void reticleLoad(const char *reticleFile);
+
+extern Reticle reticle;
+
+
 
 /**
  * @brief Make the reticle visible
