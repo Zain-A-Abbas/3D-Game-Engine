@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "gf2d_mouse.h"
 #include "Interactable.h"
+#include "Character3D.h"
 
 const float PLAYER_SPEED = 10;
 const float HORIZONTAL_MOUSE_SENSITIVITY = 1.28;
@@ -8,11 +9,6 @@ const float VERTICAL_MOUSE_SENSITIVITY = 0.96;
 const int MAX_RELATIVE_MOUSE_X = 10;
 const int HIGHEST_X_DEGREES = 48;
 const int LOWEST_X_DEGREES = -20;
-
-const float MAX_SLOPE_DEGREES = M_PI / 4;
-const float PLAYER_GRAVITY_RAYCAST_HEIGHT = 6.5;
-const float GRAVITY = -1;
-const float HORIZONTAL_COLLISION_RADIUS = 2;
 
 const float INTERACT_DISTANCE = 8;
 
@@ -40,8 +36,6 @@ Entity * createPlayer() {
 
     memset(playerData, 0, sizeof(PlayerData));
     playerEntity->data = playerData;
-    playerData->playerVelocity = gfc_vector3d(0, 0, 0);
-    playerData->playerRotation = gfc_vector3d(M_PI, 0, 0);
     
     playerData->playerWeapons = (Weapon*) malloc(10 * sizeof(Weapon));
     memset(playerData->playerWeapons, 0, 10 * sizeof(Weapon));
@@ -49,6 +43,9 @@ Entity * createPlayer() {
 
     actualCameraOffset = BASE_CAMERA_OFFSET;
     zoomCameraOffset = gfc_vector3d_multiply(BASE_CAMERA_OFFSET, gfc_vector3d(0.95, 0.75, 0.75));
+
+    playerData->character3dData = newCharacter3dData();
+    playerData->character3dData->gravityRaycastHeight = 6.5;
 
     return playerEntity;
 }
@@ -85,6 +82,7 @@ void update(Entity * self, float delta) {
 
 void _playerControls(Entity * self, float delta) {
     PlayerData * playerData = getPlayerData(self);
+    Character3DData* character3dData = playerData->character3dData;
     
     if (gfc_input_command_pressed("interact")) {
         interact(self);
@@ -95,7 +93,7 @@ void _playerControls(Entity * self, float delta) {
         gfc_input_command_down("walkright") - gfc_input_command_down("walkleft"),
         gfc_input_command_down("walkforward") - gfc_input_command_down("walkback")
     );
-    inputVector = gfc_vector2d_rotate(inputVector, playerData->playerRotation.z);
+    inputVector = gfc_vector2d_rotate(inputVector, character3dData->rotation.z);
 
     GFC_Vector3D movementVelocity = gfc_vector3d(inputVector.x, inputVector.y, 0);
 
@@ -104,8 +102,8 @@ void _playerControls(Entity * self, float delta) {
     movementVelocity.x *= -1;
     movementVelocity.y *= -1;
 
-    playerData->playerVelocity.x = movementVelocity.x;
-    playerData->playerVelocity.y = movementVelocity.y;
+    playerData->character3dData->velocity.x = movementVelocity.x;
+    playerData->character3dData->velocity.y = movementVelocity.y;
 
     // Mouse rotation
     int mouseX, mouseY;
@@ -121,58 +119,17 @@ void _playerControls(Entity * self, float delta) {
         mouseY *= 0.7;
     }
 
-    playerData->playerRotation.z -= mouseX * HORIZONTAL_MOUSE_SENSITIVITY * delta;
-    playerData->playerRotation.x += mouseY * VERTICAL_MOUSE_SENSITIVITY * delta;
-    if (playerData->playerRotation.x > HIGHEST_X_DEGREES * GFC_DEGTORAD) playerData->playerRotation.x = HIGHEST_X_DEGREES * GFC_DEGTORAD;
-    if (playerData->playerRotation.x < LOWEST_X_DEGREES * GFC_DEGTORAD) playerData->playerRotation.x = LOWEST_X_DEGREES * GFC_DEGTORAD;
-    
-    // Gravity/slope movement
-    GFC_Vector3D floorNormal;
-    GFC_Vector3D contact = { 0 };
-    if (isOnFloor(self, &floorNormal, &contact)) {
-        float floorAngle = M_PI / 2 - asinf(floorNormal.z);
-        // Make it snap to a certain height when traversing on ground with a lower angle than on the previous frame to account for slightly dipping into the floor
-        if (previousFloorAngle > floorAngle) {
-            snapZ = contact.z + PLAYER_GRAVITY_RAYCAST_HEIGHT;
-            snapToSnapZ = true;
-        }
-
-        previousFloorAngle = floorAngle;
-
-        GFC_Vector3D horizontalDirection = gfc_vector3d(playerData->playerVelocity.x, playerData->playerVelocity.y, 0);
-        gfc_vector3d_normalize(&horizontalDirection);
-        // Used to determine if moving up or down
-        float dotProduct = gfc_vector3d_dot_product(floorNormal, horizontalDirection);
-        float horizontalMagnitude = sqrtf(pow(playerData->playerVelocity.x, 2) + pow(playerData->playerVelocity.y, 2));
-
-        // Get the dot product as if parallel to the slope, to slow down vertical movement in case the player is not moving parallel to it
-        GFC_Vector3D opposite = gfc_vector3d(-floorNormal.x, -floorNormal.y, 0);
-        gfc_vector3d_normalize(&opposite);
-        float parallelDotProduct = gfc_vector3d_dot_product(floorNormal, opposite);
-
-        // Uses tanf rather than sinf as the horizontal speed should not adjust with the angle of the slope
-        float floorRatio = tanf(floorAngle) * fabs(dotProduct / parallelDotProduct);
-
-        if (dotProduct < 0) {
-            playerData->playerVelocity.z = horizontalMagnitude * floorRatio;
-        } else if (dotProduct > 0) {
-            playerData->playerVelocity.z = -horizontalMagnitude * floorRatio;
-        }
-        else {
-            playerData->playerVelocity.z = 0;
-        }
-
-    } else {
-        snapToSnapZ = false;
-        playerData->playerVelocity.z += GRAVITY * delta;
-    }
+    playerData->character3dData->rotation.z -= mouseX * HORIZONTAL_MOUSE_SENSITIVITY * delta;
+    playerData->character3dData->rotation.x += mouseY * VERTICAL_MOUSE_SENSITIVITY * delta;
+    if (playerData->character3dData->rotation.x > HIGHEST_X_DEGREES * GFC_DEGTORAD) playerData->character3dData->rotation.x = HIGHEST_X_DEGREES * GFC_DEGTORAD;
+    if (playerData->character3dData->rotation.x < LOWEST_X_DEGREES * GFC_DEGTORAD) playerData->character3dData->rotation.x = LOWEST_X_DEGREES * GFC_DEGTORAD;
 
     // Zoom
     aimZoom = gf2d_mouse_button_held(2);
 
     // Attacking
     if (gf2d_mouse_button_held(0)) {
-        playerData->playerWeapons[0].shoot(&playerData->playerWeapons[0], self->position, playerData->playerRotation, getCameraPosition(self));
+        playerData->playerWeapons[0].shoot(&playerData->playerWeapons[0], self->position, character3dData->rotation, getCameraPosition(self));
 
     }
 }
@@ -181,79 +138,13 @@ void _playerUpdate(Entity * self, float delta) {
 
     // Movement
     PlayerData * playerData = getPlayerData(self);
-
-    GFC_Vector3D velocity = playerData->playerVelocity;
-
-    for (int i = 0; i < entityManager.entityMax; i++) {
-        // Filter out inactive entities, non-interactables, and interactables out of range
-        Entity* currEntity = &entityManager.entityList[i];
-        if (!currEntity->_in_use) {
-            continue;
-        }
-        if (!isOnLayer(currEntity, 3)) {
-            continue;
-        }
-        if (!gfc_vector3d_distance_between_less_than(self->position, currEntity->position, HORIZONTAL_COLLISION_RADIUS * 8)) {
-            continue;
-        }
+    Character3DData* character3dData = playerData->character3dData;
 
 
-        GFC_Edge3D movementRaycast;
-        GFC_Vector3D contact;
-        GFC_Triangle3D t;
-        GFC_Vector3D raycastStart;
-        GFC_Vector3D raycastEnd;
-        GFC_Vector3D normalizedVelocity;
-        GFC_Vector3D triangleNormal;
-        GFC_Vector3D velocitySubtract;
-        float angle = M_PI / 8 * i;
-        float dot;
-        float absdot;
-        float velocityMagnitude;
+    horizontalWallSlide(self, character3dData, delta);
+    verticalVectorMovement(self, character3dData, delta);
 
-
-        //slog("Velocity start: %f, %f", velocity.x, velocity.y);
-        for (int i = 0; i < 16; i++) {
-            angle = M_PI / 8 * i;
-            raycastStart = gfc_vector3d(0, HORIZONTAL_COLLISION_RADIUS, 0);
-            gfc_vector3d_rotate_about_z(&raycastStart, angle);
-            raycastStart = gfc_vector3d_added(raycastStart, self->position);
-            raycastEnd = gfc_vector3d_added(raycastStart, velocity);
-            movementRaycast = gfc_edge3d_from_vectors(raycastStart, raycastEnd);
-            normalizedVelocity = velocity;
-            velocityMagnitude = gfc_vector3d_magnitude(velocity);
-
-
-            if (entityRaycastTest(currEntity, movementRaycast, &contact, &t, NULL)) {
-                gfc_vector3d_normalize(&normalizedVelocity);
-                triangleNormal = gfc_trigfc_angle_get_normal(t);
-                dot = gfc_vector3d_dot_product(normalizedVelocity, triangleNormal);
-                absdot = fabsf(dot);
-                velocitySubtract = gfc_vector3d_multiply(triangleNormal, gfc_vector3d(dot * velocityMagnitude, dot * velocityMagnitude, dot * velocityMagnitude));
-                
-                velocity = gfc_vector3d_subbed(velocity, velocitySubtract);
-                velocity = gfc_vector3d_multiply(velocity, gfc_vector3d(absdot, absdot, absdot));
-
-            }
-
-        }
-        //slog("Velocity end: %f, %f", velocity.x, velocity.y);
-
-
-            
-
-    }
-    playerData->playerVelocity = velocity;
-
-    self->position.x += playerData->playerVelocity.x;
-    self->position.y += playerData->playerVelocity.y;
-    self->position.z += playerData->playerVelocity.z;
-    if (snapToSnapZ) {
-        //slog("Pos z: %f", self->position.z);
-        //slog("Snap z: %f", snapZ);
-        self->position.z = snapZ;
-        snapToSnapZ = false;
-    }
+    moveAndSlide(self, character3dData);
 
     // Zoom
     GFC_Vector3D cameraMove;
@@ -272,12 +163,12 @@ void _playerUpdate(Entity * self, float delta) {
         gf3d_camera_set_position(getCameraPosition(self));
 
         // Takes the base camera rotation, and adds together its Z rotation and the player's Z rotation
-        GFC_Vector3D baseCamRotation = gfc_vector3d_added(CAMERA_ROTATION, gfc_vector3d(0, 0, playerData->playerRotation.z));
-        baseCamRotation = gfc_vector3d_added(baseCamRotation, gfc_vector3d(playerData->playerRotation.x, 0, 0));
+        GFC_Vector3D baseCamRotation = gfc_vector3d_added(CAMERA_ROTATION, gfc_vector3d(0, 0, character3dData->rotation.z));
+        baseCamRotation = gfc_vector3d_added(baseCamRotation, gfc_vector3d(character3dData->rotation.x, 0, 0));
         gf3d_camera_set_rotation(baseCamRotation);
 
         // Move the player model in the direction facing
-        float targetRotation = self->rotation.z + (playerData->playerRotation.z - self->rotation.z) * 0.1;
+        float targetRotation = self->rotation.z + (character3dData->rotation.z - self->rotation.z) * 0.1;
         self->rotation.z = targetRotation;
     }
 
@@ -328,9 +219,10 @@ void interact(Entity* self) {
 
 GFC_Vector3D getCameraPosition(Entity *self) {
     PlayerData * playerData = getPlayerData(self);
+    Character3DData* character3dData = playerData->character3dData;
     GFC_Vector3D newCamPosition = actualCameraOffset;
-    gfc_vector3d_rotate_about_x(&newCamPosition, playerData->playerRotation.x); 
-    gfc_vector3d_rotate_about_z(&newCamPosition, playerData->playerRotation.z);
+    gfc_vector3d_rotate_about_x(&newCamPosition, character3dData->rotation.x);
+    gfc_vector3d_rotate_about_z(&newCamPosition, character3dData->rotation.z);
     newCamPosition = gfc_vector3d_added(newCamPosition, self->position);
     return newCamPosition;
 }

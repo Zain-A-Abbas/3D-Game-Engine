@@ -13,7 +13,7 @@ Entity * enemyEntityNew() {
 	enemyEntity->think = enemyThink;
 	enemyEntity->update = enemyUpdate;
 	enemyEntity->type = ENEMY;
-	enemyEntity->model = gf3d_model_load("models/enemies/enemy1/enemy1.model");
+	enemyEntity->model = gf3d_model_load("models/enemies/zombie/zombie.model");
 
 	EnemyData* enemyData = (EnemyData*)malloc(sizeof(EnemyData));
     if (!enemyData) {

@@ -14,7 +14,23 @@ typedef struct  {
     int                 zSnap; // Determines if the Z position should snap the next frame
     float               zSnapTarget; // The Z position to snap to next frame
     float               gravity; // Automatically set to negative 1 on creation
+    float               horizontalCollisionRadius; // The character's collision radius
 } Character3DData;
+
+/**
+ * @brief Creates a Character3DData structure.
+ */
+Character3DData* newCharacter3dData();
+
+/**
+* @Brief moves the character while sliding them across walls.
+*/
+void moveAndSlide(Entity* self, Character3DData* character3dData);
+
+/**
+* @brief Adjusts the speed and direction of the character if pushing against a wall
+*/
+void horizontalWallSlide(Entity* self, Character3DData* character3dData, float delta);
 
 /**
 * @brief Adjusts the vertical movement based on the slope.

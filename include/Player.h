@@ -14,12 +14,10 @@
 
 typedef struct PlayerData_S {
     Camera              *camera;    // Pointer to camera
-    GFC_Vector3D        playerRotation;
-    GFC_Vector3D        playerVelocity;
     Weapon              *playerWeapons;
     GFC_Edge3D          raycastTest;
     GFC_Color           raycastColor;
-    Character3DData     character3dData;
+    Character3DData     *character3dData;
 } PlayerData;
 
 

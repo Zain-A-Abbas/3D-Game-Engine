@@ -1,0 +1,12 @@
+{
+    "model":
+    {
+        "obj":"models/enemies/enemy1/enemy1.obj",
+        "texture":"models/dino/dino.png",
+        "material":
+        {
+            "name":"primitive_material",
+            "emit":[255,255,255,255]
+        }
+    }
+}
