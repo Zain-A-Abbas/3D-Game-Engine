@@ -9,13 +9,16 @@
 typedef struct {
 	PlayerData*		playerData;
 	Actor*			bgActor;
+	Actor*			currentWeaponActor;
 } UIData ;
 
 void initializeUI();
 
-void actorLoad(Actor* actorptr, const char* actorFile);
+void actorLoad(Actor** actorptr, const char* actorFile);
 
 void assignPlayer(PlayerData* playerData);
+
+void playerSwitchWeapon(Weapon* weapon);
 
 void drawUI();
 

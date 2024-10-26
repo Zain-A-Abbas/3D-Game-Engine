@@ -2,6 +2,7 @@
 #include "gf2d_mouse.h"
 #include "Interactable.h"
 #include "Character3D.h"
+#include "UI.h"
 
 const float PLAYER_SPEED = 10;
 const float HORIZONTAL_MOUSE_SENSITIVITY = 1.28;
@@ -40,6 +41,7 @@ Entity * createPlayer() {
     playerData->playerWeapons = (Weapon*) malloc(10 * sizeof(Weapon));
     memset(playerData->playerWeapons, 0, 10 * sizeof(Weapon));
     playerData->playerWeapons[0] = loadWeapon("GameData/WeaponData/Pistol.json");
+    playerSwitchWeapon(&playerData->playerWeapons[0]);
 
     playerData->cameraTrauma = gfc_vector3d(0, 0, 0);
     playerData->cameraTraumaDecay = gfc_vector3d(0, 0, 0);

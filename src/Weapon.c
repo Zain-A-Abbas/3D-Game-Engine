@@ -25,6 +25,11 @@ Weapon loadWeapon(const char *weaponFile) {
         slog("Weapon does not exist.");
     }
 
+    const char* weaponActor = malloc(strlen("actors/") + strlen(weaponName) + strlen(".actor") + 1);
+    strcpy(weaponActor, "actors/");
+    strcat(weaponActor, weaponName);
+    strcat(weaponActor, ".actor");
+
     SJson *SJcartridgeSize = sj_object_get_value(weaponJson, "CartridgeSize");
     SJson *SJreloadSpeed = sj_object_get_value(weaponJson, "ReloadSpeed");
     SJson *SJmaxReserveAmmo = sj_object_get_value(weaponJson, "MaxReserveAmmo");
@@ -38,6 +43,7 @@ Weapon loadWeapon(const char *weaponFile) {
 
     Weapon newWeapon = {
         weaponName,
+        weaponActor,
         cartridgeSize,
         reloadSpeed,
         maxReserveAmmo,

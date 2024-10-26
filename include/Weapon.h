@@ -7,18 +7,20 @@
 #include "stdbool.h"
 #include <string.h>
 #include "Entity.h"
+#include "gf2d_actor.h"
 
 
 
 typedef struct Weapon_S
 {
-    const char        *name;
-    int         cartridgeSize;
-    float       reloadSpeed;
-    int         maxReserveAmmo;
-    int         currentAmmo;
-    int         reserveAmmo;
-    int         damage;
+    const char*     name;
+    const char*     actorFile;
+    int             cartridgeSize;
+    float           reloadSpeed;
+    int             maxReserveAmmo;
+    int             currentAmmo;
+    int             reserveAmmo;
+    int             damage;
     // Behavior
     void (*shoot)   (
         struct Weapon_S * weapon,

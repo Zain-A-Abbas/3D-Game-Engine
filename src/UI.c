@@ -19,12 +19,16 @@ void actorLoad(Actor **actorptr, const char* actorFile) {
 	*actorptr = gf2d_actor_load(actorFile);
 
 	if (!*actorptr) {
-		slog("Failed to load actor into pointer");
+		slog("Failed to load actor file %s into pointer", actorFile);
 	}
 }
 
 void assignPlayer(PlayerData* playerData) {
 	uiData.playerData = playerData;
+}
+
+void playerSwitchWeapon(Weapon* weapon) {
+	actorLoad(&uiData.currentWeaponActor, weapon->actorFile);
 }
 
 void drawUI() {
@@ -50,4 +54,17 @@ void drawPlayerUI(GFC_Vector2D resolution) {
 		NULL,
 		NULL
 	);
+
+	if (uiData.currentWeaponActor) {
+		gf2d_actor_draw(
+			uiData.currentWeaponActor,
+			0,
+			uiPosition,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
+	}
 }

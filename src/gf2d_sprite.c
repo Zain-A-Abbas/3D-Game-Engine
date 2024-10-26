@@ -272,7 +272,6 @@ Sprite * gf2d_sprite_load(const char * filename,int frame_width,int frame_height
     sprite->texture = gf3d_texture_load(filename);
     if (!sprite->texture)
     {
-        slog("gf2d_sprite_load: failed to load texture for sprite");
         gf2d_sprite_free(sprite);
         return NULL;
     }
