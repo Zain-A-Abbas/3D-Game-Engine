@@ -16,7 +16,7 @@ typedef struct PlayerData_S {
     Camera              *camera;    // Pointer to camera
     Weapon              *playerWeapons;
     int                 currentweapon;
-    int                 weaponUnlocked;
+    int                 weaponsUnlocked;
     float               attackCooldown;
     GFC_Vector3D        cameraTrauma;
     GFC_Vector3D        cameraTraumaDecay;
@@ -66,8 +66,20 @@ void addCameraTrauma(PlayerData* playerData, GFC_Vector3D trauma, GFC_Vector3D t
 void interact(Entity* self);
 
 /**
+* @brief Triggered when the player hits the attack button.
+*/
+void attack(Entity* self, PlayerData* playerData, Character3DData* character3dData);
+
+void reload(Entity* self, PlayerData* playerData);
+
+/**
 * @brief Sets the current weapon to the following one in the array. Also updates the UI.
 */
-void setWeapon(int weaponIndex);
+void setWeapon(PlayerData* playerData, int weaponIndex);
+
+/**
+* @brief Gives the player a weapon, initializes it at the base ammo, and then switches to it.
+*/
+void giveWeapon(Entity* self, PlayerData* playerData, const char* weapon);
 
 #endif

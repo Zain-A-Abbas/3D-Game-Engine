@@ -193,6 +193,10 @@ FontTypes gf2d_font_type_from_text(const char *buf)
     {
         return FT_H6;
     }
+    else if (strcmp(buf, "Ammo") == 0)
+    {
+        return FT_Ammo;
+    }
     return FT_MAX;
 }
 

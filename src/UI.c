@@ -1,5 +1,6 @@
 #include "UI.h"
 #include "Reticle.h"
+#include "gf2d_font.h"
 
 const char* reticleActor = "actors/reticle.actor";
 const char* uiBGActor = "actors/WeaponBG.actor";
@@ -27,8 +28,8 @@ void assignPlayer(PlayerData* playerData) {
 	uiData.playerData = playerData;
 }
 
-void playerSwitchWeapon(Weapon* weapon) {
-	actorLoad(&uiData.currentWeaponActor, weapon->actorFile);
+void playerSwitchWeapon(Weapon weapon) {
+	actorLoad(&uiData.currentWeaponActor, weapon.actorFile);
 }
 
 void drawUI() {
@@ -41,13 +42,17 @@ void drawPlayerUI(GFC_Vector2D resolution) {
 	if (!uiData.playerData) {
 		return;
 	}
+	if (uiData.playerData->weaponsUnlocked < 1) {
+		return;
+	}
 
-	GFC_Vector2D uiPosition = gfc_vector2d_multiply(resolution, gfc_vector2d(0.2, 0.8));
+	GFC_Vector2D weaponUiPosition = gfc_vector2d_multiply(resolution, gfc_vector2d(0.128, 0.8));
+	GFC_Vector2D ammoTextPosition = gfc_vector2d(weaponUiPosition.x - 24, weaponUiPosition.y + 8);
 
 	gf2d_actor_draw(
 		uiData.bgActor,
 		0,
-		uiPosition,
+		weaponUiPosition,
 		NULL,
 		NULL,
 		NULL,
@@ -59,12 +64,19 @@ void drawPlayerUI(GFC_Vector2D resolution) {
 		gf2d_actor_draw(
 			uiData.currentWeaponActor,
 			0,
-			uiPosition,
+			weaponUiPosition,
 			NULL,
 			NULL,
 			NULL,
 			NULL,
 			NULL
 		);
+
+		Weapon currentWeaponData = uiData.playerData->playerWeapons[uiData.playerData->currentweapon];
+
+		char* ammoText = malloc(8);
+		snprintf(ammoText, 8, "%02d | %02d", currentWeaponData.currentAmmo, currentWeaponData.reserveAmmo);
+		gf2d_font_draw_line_tag(ammoText, FT_Ammo, GFC_COLOR_WHITE, ammoTextPosition);
+
 	}
 }

@@ -35,10 +35,12 @@ Weapon loadWeapon(const char *weaponFile) {
     SJson *SJmaxReserveAmmo = sj_object_get_value(weaponJson, "MaxReserveAmmo");
     SJson *SJdamage = sj_object_get_value(weaponJson, "Damage");
     
-    int cartridgeSize = sj_get_integer_value(SJcartridgeSize, &cartridgeSize);
-    float reloadSpeed = sj_get_float_value(SJreloadSpeed, &reloadSpeed);
-    int maxReserveAmmo = sj_get_integer_value(SJmaxReserveAmmo, &maxReserveAmmo);
-    int damage = sj_get_integer_value(SJdamage, &damage);
+    int cartridgeSize, maxReserveAmmo, damage;
+    float reloadSpeed; 
+    sj_get_integer_value(SJcartridgeSize, &cartridgeSize);
+    sj_get_float_value(SJreloadSpeed, &reloadSpeed);
+    sj_get_integer_value(SJmaxReserveAmmo, &maxReserveAmmo);
+    sj_get_integer_value(SJdamage, &damage);
     
 
     Weapon newWeapon = {
@@ -47,8 +49,8 @@ Weapon loadWeapon(const char *weaponFile) {
         cartridgeSize,
         reloadSpeed,
         maxReserveAmmo,
-        0,
-        0,
+        cartridgeSize,
+        20,
         damage,
     };
 

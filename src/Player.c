@@ -21,6 +21,7 @@ float previousFloorAngle = 0.0;
 float snapZ = 0.0;
 bool snapToSnapZ = false;
 
+bool reloading = false;
 bool aimZoom = false;
 
 Entity * createPlayer() {
@@ -38,10 +39,8 @@ Entity * createPlayer() {
     memset(playerData, 0, sizeof(PlayerData));
     playerEntity->data = playerData;
     
-    playerData->playerWeapons = (Weapon*) malloc(10 * sizeof(Weapon));
-    memset(playerData->playerWeapons, 0, 10 * sizeof(Weapon));
-    playerData->playerWeapons[0] = loadWeapon("GameData/WeaponData/Pistol.json");
-    playerSwitchWeapon(&playerData->playerWeapons[0]);
+    playerData->weaponsUnlocked = 0;
+    giveWeapon(playerEntity, playerData, "GameData/WeaponData/Pistol.json");
 
     playerData->cameraTrauma = gfc_vector3d(0, 0, 0);
     playerData->cameraTraumaDecay = gfc_vector3d(0, 0, 0);
@@ -52,6 +51,9 @@ Entity * createPlayer() {
     playerData->character3dData->gravityRaycastHeight = 6.5;
 
     playerData->attackCooldown = 0;
+
+    // UI setup
+    assignPlayer(playerData);
 
     return playerEntity;
 }
@@ -135,14 +137,12 @@ void _playerControls(Entity * self, float delta) {
     aimZoom = gf2d_mouse_button_held(2);
 
     // Attacking
-    if (gf2d_mouse_button_held(0) && playerData->attackCooldown == 0) {
-        addCameraTrauma(playerData, gfc_vector3d(-0.08, 0, 0.04), gfc_vector3d(1.0, 0, 2.0));
-        if (gf2d_mouse_button_held(2)) {
-            playerData->cameraTrauma = gfc_vector3d_multiply(playerData->cameraTrauma, gfc_vector3d(0.5, 0.5, 0.5));
-        }
-        playerData->attackCooldown = 0.2;
-        playerData->playerWeapons[0].shoot(&playerData->playerWeapons[0], self->position, character3dData->rotation, getCameraPosition(self));
+    if (gf2d_mouse_button_held(0)) {
+        attack(self, playerData, character3dData);
+    }
 
+    if (gfc_input_command_pressed("reload")) {
+        reload(self, playerData);
     }
 }
 
@@ -151,7 +151,7 @@ void _playerUpdate(Entity * self, float delta) {
 
     // Movement
     PlayerData * playerData = getPlayerData(self);
-
+    
     Character3DData* character3dData = playerData->character3dData;
 
 
@@ -263,4 +263,61 @@ GFC_Vector3D getCameraPosition(Entity *self) {
 void addCameraTrauma(PlayerData* playerData, GFC_Vector3D trauma, GFC_Vector3D traumaDecay) {
     playerData->cameraTrauma = gfc_vector3d_added(playerData->cameraTrauma, trauma);
     playerData->cameraTraumaDecay = traumaDecay;
+}
+
+void attack(Entity * self, PlayerData * playerData, Character3DData * character3dData) {
+    if (playerData->attackCooldown != 0) {
+        return;
+    }
+
+    Weapon* weaponData = &playerData->playerWeapons[playerData->currentweapon];
+    if (weaponData->currentAmmo <= 0) {
+        return;
+    }
+
+    weaponData->currentAmmo -= 1;
+
+    addCameraTrauma(playerData, gfc_vector3d(-0.08, 0, 0.04), gfc_vector3d(1.0, 0, 2.0));
+    if (gf2d_mouse_button_held(2)) {
+        playerData->cameraTrauma = gfc_vector3d_multiply(playerData->cameraTrauma, gfc_vector3d(0.5, 0.5, 0.5));
+    }
+    playerData->attackCooldown = 0.2;
+    playerData->playerWeapons[0].shoot(&playerData->playerWeapons[0], self->position, character3dData->rotation, getCameraPosition(self));
+}
+
+void reload(Entity * self, PlayerData * playerData) {
+    if (reloading) {
+        return;
+    }
+    reloading = true;
+    Weapon* weaponData = &playerData->playerWeapons[playerData->currentweapon];
+    
+    int reloadAmount = min(weaponData->cartridgeSize - weaponData->currentAmmo, min(weaponData->cartridgeSize, weaponData->reserveAmmo));
+    
+    if (reloadAmount == 0) {
+        return;
+    }
+
+    weaponData->reserveAmmo -= reloadAmount;
+    weaponData->currentAmmo += reloadAmount;
+    
+    reloading = false;
+
+}
+
+void giveWeapon(Entity* self, PlayerData* playerData, const char *weapon) {
+    int newWeaponIndex = playerData->weaponsUnlocked;
+    playerData->weaponsUnlocked += 1;
+    playerData->playerWeapons = (Weapon*)realloc(playerData->playerWeapons, sizeof(Weapon) * playerData->weaponsUnlocked);
+    if (!playerData->playerWeapons) {
+        slog("\n\nFailed to allocate weapons\n\n");
+        return;
+    }
+    playerData->playerWeapons[newWeaponIndex] = loadWeapon(weapon);
+    setWeapon(playerData, newWeaponIndex);
+}
+
+void setWeapon(PlayerData* playerData, int weaponIndex) {
+    playerData->currentweapon = weaponIndex;
+    playerSwitchWeapon(playerData->playerWeapons[weaponIndex]);
 }

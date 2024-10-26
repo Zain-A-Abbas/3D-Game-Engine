@@ -111,7 +111,6 @@ int main(int argc,char *argv[])
 
     // UI setup
     initializeUI();
-    assignPlayer(player);
 
     // Create dummy enemies
     Entity* enemy1 = enemyEntityNew();
