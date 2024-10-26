@@ -165,6 +165,7 @@
     <ClCompile Include="gfc\src\gfc_types.c" />
     <ClCompile Include="gfc\src\gfc_vector.c" />
     <ClCompile Include="gfc\src\miniz.c" />
+    <ClCompile Include="src\Character3D.c" />
     <ClCompile Include="src\Enemy.c" />
     <ClCompile Include="src\Interactable.c" />
     <ClCompile Include="src\TerrainManager.c" />
@@ -198,6 +199,7 @@
     <ClCompile Include="src\gf3d_vqueues.c" />
     <ClCompile Include="src\Player.c" />
     <ClCompile Include="src\Reticle.c" />
+    <ClCompile Include="src\UI.c" />
     <ClCompile Include="src\Weapon.c" />
   </ItemGroup>
   <ItemGroup>
@@ -264,7 +266,11 @@
     <ClInclude Include="include\light.h" />
     <ClInclude Include="include\Player.h" />
     <ClInclude Include="include\Reticle.h" />
+    <ClInclude Include="include\UI.h" />
     <ClInclude Include="include\Weapon.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="The Plan.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

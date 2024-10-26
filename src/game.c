@@ -28,7 +28,7 @@
 #include "TerrainManager.h"
 #include "Player.h"
 #include "Enemy.h"
-#include "Reticle.h"
+#include "UI.h"
 #include "Interactable.h"
 
 extern int __DEBUG;
@@ -87,8 +87,8 @@ int main(int argc,char *argv[])
     slog_sync();
 
     //game setup
-    //gf2d_mouse_load("actors/mouse.actor");
-    reticleLoad("actors/reticle.actor");
+
+
     sky = gf3d_model_load("models/sky.model");
     gfc_matrix4_identity(skyMat);
     gfc_matrix4_identity(dinoMat);
@@ -106,7 +106,12 @@ int main(int argc,char *argv[])
     Entity * player = createPlayer();
     assignCamera(player, gf3dGetCamera());
     player->position.z = 20;
+    
     SDL_SetRelativeMouseMode(SDL_TRUE);
+
+    // UI setup
+    initializeUI();
+    assignPlayer(player);
 
     // Create dummy enemies
     Entity* enemy1 = enemyEntityNew();
@@ -173,7 +178,8 @@ int main(int argc,char *argv[])
                 }*/
             //2D draws
                 //gf2d_mouse_draw();
-                reticleDraw();
+                drawUI();
+
                 gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
         gf3d_vgraphics_render_end();
 

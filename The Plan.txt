@@ -1,4 +1,9 @@
-Transfer some stuff from the player to Character3D
+One functioning gun UI
+	- UI object has a "drawUI" function
+	- "drawUI" checks if the player data is valid, and if so, runs the "drawPlayerUI" function
+	- "drawPlayerUI" draws the sprites associated with the current weapon as well as remaining ammo in the bottom left (shoot for basic grey circle, text, and 1 png of pistol)
+
+
 
 One functioning enemy
 
@@ -7,8 +12,15 @@ When enemy is spawned, gets given a point on the map where it walks around a cer
 the enemy will approach the player. If the player is too far, the enemy will make their current point the new epicenter for wandering around.
 
 
-	One functioning gun UI
 
 	One functioning randomly generated map piece
 
 	Pickups
+
+
+
+DONE:
+Transfer some stuff from the player to Character3D
+
+add screenshake on using gun:
+	- Hehe camera trauma implemented

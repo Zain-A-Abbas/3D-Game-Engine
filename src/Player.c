@@ -41,11 +41,15 @@ Entity * createPlayer() {
     memset(playerData->playerWeapons, 0, 10 * sizeof(Weapon));
     playerData->playerWeapons[0] = loadWeapon("GameData/WeaponData/Pistol.json");
 
+    playerData->cameraTrauma = gfc_vector3d(0, 0, 0);
+    playerData->cameraTraumaDecay = gfc_vector3d(0, 0, 0);
     actualCameraOffset = BASE_CAMERA_OFFSET;
     zoomCameraOffset = gfc_vector3d_multiply(BASE_CAMERA_OFFSET, gfc_vector3d(0.95, 0.75, 0.75));
 
     playerData->character3dData = newCharacter3dData();
     playerData->character3dData->gravityRaycastHeight = 6.5;
+
+    playerData->attackCooldown = 0;
 
     return playerEntity;
 }
@@ -123,12 +127,18 @@ void _playerControls(Entity * self, float delta) {
     playerData->character3dData->rotation.x += mouseY * VERTICAL_MOUSE_SENSITIVITY * delta;
     if (playerData->character3dData->rotation.x > HIGHEST_X_DEGREES * GFC_DEGTORAD) playerData->character3dData->rotation.x = HIGHEST_X_DEGREES * GFC_DEGTORAD;
     if (playerData->character3dData->rotation.x < LOWEST_X_DEGREES * GFC_DEGTORAD) playerData->character3dData->rotation.x = LOWEST_X_DEGREES * GFC_DEGTORAD;
+    // Camera shake
 
     // Zoom
     aimZoom = gf2d_mouse_button_held(2);
 
     // Attacking
-    if (gf2d_mouse_button_held(0)) {
+    if (gf2d_mouse_button_held(0) && playerData->attackCooldown == 0) {
+        addCameraTrauma(playerData, gfc_vector3d(-0.08, 0, 0.04), gfc_vector3d(1.0, 0, 2.0));
+        if (gf2d_mouse_button_held(2)) {
+            playerData->cameraTrauma = gfc_vector3d_multiply(playerData->cameraTrauma, gfc_vector3d(0.5, 0.5, 0.5));
+        }
+        playerData->attackCooldown = 0.2;
         playerData->playerWeapons[0].shoot(&playerData->playerWeapons[0], self->position, character3dData->rotation, getCameraPosition(self));
 
     }
@@ -136,8 +146,10 @@ void _playerControls(Entity * self, float delta) {
 
 void _playerUpdate(Entity * self, float delta) {
 
+
     // Movement
     PlayerData * playerData = getPlayerData(self);
+
     Character3DData* character3dData = playerData->character3dData;
 
 
@@ -145,6 +157,8 @@ void _playerUpdate(Entity * self, float delta) {
     verticalVectorMovement(self, character3dData, delta);
 
     moveAndSlide(self, character3dData);
+
+    playerData->attackCooldown = fMoveTowards(playerData->attackCooldown, 0, delta);
 
     // Zoom
     GFC_Vector3D cameraMove;
@@ -156,6 +170,21 @@ void _playerUpdate(Entity * self, float delta) {
     cameraMove = gfc_vector3d_multiply(cameraMove, gfc_vector3d(delta * 10, delta * 10, delta * 10));
     actualCameraOffset = gfc_vector3d_subbed(actualCameraOffset, cameraMove);
 
+    // Camera trauma reduction
+    playerData->cameraTrauma.x = fMoveTowards(playerData->cameraTrauma.x, 0, playerData->cameraTraumaDecay.x * delta);
+    playerData->cameraTrauma.y = fMoveTowards(playerData->cameraTrauma.y, 0, playerData->cameraTraumaDecay.y * delta);
+    playerData->cameraTrauma.z = fMoveTowards(playerData->cameraTrauma.z, 0, playerData->cameraTraumaDecay.z * delta);
+
+    if (playerData->cameraTrauma.x == 0) {
+        playerData->cameraTraumaDecay.x = 0;
+    }
+    if (playerData->cameraTrauma.y == 0) {
+        playerData->cameraTraumaDecay.y = 0;
+    }
+    if (playerData->cameraTrauma.z == 0) {
+        playerData->cameraTraumaDecay.z = 0;
+    }
+
     // Mouse update
     if (playerData->camera) {
 
@@ -165,6 +194,7 @@ void _playerUpdate(Entity * self, float delta) {
         // Takes the base camera rotation, and adds together its Z rotation and the player's Z rotation
         GFC_Vector3D baseCamRotation = gfc_vector3d_added(CAMERA_ROTATION, gfc_vector3d(0, 0, character3dData->rotation.z));
         baseCamRotation = gfc_vector3d_added(baseCamRotation, gfc_vector3d(character3dData->rotation.x, 0, 0));
+        baseCamRotation = gfc_vector3d_added(baseCamRotation, playerData->cameraTrauma);
         gf3d_camera_set_rotation(baseCamRotation);
 
         // Move the player model in the direction facing
@@ -172,6 +202,7 @@ void _playerUpdate(Entity * self, float delta) {
         self->rotation.z = targetRotation;
     }
 
+        
     // Floor raycast
     if (playerData != NULL) {
         GFC_Triangle3D t = { 0 };
@@ -188,8 +219,6 @@ void _playerUpdate(Entity * self, float delta) {
     }
 
 }
-
-
 
 void interact(Entity* self) {
     GFC_Vector3D interactPoint = gfc_vector3d(0, -INTERACT_DISTANCE, 0);
@@ -223,6 +252,13 @@ GFC_Vector3D getCameraPosition(Entity *self) {
     GFC_Vector3D newCamPosition = actualCameraOffset;
     gfc_vector3d_rotate_about_x(&newCamPosition, character3dData->rotation.x);
     gfc_vector3d_rotate_about_z(&newCamPosition, character3dData->rotation.z);
+
+
     newCamPosition = gfc_vector3d_added(newCamPosition, self->position);
     return newCamPosition;
+}
+
+void addCameraTrauma(PlayerData* playerData, GFC_Vector3D trauma, GFC_Vector3D traumaDecay) {
+    playerData->cameraTrauma = gfc_vector3d_added(playerData->cameraTrauma, trauma);
+    playerData->cameraTraumaDecay = traumaDecay;
 }

@@ -15,6 +15,9 @@
 typedef struct PlayerData_S {
     Camera              *camera;    // Pointer to camera
     Weapon              *playerWeapons;
+    float               attackCooldown;
+    GFC_Vector3D        cameraTrauma;
+    GFC_Vector3D        cameraTraumaDecay;
     GFC_Edge3D          raycastTest;
     GFC_Color           raycastColor;
     Character3DData     *character3dData;
@@ -48,7 +51,12 @@ PlayerData* getPlayerData(Entity* self);
  */
 GFC_Vector3D getCameraPosition(Entity *self);
 
-
+/**
+* @brief Adds the trauma to the camera rotation every frame.
+* @param The trauma value. Added on to the player's current camera truma, so if used again before it runs out it will stack.
+* @parma the amount by which the trama decreases every second. Only the latest traumaDecay is used, rather than it stacking.
+*/
+void addCameraTrauma(PlayerData* playerData, GFC_Vector3D trauma, GFC_Vector3D traumaDecay);
 
 /**
 * @brief Interacts with all objects in a radius in front of the player
