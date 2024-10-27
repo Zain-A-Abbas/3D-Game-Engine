@@ -41,6 +41,15 @@ Weapon loadWeapon(const char *weaponFile) {
     sj_get_float_value(SJreloadSpeed, &reloadSpeed);
     sj_get_integer_value(SJmaxReserveAmmo, &maxReserveAmmo);
     sj_get_integer_value(SJdamage, &damage);
+
+    // Get weapon audio
+    SJson* SJweaponUseSound = sj_object_get_value(weaponJson, "UseSound");
+    const char* useSoundString = malloc(strlen("sounds/") + strlen(sj_get_string_value(SJweaponUseSound) + strlen(".wav")));
+    strcpy(useSoundString, "sounds/");
+    strcat(useSoundString, sj_get_string_value(SJweaponUseSound));
+    strcat(useSoundString, ".wav");
+    GFC_Sound* useSound = gfc_sound_load(useSoundString, 1.0, 0);
+
     
 
     Weapon newWeapon = {
@@ -52,6 +61,7 @@ Weapon loadWeapon(const char *weaponFile) {
         cartridgeSize,
         20,
         damage,
+        useSound
     };
 
     newWeapon.shoot = pistolFire;
@@ -93,6 +103,7 @@ Entity * shotCollided(GFC_Edge3D raycast, GFC_Box boundingBox) {
 }
 
 void pistolFire(Weapon* weapon, GFC_Vector3D playerPosition, GFC_Vector3D playerRotation, GFC_Vector3D cameraPosition) {
+    gfc_sound_play(weapon->useSound, 0, 0.3, 0, -1);
     GFC_Vector3D raycastStart = cameraPosition;
     GFC_Vector3D raycastAdd = gfc_vector3d(0, -1024, 0);
     gfc_vector3d_rotate_about_x(&raycastAdd, playerRotation.x);

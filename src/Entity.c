@@ -168,5 +168,5 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
 
         }
     }
-    return false;
+    return 0;
 }

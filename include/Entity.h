@@ -80,7 +80,7 @@ void _entityFree(Entity *self);
 /**
 * @brief Return whether or not the following raycast intersected an entity or not
 */
-int entityRaycastTest(Entity* entity, GFC_Edge3D raycast, GFC_Vector3D* contact, GFC_Triangle3D* t, GFC_Box* boundingBox);
+int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact, GFC_Triangle3D * t, GFC_Box * boundingBox);
 
 /**
 * @brief Check if the entity is on a collision layer or not

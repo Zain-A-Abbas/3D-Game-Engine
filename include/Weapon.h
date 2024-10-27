@@ -8,7 +8,7 @@
 #include <string.h>
 #include "Entity.h"
 #include "gf2d_actor.h"
-
+#include "gfc_audio.h"
 
 
 typedef struct Weapon_S
@@ -21,6 +21,7 @@ typedef struct Weapon_S
     int             currentAmmo;
     int             reserveAmmo;
     int             damage;
+    GFC_Sound*      useSound;
     // Behavior
     void (*shoot)   (
         struct Weapon_S * weapon,

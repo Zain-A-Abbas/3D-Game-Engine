@@ -2,7 +2,7 @@
 #include "simple_logger.h"
 
 const float BASE_GRAVITY = -1;
-const float BASE_HORIZONTAL_COLLISION_RADIUS = 64;
+const float BASE_HORIZONTAL_COLLISION_RADIUS = 2;
 
 Character3DData* newCharacter3dData() {
     Character3DData* newData = (Character3DData*) malloc (sizeof(Character3DData));
@@ -38,18 +38,18 @@ void moveAndSlide(Entity* self, Character3DData* character3dData) {
 
 void horizontalWallSlide(Entity* self, Character3DData* character3dData, float delta) {
     GFC_Vector3D velocity = character3dData->velocity;
-    GFC_Edge3D movementRaycast;
-    GFC_Vector3D contact;
-    GFC_Triangle3D t;
-    GFC_Vector3D raycastStart;
-    GFC_Vector3D raycastEnd;
-    GFC_Vector3D normalizedVelocity;
-    GFC_Vector3D triangleNormal;
-    GFC_Vector3D velocitySubtract;
-    float angle;
-    float dot;
-    float absdot;
-    float velocityMagnitude;
+    GFC_Vector3D raycastStart = gfc_vector3d(0, 0, 0);
+    GFC_Vector3D raycastEnd = gfc_vector3d(0, 0, 0);
+    GFC_Edge3D movementRaycast = gfc_edge3d_from_vectors(raycastStart, raycastEnd);
+    GFC_Vector3D contact = gfc_vector3d(0, 0, 0);
+    GFC_Triangle3D t = { 0 };
+    GFC_Vector3D normalizedVelocity = gfc_vector3d(0, 0, 0);
+    GFC_Vector3D triangleNormal = gfc_vector3d(0, 0, 0);
+    GFC_Vector3D velocitySubtract = gfc_vector3d(0, 0, 0);
+    float angle = 0;
+    float dot = 0;
+    float speedMod = 0;
+    float velocityMagnitude = 0;
 
     for (int i = 0; i < entityManager.entityMax; i++) {
         // Filter out inactive entities, non-collideable, and collideable out of range
@@ -57,17 +57,17 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
         if (!currEntity->_in_use) {
             continue;
         }
-        if (!isOnLayer(currEntity, 1)) {
+        if (!isOnLayer(currEntity, 3)) {
             continue;
         }
-        if (!gfc_vector3d_distance_between_less_than(self->position, currEntity->position, character3dData->horizontalCollisionRadius)) {
+        if (!gfc_vector3d_distance_between_less_than(self->position, currEntity->position, character3dData->horizontalCollisionRadius * 8)) {
             continue;
         }
         
 
         // Constructs 16 raycasts in a circular perimeter around the entity
-        for (int i = 0; i < 16; i++) {
-            angle = M_PI / 8 * i;
+        for (int j = 0; j < 16; j++) {
+            angle = M_PI / 8 * j;
             raycastStart = gfc_vector3d(0, character3dData->horizontalCollisionRadius, 0);
             gfc_vector3d_rotate_about_z(&raycastStart, angle);
             raycastStart = gfc_vector3d_added(raycastStart, self->position);
@@ -77,18 +77,20 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
             velocityMagnitude = gfc_vector3d_magnitude(velocity);
 
             // Check each raycast in the direction of movement
+            //slog("Velocity start: %f, %f, %f", raycastStart.x, raycastStart.y, raycastStart.z);
             if (entityRaycastTest(currEntity, movementRaycast, &contact, &t, NULL)) {
                 // Take the dot product between the direction of horizontal velocity and the normal of the wall
                 gfc_vector3d_normalize(&normalizedVelocity);
                 triangleNormal = gfc_trigfc_angle_get_normal(t);
                 dot = gfc_vector3d_dot_product(normalizedVelocity, triangleNormal);
-                absdot = fabsf(dot);
+
+                speedMod = fabsf(dot * dot);
                 // Create velocitySubtract by multiplying the normal of the triangle by the dot product and the speed at which the entity was traveling
                 velocitySubtract = gfc_vector3d_multiply(triangleNormal, gfc_vector3d(dot * velocityMagnitude, dot * velocityMagnitude, dot * velocityMagnitude));
 
                 velocity = gfc_vector3d_subbed(velocity, velocitySubtract);
                 // Use the dot product to slow down if hitting wall at an angle rather than turning with no speed loss
-                velocity = gfc_vector3d_multiply(velocity, gfc_vector3d(absdot, absdot, absdot));
+                velocity = gfc_vector3d_multiply(velocity, gfc_vector3d(speedMod, speedMod, speedMod));
 
             }
 

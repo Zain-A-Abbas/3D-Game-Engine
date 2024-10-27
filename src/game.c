@@ -92,7 +92,8 @@ int main(int argc,char *argv[])
     sky = gf3d_model_load("models/sky.model");
     gfc_matrix4_identity(skyMat);
     gfc_matrix4_identity(dinoMat);
-        //camera
+
+    //camera
     gf3d_camera_set_scale(gfc_vector3d(1,1,1));
     gf3d_camera_set_position(gfc_vector3d(15,-15,10));
     gf3d_camera_look_at(gfc_vector3d(0,0,0),NULL);
@@ -102,6 +103,9 @@ int main(int argc,char *argv[])
     gf3d_camera_enable_free_look(1);
     entitySystemInit(2048);
 
+    // Setup audio
+    gfc_audio_init(128, 1, 1, 1, 0, 0);
+    
     // Create player
     Entity * player = createPlayer();
     assignCamera(player, gf3dGetCamera());
@@ -113,23 +117,24 @@ int main(int argc,char *argv[])
     initializeUI();
 
     // Create dummy enemies
-    Entity* enemy1 = enemyEntityNew();
+    /*Entity* enemy1 = enemyEntityNew();
     enemy1->position = gfc_vector3d(4, 4, 0);
     Entity* enemy2 = enemyEntityNew();
     enemy2->position = gfc_vector3d(-4, 4, 0);
-    enemy1->scale = gfc_vector3d(1, 1, 1);
+    enemy1->scale = gfc_vector3d(1, 1, 1);*/
     
     // Create land
     Entity* testGround = terrainEntityNew();
     testGround->model = gf3d_model_load("models/primitives/testground.model");
     testGround->position = gfc_vector3d(0, 0, -8);
+    testGround->scale = gfc_vector3d(4, 4, 4);
 
 
     // Create interactable
     Entity* testInteractable = interactableNew(SPINNING_BOX);
-    testInteractable->position = gfc_vector3d(0, -32, 0);
+    testInteractable->position = gfc_vector3d(0, -16, -2);
     testInteractable->scale = gfc_vector3d(4, 4, 4);
-    testInteractable->rotation.z = 0.707;
+    //testInteractable->rotation.z = 0.707;
 
 
     //Delta time

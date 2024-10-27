@@ -1,7 +1,4 @@
-One functioning gun UI
-	- UI object has a "drawUI" function
-	- "drawUI" checks if the player data is valid, and if so, runs the "drawPlayerUI" function
-	- "drawPlayerUI" draws the sprites associated with the current weapon as well as remaining ammo in the bottom left (shoot for basic grey circle, text, and 1 png of pistol)
+House:
 
 
 
@@ -13,7 +10,6 @@ the enemy will approach the player. If the player is too far, the enemy will mak
 
 
 
-	One functioning randomly generated map piece
 
 	Pickups
 
@@ -23,4 +19,34 @@ DONE:
 Transfer some stuff from the player to Character3D
 
 add screenshake on using gun:
-	- Hehe camera trauma implemented
+- Hehe camera trauma implemented
+
+One functioning gun UI
+- UI object has a "drawUI" function
+- "drawUI" checks if the player data is valid, and if so, runs the "drawPlayerUI" function
+- "drawPlayerUI" draws the sprites associated with the current weapon as well as remaining ammo in the bottom left (shoot for basic grey circle, text, and 1 png of pistol)
+
+DELIVERABLES:
+
+UI Elements reflecting in game information
+Functioning Entity System
+Basic Collision Detection
+Basic User Controls
+A contained game world
+
+
+10 weapons
+5 enemy types
+2 stages with a shop between them
+5 powerups
+	Infinite ammo
+	No jerk
+	Half cooldown
+	Invincible
+	Double speed
+5 map interactable elements
+    Interact button
+    Doors that can be opened
+    Ammo that can be found in abandoned houses?
+    A melee QTE attack on enemies after a headshot
+    The shop

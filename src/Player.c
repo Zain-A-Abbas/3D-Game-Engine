@@ -169,7 +169,7 @@ void _playerUpdate(Entity * self, float delta) {
     } else {
         cameraMove = gfc_vector3d_subbed(actualCameraOffset, BASE_CAMERA_OFFSET);
     }
-    cameraMove = gfc_vector3d_multiply(cameraMove, gfc_vector3d(delta * 10, delta * 10, delta * 10));
+    cameraMove = gfc_vector3d_multiply(cameraMove, gfc_vector3d(delta * 16, delta * 16, delta * 16));
     actualCameraOffset = gfc_vector3d_subbed(actualCameraOffset, cameraMove);
 
     // Camera trauma reduction

@@ -3,5 +3,6 @@
     "CartridgeSize": 8,
     "ReloadSpeed": 2,
     "MaxReserveAmmo": 999,
-    "Damage": 3
+    "Damage": 3,
+    "UseSound": "Gun1"
 }
