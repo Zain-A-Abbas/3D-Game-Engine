@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/structures/house.obj",
+        "texture":"models/interactables/interactabletexture.png"
+    }
+}

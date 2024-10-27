@@ -1,5 +1,8 @@
 House:
-
+Just a solid entity with a door "sub entity"
+Has positions for ammo/health pickup
+Has position for powerup
+Has position for door
 
 
 One functioning enemy

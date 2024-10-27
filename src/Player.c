@@ -238,13 +238,15 @@ void interact(Entity* self) {
             continue;
         }
 
-        if (!gfc_vector3d_distance_between_less_than(interactPoint, currEntity->position, INTERACT_DISTANCE)) {
+        Interactable* interactable = (Interactable*)currEntity->data;
+
+        GFC_Vector3D interactPosition = gfc_vector3d_added(entityGlobalPosition(currEntity), interactable->interactOrigin);
+
+        if (!gfc_vector3d_distance_between_less_than(interactPoint, interactPosition, INTERACT_DISTANCE)) {
             continue;
         }
 
-        InteractableData* interactData = (InteractableData*)currEntity->data;
-
-        interactData->interact(currEntity, interactData);
+        interactable->interact(currEntity, interactable);
     }
 }
 

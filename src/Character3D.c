@@ -60,17 +60,16 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
         if (!isOnLayer(currEntity, 3)) {
             continue;
         }
-        if (!gfc_vector3d_distance_between_less_than(self->position, currEntity->position, character3dData->horizontalCollisionRadius * 8)) {
+        if (!gfc_vector3d_distance_between_less_than(entityGlobalPosition(self), entityGlobalPosition(currEntity), character3dData->horizontalCollisionRadius * 24)) {
             continue;
         }
         
-
         // Constructs 16 raycasts in a circular perimeter around the entity
         for (int j = 0; j < 16; j++) {
             angle = M_PI / 8 * j;
             raycastStart = gfc_vector3d(0, character3dData->horizontalCollisionRadius, 0);
             gfc_vector3d_rotate_about_z(&raycastStart, angle);
-            raycastStart = gfc_vector3d_added(raycastStart, self->position);
+            raycastStart = gfc_vector3d_added(raycastStart, entityGlobalPosition(self));
             raycastEnd = gfc_vector3d_added(raycastStart, velocity);
             movementRaycast = gfc_edge3d_from_vectors(raycastStart, raycastEnd);
             normalizedVelocity = velocity;
@@ -84,7 +83,7 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
                 triangleNormal = gfc_trigfc_angle_get_normal(t);
                 dot = gfc_vector3d_dot_product(normalizedVelocity, triangleNormal);
 
-                speedMod = fabsf(dot * dot);
+                speedMod = 1.0 - fabsf(dot * dot);
                 // Create velocitySubtract by multiplying the normal of the triangle by the dot product and the speed at which the entity was traveling
                 velocitySubtract = gfc_vector3d_multiply(triangleNormal, gfc_vector3d(dot * velocityMagnitude, dot * velocityMagnitude, dot * velocityMagnitude));
 
@@ -150,7 +149,7 @@ GFC_Vector3D verticalVectorMovement(Entity * self, Character3DData * character3d
 int isOnFloor(Entity* self, Character3DData* character3dData, GFC_Vector3D* floorNormal, GFC_Vector3D* contact) {
     GFC_Triangle3D t = { 0 };
     GFC_Vector3D gravityRaycastDir = gfc_vector3d(0, 0, -character3dData->gravityRaycastHeight);
-    GFC_Edge3D gravityRaycast = gfc_edge3d_from_vectors(self->position, gfc_vector3d_added(self->position, gravityRaycastDir));
+    GFC_Edge3D gravityRaycast = gfc_edge3d_from_vectors(entityGlobalPosition(self), gfc_vector3d_added(entityGlobalPosition(self), gravityRaycastDir));
     for (int i = 0; i < entityManager.entityMax; i++) {
         // Get ground entitiesentities
         if (!entityManager.entityList[i]._in_use) {

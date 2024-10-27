@@ -30,6 +30,7 @@
 #include "Enemy.h"
 #include "UI.h"
 #include "Interactable.h"
+#include "Structure.h"
 
 extern int __DEBUG;
 
@@ -129,12 +130,18 @@ int main(int argc,char *argv[])
     testGround->position = gfc_vector3d(0, 0, -8);
     testGround->scale = gfc_vector3d(4, 4, 4);
 
+    // Create house
+    Entity* testHouse = structureNew(HOUSE);
+    testHouse->position = gfc_vector3d(0, 24, -8);
+    testHouse->scale = gfc_vector3d(1, 1, 1);
+    //testHouse->rotation.z = M_PI;
+
 
     // Create interactable
-    Entity* testInteractable = interactableNew(SPINNING_BOX);
-    testInteractable->position = gfc_vector3d(0, -16, -2);
-    testInteractable->scale = gfc_vector3d(4, 4, 4);
-    //testInteractable->rotation.z = 0.707;
+    //Entity* testInteractable = interactableNew(SPINNING_BOX, gfc_vector3d(0, 0, 0));
+    //testInteractable->position = gfc_vector3d(0, -24, 0);
+    //testInteractable->scale = gfc_vector3d(2, 2, 2);
+   // testInteractable->rotation.z = 0.707;
 
 
     //Delta time

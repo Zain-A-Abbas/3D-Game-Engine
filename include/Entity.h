@@ -13,24 +13,26 @@ typedef enum {
     ENEMY,
     INTERACTABLE,
     TERRAIN,
-    OBJECT
+    OBJECT,
+    STRUCTURE
 } EntityType;
 
 typedef struct Entity_S {
-    Uint8           _in_use; // Active memory
-    GFC_TextLine    name; // Entity Name
-    GFC_Vector3D    position; 
-    GFC_Vector3D    rotation;
-    GFC_Vector3D    scale;
-    Uint8           collisionLayer;
-    EntityType      type;
-    Model           *model; // POINTER to model
+    Uint8               _in_use; // Active memory
+    GFC_TextLine        name; // Entity Name
+    GFC_Vector3D        position; 
+    GFC_Vector3D        rotation;
+    GFC_Vector3D        scale;
+    Uint8               collisionLayer;
+    EntityType          type;
+    Model               *model; // POINTER to model
+    struct Entity_S            *parent; // POINTER to parent
     // Behavior
-    void (*think)   (struct Entity_S *self, float delta); // Called every frame on the entity
-    void (*update)   (struct Entity_S *self, float delta); // Called every frame for entity state update
-    void (*draw)    (struct Entity_S *self); // Custom draw code
-    void (*free)    (struct Entity_S *self); // Cleans up custom data
-    void            *data; // Custom entity data
+    void (*think)       (struct Entity_S *self, float delta); // Called every frame on the entity
+    void (*update)      (struct Entity_S *self, float delta); // Called every frame for entity state update
+    void (*draw)        (struct Entity_S *self); // Custom draw code
+    void (*free)        (struct Entity_S *self); // Cleans up custom data
+    void                *data; // Custom entity data
 
 } Entity;
 
@@ -86,5 +88,12 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
 * @brief Check if the entity is on a collision layer or not
 */
 int isOnLayer(Entity* self, int layer);
+
+/**
+* @brief Get the entity's transforms, in reference to the parent's.
+*/
+GFC_Vector3D entityGlobalPosition(Entity* self);
+GFC_Vector3D entityGlobalRotation(Entity* self);
+GFC_Vector3D entityGlobalScale(Entity* self);
 
 #endif

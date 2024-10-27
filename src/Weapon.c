@@ -92,7 +92,7 @@ Entity * shotCollided(GFC_Edge3D raycast, GFC_Box boundingBox) {
             if (!hitEntity) {
                 hitEntity = currEntity;
             } else {
-                if (gfc_vector3d_magnitude_between_squared(raycast.a, currEntity->position) < gfc_vector3d_magnitude_between_squared(raycast.a, hitEntity->position)) {
+                if (gfc_vector3d_magnitude_between_squared(raycast.a, entityGlobalPosition(currEntity)) < gfc_vector3d_magnitude_between_squared(raycast.a, entityGlobalPosition(hitEntity))) {
                     hitEntity = currEntity;
                 }
             }
@@ -103,7 +103,7 @@ Entity * shotCollided(GFC_Edge3D raycast, GFC_Box boundingBox) {
 }
 
 void pistolFire(Weapon* weapon, GFC_Vector3D playerPosition, GFC_Vector3D playerRotation, GFC_Vector3D cameraPosition) {
-    gfc_sound_play(weapon->useSound, 0, 0.3, 0, -1);
+    gfc_sound_play(weapon->useSound, 0, 0.2, 0, -1);
     GFC_Vector3D raycastStart = cameraPosition;
     GFC_Vector3D raycastAdd = gfc_vector3d(0, -1024, 0);
     gfc_vector3d_rotate_about_x(&raycastAdd, playerRotation.x);

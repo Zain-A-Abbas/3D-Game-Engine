@@ -57,9 +57,9 @@ void _entityDraw(Entity * self) {
     GFC_Matrix4 matrix;
     gfc_matrix4_from_vectors(
         matrix,
-        self->position,
-        self->rotation,
-        self->scale
+        entityGlobalPosition(self),
+        entityGlobalRotation(self),
+        entityGlobalScale(self)
     );
 
     /*Light light = {
@@ -138,12 +138,37 @@ int isOnLayer(Entity * self, int layer) {
     return ((self->collisionLayer >> layer) & 1);
 }
 
+GFC_Vector3D entityGlobalPosition(Entity* self) {
+    GFC_Vector3D position = self->position;
+    if (self->parent) {
+        position = gfc_vector3d_added(position, entityGlobalPosition(self->parent));
+    };
+    return position;
+}
+
+GFC_Vector3D entityGlobalRotation(Entity* self) {
+    GFC_Vector3D rotation = self->rotation;
+    if (self->parent) {
+        rotation = gfc_vector3d_added(rotation, entityGlobalRotation(self->parent));
+    };
+    return rotation;
+}
+
+GFC_Vector3D entityGlobalScale(Entity* self) {
+    GFC_Vector3D scale = self->scale;
+    if (self->parent) {
+        scale = gfc_vector3d_multiply(scale, entityGlobalScale(self->parent));
+    };
+    return scale;
+}
+
+
 int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact, GFC_Triangle3D * t, GFC_Box * boundingBox) {
     if (boundingBox) {
         if (!(
-            entity->position.x > fminf(boundingBox->x, (boundingBox->x + boundingBox->w)) && entity->position.x < fmaxf(boundingBox->x, (boundingBox->x + boundingBox->w)) &&
-            entity->position.y > fminf(boundingBox->y, (boundingBox->y + boundingBox->d)) && entity->position.y < fmaxf(boundingBox->y, (boundingBox->y + boundingBox->d)) &&
-            entity->position.z > fminf(boundingBox->z, (boundingBox->z + boundingBox->h)) && entity->position.z < fmaxf(boundingBox->z, (boundingBox->z + boundingBox->h))
+            entityGlobalPosition(entity).x > fminf(boundingBox->x, (boundingBox->x + boundingBox->w)) && entityGlobalPosition(entity).x < fmaxf(boundingBox->x, (boundingBox->x + boundingBox->w)) &&
+            entityGlobalPosition(entity).y > fminf(boundingBox->y, (boundingBox->y + boundingBox->d)) && entityGlobalPosition(entity).y < fmaxf(boundingBox->y, (boundingBox->y + boundingBox->d)) &&
+            entityGlobalPosition(entity).z > fminf(boundingBox->z, (boundingBox->z + boundingBox->h)) && entityGlobalPosition(entity).z < fmaxf(boundingBox->z, (boundingBox->z + boundingBox->h))
         )) {
             return false;
         }

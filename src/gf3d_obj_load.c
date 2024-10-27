@@ -580,6 +580,9 @@ Uint8 gf3d_obj_line_test(ObjData *obj, GFC_Edge3D e, GFC_Vector3D *contact) {
 Uint8 gf3d_entity_obj_line_test(ObjData* obj, Entity* ent, GFC_Edge3D e, GFC_Vector3D* contact, GFC_Triangle3D *t) {
     int i;
     Uint32 index;
+    GFC_Vector3D entityPosition = entityGlobalPosition(ent);
+    GFC_Vector3D entityRotation = entityGlobalRotation(ent);
+    GFC_Vector3D entityScale = entityGlobalScale(ent);
     if (!obj) return 0;
     if (!obj->outFace || !obj->faceVertices) return 0;
     for (i = 0; i < obj->face_count; i++) {
@@ -590,17 +593,17 @@ Uint8 gf3d_entity_obj_line_test(ObjData* obj, Entity* ent, GFC_Edge3D e, GFC_Vec
         index = obj->outFace[i].verts[2];
         t->c = obj->faceVertices[index].vertex;
 
-        t->a = gfc_vector3d_multiply(t->a, ent->scale);
-        t->b = gfc_vector3d_multiply(t->b, ent->scale);
-        t->c = gfc_vector3d_multiply(t->c, ent->scale);
+        t->a = gfc_vector3d_multiply(t->a, entityScale);
+        t->b = gfc_vector3d_multiply(t->b, entityScale);
+        t->c = gfc_vector3d_multiply(t->c, entityScale);
 
-        gfc_vector3d_rotate_about_z(&t->a, ent->rotation.z);
-        gfc_vector3d_rotate_about_z(&t->b, ent->rotation.z);
-        gfc_vector3d_rotate_about_z(&t->c, ent->rotation.z);
+        gfc_vector3d_rotate_about_z(&t->a, entityRotation.z);
+        gfc_vector3d_rotate_about_z(&t->b, entityRotation.z);
+        gfc_vector3d_rotate_about_z(&t->c, entityRotation.z);
 
-        t->a = gfc_vector3d_added(t->a, ent->position);
-        t->b = gfc_vector3d_added(t->b, ent->position);
-        t->c = gfc_vector3d_added(t->c, ent->position);
+        t->a = gfc_vector3d_added(t->a, entityPosition);
+        t->b = gfc_vector3d_added(t->b, entityPosition);
+        t->c = gfc_vector3d_added(t->c, entityPosition);
         if (gfc_trigfc_angle_edge_test(e, *t, contact)) {
             return true;
         };
