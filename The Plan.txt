@@ -1,5 +1,6 @@
 House:
-Just a solid entity with a door "sub entity"
+Figure out how to make the door push the character (Check if detected, and if so, use the actor's velocity as 1 pointed towards the object if velocity is 0?)
+uv map that thing
 Has positions for ammo/health pickup
 Has position for powerup
 Has position for door
