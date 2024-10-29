@@ -118,11 +118,11 @@ int main(int argc,char *argv[])
     initializeUI();
 
     // Create dummy enemies
-    /*Entity* enemy1 = enemyEntityNew();
-    enemy1->position = gfc_vector3d(4, 4, 0);
-    Entity* enemy2 = enemyEntityNew();
-    enemy2->position = gfc_vector3d(-4, 4, 0);
-    enemy1->scale = gfc_vector3d(1, 1, 1);*/
+    Entity* enemy1 = enemyEntityNew();
+    enemy1->position = gfc_vector3d(4, -16, -8);
+    enemy1->scale = gfc_vector3d(2, 2, 2);
+    /*Entity* enemy2 = enemyEntityNew();
+    enemy2->position = gfc_vector3d(-4, 4, 0);*/
     
     // Create land
     Entity* testGround = terrainEntityNew();

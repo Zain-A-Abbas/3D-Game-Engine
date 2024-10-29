@@ -1,5 +1,6 @@
 #include "Door.h"
 #include "simple_logger.h"
+#include "TypesExtra.h"
 
 const float OPEN_TIME = 1.0;
 

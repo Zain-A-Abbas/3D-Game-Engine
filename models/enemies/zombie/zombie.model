@@ -1,8 +1,7 @@
 {
     "model":
     {
-        "obj":"models/enemies/enemy1/enemy1.obj",
-        "texture":"models/dino/dino.png",
+        "gltf":"models/enemies/zombie/TestWanderer.gltf",
         "material":
         {
             "name":"primitive_material",

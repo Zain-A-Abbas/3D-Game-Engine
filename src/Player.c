@@ -3,6 +3,7 @@
 #include "Interactable.h"
 #include "Character3D.h"
 #include "UI.h"
+#include "TypesExtra.h"
 
 const float PLAYER_SPEED = 10;
 const float HORIZONTAL_MOUSE_SENSITIVITY = 1.28;

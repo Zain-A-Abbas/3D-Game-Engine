@@ -1,3 +1,11 @@
+Armatures:
+A vertex should, on the shader, get the transform of the bone through the UBO using the index and weight of the bones it has.
+
+Bone struct:
+Should contain name (textline), index, id, parent, 16 short array of children
+
+
+
 House:
 Figure out how to make the door push the character (Check if detected, and if so, use the actor's velocity as 1 pointed towards the object if velocity is 0?)
 uv map that thing

@@ -201,6 +201,7 @@
     <ClCompile Include="src\gf3d_vqueues.c" />
     <ClCompile Include="src\Player.c" />
     <ClCompile Include="src\Reticle.c" />
+    <ClCompile Include="src\TypesExtra.c" />
     <ClCompile Include="src\UI.c" />
     <ClCompile Include="src\Weapon.c" />
   </ItemGroup>
@@ -270,6 +271,7 @@
     <ClInclude Include="include\light.h" />
     <ClInclude Include="include\Player.h" />
     <ClInclude Include="include\Reticle.h" />
+    <ClInclude Include="include\TypesExtra.h" />
     <ClInclude Include="include\UI.h" />
     <ClInclude Include="include\Weapon.h" />
   </ItemGroup>
