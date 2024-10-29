@@ -1,9 +1,29 @@
-Armatures:
-A vertex should, on the shader, get the transform of the bone through the UBO using the index and weight of the bones it has.
 
-Bone struct:
-Should contain name (textline), index, id, parent, 16 short array of children
+boneIndices is an array of vector4s. An individual vertex would access its index to this array, and get a specific vector4. Each vector4 holds the 4 bone indexes of the vertex.
 
+STRUCTS:
+Armature3D
+- Filename
+- Armature name
+- Array of bones
+- Array of inverse bind matrices
+- Poses of the current animation (or maybe all poses it could take?) Poses are interpolated.
+
+Bone
+- Name
+- Index (its place in the armature array)
+- Its local transform
+- Its global transform
+- Its children
+- Its parent
+
+Pose3d
+- An array of all bones, containing their global at a specific point (which is multiplied by the bind matrix by the shader to move a vertex). An individual animation may have multiple poses
+
+To set it all up:
+"Get armature" function
+Get number of bones and set bone array length to that
+Add all the bones there
 
 
 House:
