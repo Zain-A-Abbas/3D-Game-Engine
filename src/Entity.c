@@ -266,5 +266,4 @@ void animationPlay(Entity* self, const char* animName) {
         }
     }
     self->entityAnimation->animationFrame = 0;
-    self->entityAnimation->animationStartedThisFrame = 0;
 }
