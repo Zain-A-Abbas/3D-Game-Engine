@@ -1,7 +1,7 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-const uint MAX_BONES = 100;
+const uint MAX_BONES = 128;
 const uint MAX_SHADER_LIGHTS = 16;
 
 struct MeshUBO
@@ -23,10 +23,12 @@ struct MaterialUBO
     vec4    ambient;        //how much ambient light affects this material
     vec4    diffuse;        //how much diffuse light affects this material - primary influcen for material color
     vec4    specular;       //color of the shine on the materials
+    vec4    emission;       //color that shows regardless of light
     float   transparency;   //how translucent the material should be overall
     float   shininess;      //how shiny the materials is.  // how pronounced the specular is
     vec2    padding;        //for alignment
 };
+
 
 struct Light {
     vec4    lightColor;

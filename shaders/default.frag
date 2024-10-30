@@ -1,7 +1,7 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-const uint MAX_BONES = 100;
+const uint MAX_BONES = 128;
 const uint MAX_SHADER_LIGHTS = 16;
 
 struct MeshUBO

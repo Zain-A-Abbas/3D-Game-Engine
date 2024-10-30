@@ -12,7 +12,7 @@
 #include "gf3d_gltf_parse.h"
 
 //this must be kept in sync with the shader
-#define MAX_BONES 100
+#define MAX_BONES 128
 
 
 /**

@@ -675,7 +675,6 @@ void gf3d_model_draw_index(
 
     if (model->armature)
     {
-        printf("Armature exists\n");
         uboData.armature = gf3d_armature_get_ubo(model->armature, frame);
         uboData.flags.x = 1.0;
     }
