@@ -33,14 +33,17 @@
 #include "gf3d_texture.h"
 #include "gf3d_mesh.h"
 #include "gf3d_materials.h"
+#include "gf3d_armature.h"
 #include "light.h"
 
 //all inclusive of features
 typedef struct
 {
     MeshUBO         mesh;
+    ArmatureUBO     armature;
     MaterialUBO     material;   //this may become an array
-    Light           light[LIGHT_UBO_MAX];
+    LightUBO        lights;
+    GFC_Vector4D    flags;      // x tells the vertex shader whether or not to used bones , y tells the fragment shader if it is to be rendered opaque or transparent (to be implemented)
 }ModelUBO;
 
 /**
@@ -60,6 +63,8 @@ typedef struct
     GFC_Box             bounds;         //copied from the mesh
     GFC_Matrix4         matrix;         //a delta applied right before rendering.  an adjustment loaded from file
     GFC_List           *light;
+    Armature3D         *armature;
+    GFC_ActionList     *action_list;    //list of animation actions
     
 } Model;
 
@@ -149,12 +154,12 @@ void gf3d_model_move(Model *in, GFC_Vector3D offset,GFC_Vector3D rotation);
  * @param frame the animation frame to use for armature based animations
  */
 void gf3d_model_draw(
-    Model *model,
+    Model* model,
     GFC_Matrix4 modelMat,
-    GFC_Color   colorMod,//TODO pass a material instead
-    GFC_List   *light,
+    GFC_Color   colorMod,
+    LightUBO* lights,
     Uint32 frame
-    );
+);
 
 /**
  * @brief queue up a model for rendering, specifying one mesh in the model (this can be for animation, or sub-meshes)
@@ -165,12 +170,13 @@ void gf3d_model_draw(
  * @param frame the animation frame to use for armature based animations
  */
 void gf3d_model_draw_index(
-    Model *model,
+    Model* model,
     Uint32 index,
     GFC_Matrix4 modelMat,
     GFC_Color   colorMod,
-    GFC_List   *light,
-    Uint32 frame);
+    LightUBO* lights,
+    Uint32 frame
+);
 
 /**
  * @brief draw all of the meshes of a model.  This is meant for multi-mesh models
@@ -181,12 +187,12 @@ void gf3d_model_draw_index(
  * @note this is called by gf3d_model_draw when not using a sequence of meshes
  */
 void gf3d_model_draw_all_meshes(
-    Model *model,
+    Model* model,
     GFC_Matrix4 modelMat,
-    GFC_Color   colorMod,
-    GFC_List   *light,
+    GFC_Color colorMod,
+    LightUBO* lights,
     Uint32 frame
-    );
+);
 
 /**
  * @brief queue up a model for rendering as a sky

@@ -294,6 +294,8 @@ ObjData *gf3d_gltf_parse_primitive(GLTF *gltf,SJson *primitive)
         else slog("failed to get accessor detials");
     }
     gf3d_gltf_reorg_obj(obj);
+
+        
     return obj;
 }
 

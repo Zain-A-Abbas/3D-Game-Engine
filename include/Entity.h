@@ -25,6 +25,7 @@ typedef struct Entity_S {
     GFC_Vector3D        scale;
     Uint8               collisionLayer;
     EntityType          type;
+    int                 animation;
     Model               *model; // POINTER to model
     struct Entity_S            *parent; // POINTER to parent
     // Behavior

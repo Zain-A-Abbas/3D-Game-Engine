@@ -3,20 +3,25 @@
 
 #include "gfc_vector.h"
 
-#define LIGHT_UBO_MAX   16
+#define MAX_SHADER_LIGHTS   16
 
 typedef struct
 {
     /* data */
+    GFC_Vector4D    lightColor;
     GFC_Vector4D    lightPos;
     GFC_Vector4D    lightDir;
-    GFC_Vector4D    lightColor;
     float           angle;
     float           brightness;
     float           falloff;
-    float           padding;
-    Bool            active;
+    float           lightActive;
 } Light;
+
+typedef struct
+{
+    Light lights[MAX_SHADER_LIGHTS];   //list of all lights
+}LightUBO;
+
 
 
 #endif

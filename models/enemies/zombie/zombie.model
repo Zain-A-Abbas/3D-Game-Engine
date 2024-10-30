@@ -2,6 +2,7 @@
     "model":
     {
         "gltf":"models/enemies/zombie/TestWanderer.gltf",
+        "texture":"models/enemies/zombie/wanderererTexture.png",
         "material":
         {
             "name":"primitive_material",

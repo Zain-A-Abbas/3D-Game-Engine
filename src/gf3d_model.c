@@ -199,9 +199,25 @@ Model *gf3d_model_copy(Model *in)
         out->normalMap = in->normalMap;       //if set, use this material when sending draw calls
         out->normalMap->_refcount++;
     }
-    
-    memcpy(&out->bounds,&in->bounds,sizeof(GFC_Box));
 
+    if (in->armature)
+    {
+        out->armature = in->armature;       //if set, use this material when sending draw calls
+        out->armature->refCount++;
+    }
+    memcpy(&out->bounds,&in->bounds,sizeof(GFC_Box));
+    
+    if (in->armature)
+    {
+        out->armature = in->armature;       //if set, use this material when sending draw calls
+        out->armature->refCount++;
+    }
+
+    if (in->action_list)
+    {
+        out->action_list = in->action_list;
+        out->action_list->_refCount++;
+    }
     return out;
 }
 
@@ -242,6 +258,7 @@ Model *gf3d_model_load_from_config(SJson *json,const char *filename)
     Model *model;
     const char *modelFile;
     const char *textureFile;
+    const char *armatureFile;
     const char *materialFile;
     if (!gf3d_model.initiliazed)return NULL;
     if (!json)return NULL;
@@ -251,6 +268,11 @@ Model *gf3d_model_load_from_config(SJson *json,const char *filename)
     {
         model = gf3d_gltf_parse_model(modelFile);
         if (!model)return NULL;
+        armatureFile = sj_get_string_value(sj_object_get_value(json, "gltf"));
+        if (armatureFile)
+        {
+            model->armature = gf3d_armature_load(armatureFile);
+        }
     }    
     else
     {
@@ -375,6 +397,7 @@ void gf3d_model_delete(Model *model)
     gf3d_material_free(model->material);
     gfc_list_delete(model->mesh_list);
     gf3d_texture_free(model->texture);
+    gf3d_armature_free(model->armature);
     memset(model,0,sizeof(Model));
 }
 
@@ -565,7 +588,7 @@ void gf3d_model_draw_all_meshes(
     Model *model,
     GFC_Matrix4 modelMat,
     GFC_Color colorMod,
-    GFC_List   *light,
+    LightUBO   *lights,
     Uint32 frame
     )
 {
@@ -574,7 +597,7 @@ void gf3d_model_draw_all_meshes(
     c = gfc_list_get_count(model->mesh_list);
     for (i = 0;i < c; i++)
     {
-        gf3d_model_draw_index(model,i,modelMat,colorMod,light,frame);
+        gf3d_model_draw_index(model,i,modelMat,colorMod, lights,frame);
     }
 }
 
@@ -582,7 +605,7 @@ void gf3d_model_draw(
     Model *model,
     GFC_Matrix4 modelMat,
     GFC_Color   colorMod,
-    GFC_List   *light,
+    LightUBO    *lights,
     Uint32 frame
     )
 {
@@ -594,7 +617,7 @@ void gf3d_model_draw(
             frame,
             modelMat,
             colorMod,
-            light,
+            lights,
             0
             );
         return;
@@ -603,7 +626,7 @@ void gf3d_model_draw(
         model,
         modelMat,
         colorMod,
-        light,
+        lights,
         frame);
 }
 
@@ -613,7 +636,7 @@ void gf3d_model_draw_index(
     Uint32 index,
     GFC_Matrix4 modelMat,
     GFC_Color   colorMod,
-    GFC_List   *light,
+    LightUBO    *lights,
     Uint32 frame
     )
 {
@@ -634,18 +657,8 @@ void gf3d_model_draw_index(
     
     uboData.mesh = gf3d_mesh_get_ubo(matrix,colorMod);
 
-    if (light) {
-        c = gfc_list_count(light);
-
-
-        for (i = 0; i < MIN(c, LIGHT_UBO_MAX); i++) {
-            currLight = gfc_list_nth(light, i);
-            if (!currLight) {
-                continue;
-            }
-            slog("Light use: %f", currLight->active);
-            memcpy(&uboData.light[i], currLight, sizeof(Light));
-        }
+    if (lights) {
+        memcpy(&uboData.lights, lights, sizeof(LightUBO));
     }
     
     if (model->material)
@@ -656,6 +669,16 @@ void gf3d_model_draw_index(
         gfc_vector4d_scale_by(uboData.material.diffuse,uboData.material.diffuse,modColor);
     }
     else uboData.material = gf3d_material_make_basic_ubo(colorMod);
+    if (lights) {
+        memcpy(&uboData.lights, lights, sizeof(lights));
+    }
+
+    if (model->armature)
+    {
+        printf("Armature exists\n");
+        uboData.armature = gf3d_armature_get_ubo(model->armature, frame);
+        uboData.flags.x = 1.0;
+    }
     if (!model->texture)
     {
         texture = gf3d_model.defaultTexture;

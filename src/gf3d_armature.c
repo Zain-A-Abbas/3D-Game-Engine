@@ -17,7 +17,6 @@ typedef struct
 static ArmatureManager3D armature_manager3d = { 0 };
 
 void gf3d_armature_delete(Armature3D* armature);//permanently clean up
-void gf3d_armature_parse_poses(Armature3D* armature, GLTF* gltf);
 
 Bone3D* gf3d_armature_bone_new();
 void gf3d_armature_bone_free(Bone3D* bone);
@@ -1098,7 +1097,7 @@ ArmatureUBO gf3d_armature_get_ubo(
     if (!armature)return boneUbo;
 
     bones = gf3d_armature_get_pose_matrices(armature, frame, &boneCount);
-    if ((bones) && (boneCount <= MAX_SHADER_BONES))
+    if ((bones) && (boneCount <= MAX_BONES))
     {
         memcpy(boneUbo.bones, bones, sizeof(GFC_Matrix4) * boneCount);
     }

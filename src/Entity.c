@@ -78,12 +78,14 @@ void _entityDraw(Entity * self) {
 
     int listCount = gfc_list_count(lightList);*/
 
+
+
     gf3d_model_draw(
         self->model,
         matrix,
         GFC_COLOR_WHITE,
         NULL,
-        0
+        self->animation
     );
 }
 
@@ -99,6 +101,11 @@ void _entityThink(Entity * self, float delta) {
 
 void _entityUpdate(Entity * self, float delta) {
     if (!self) return;
+
+    self->animation += 1;
+    if (self->animation == 11) {
+        self->animation = 0;
+    }
     
     if (self->update) {
         self->update(self, delta);

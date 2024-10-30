@@ -24,6 +24,7 @@
 #include "gf3d_camera.h"
 #include "gf3d_texture.h"
 #include "gf3d_draw.h"
+#include "gf3d_armature.h"
 #include "Entity.h"
 #include "TerrainManager.h"
 #include "Player.h"
@@ -89,6 +90,9 @@ int main(int argc,char *argv[])
 
     //game setup
 
+    //armatures
+    gf3d_armature_system_init(256);
+
 
     sky = gf3d_model_load("models/sky.model");
     gfc_matrix4_identity(skyMat);
@@ -132,7 +136,7 @@ int main(int argc,char *argv[])
 
     // Create house
     Entity* testHouse = structureNew(HOUSE);
-    testHouse->position = gfc_vector3d(0, 24, -8);
+    testHouse->position = gfc_vector3d(0, 64, -8);
     testHouse->scale = gfc_vector3d(1, 1, 1);
     //testHouse->rotation.z = M_PI;
 

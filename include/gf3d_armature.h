@@ -12,7 +12,7 @@
 #include "gf3d_gltf_parse.h"
 
 //this must be kept in sync with the shader
-#define MAX_SHADER_BONES 100
+#define MAX_BONES 100
 
 
 /**
@@ -21,7 +21,7 @@
  */
 typedef struct
 {
-    GFC_Matrix4 bones[MAX_SHADER_BONES];
+    GFC_Matrix4 bones[MAX_BONES];
 }ArmatureUBO;
 
 typedef struct Bone3D_S
@@ -29,15 +29,16 @@ typedef struct Bone3D_S
     GFC_TextLine        name;           /**<name of bone*/
     Uint32              index;          /**<place in the list*/
     Uint32              nodeId;         /**<for parsing*/
-    struct Bone3D_S* parent;         /**<pointer to the parent of the bone*/
-    GFC_List* children;       /**<list of indicies to any children, no data is allocated for this*/
+    struct Bone3D_S     *parent;         /**<pointer to the parent of the bone*/
+    GFC_List            *children;       /**<list of indicies to any children, no data is allocated for this*/
     GFC_Matrix4         mat;            /**<matrix describing the bone orientation*/
     GFC_Matrix4         localMat;       /**<local bone orientation*/
-    GFC_List* poses;          /**<list of bonePose3Ds,when parsed, they are initially added here,*/
+    GFC_List            *poses;          /**<list of bonePose3Ds,when parsed, they are initially added here,*/
     //staging area for extraction
+
     Uint32              translationCount;
-    float* translationTimestamps;
-    GFC_Vector3D* translations;
+    float               *translationTimestamps;
+    GFC_Vector3D        *translations;
 
     Uint32              rotationCount;
     float* rotationTimestamps;
@@ -159,6 +160,9 @@ void gf3d_armature_draw_bones(Armature3D* arm);
  * @param frame the pose frame to draw
  */
 void gf3d_armature_draw_bone_poses(Armature3D* arm, Uint32 frame);
+
+
+void gf3d_armature_parse_poses(Armature3D* armature, GLTF* gltf);
 
 /**
  * @brief translate a bone ID to its index in the bone list.
