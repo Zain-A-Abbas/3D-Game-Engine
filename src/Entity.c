@@ -79,13 +79,17 @@ void _entityDraw(Entity * self) {
     int listCount = gfc_list_count(lightList);*/
 
 
+    int animFrame = 0;
+    if (self->entityAnimation) {
+        animFrame = self->entityAnimation->animationFrame;
+    }
 
     gf3d_model_draw(
         self->model,
         matrix,
         GFC_COLOR_WHITE,
         NULL,
-        self->animation
+        animFrame
     );
 }
 
@@ -102,9 +106,13 @@ void _entityThink(Entity * self, float delta) {
 void _entityUpdate(Entity * self, float delta) {
     if (!self) return;
 
-    self->animation += 1;
-    if (self->animation == 11) {
-        self->animation = 0;
+    if (self->entityAnimation) {
+        if (self->entityAnimation->animationFrame+1 >= self->entityAnimation->animationFrameCount) {
+            self->entityAnimation->animationFrame = 0;
+        }
+        else {
+            self->entityAnimation->animationFrame += 1;
+        }
     }
     
     if (self->update) {
@@ -201,4 +209,62 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
         }
     }
     return 0;
+}
+
+
+void animationSetup(Entity* self, const char* animFolder) {
+    if (self->entityAnimation) {
+        free(self->entityAnimation);
+    }
+    self->entityAnimation = (EntityAnimation*)malloc(sizeof(EntityAnimation));
+    if (!self->entityAnimation) {
+        slog("Could not create entity animation handler");
+        return;
+    }
+
+    memset(self->entityAnimation, 0, sizeof(EntityAnimation));
+    self->entityAnimation->animFolder = animFolder;
+}
+
+
+void animationPlay(Entity* self, const char* animName) {
+    if (!self->entityAnimation) {
+        slog("Entity animation handler does not exist");
+        return;
+    }
+    if (!self->entityAnimation->animFolder) {
+        slog("Animlocation not defined");
+        return;
+    }
+
+    const char* animation = malloc(strlen(self->entityAnimation->animFolder) + strlen(animName) + strlen(".model"));
+    strcpy(animation, self->entityAnimation->animFolder);
+    strcat(animation, animName);
+    strcat(animation, ".model");
+
+    gf3d_model_free(self->model);
+
+    Model *newModel = gf3d_model_load(animation);
+    if (!newModel) {
+        slog("newModel animation could not be found");
+        return;
+    }
+    self->model = newModel;
+
+    SJson *json, *config, *array;
+    json = sj_load(animation);
+    config = sj_object_get_value(json, "model");
+    if (sj_object_get_value(config, "obj_list"))
+    {
+        array = sj_object_get_value(config, "obj_list");
+        if (!array)
+        {
+            self->entityAnimation->animationFrameCount = 0;
+        }
+        else {
+            self->entityAnimation->animationFrameCount = max(0, sj_array_get_count(array) - 1);
+        }
+    }
+    self->entityAnimation->animationFrame = 0;
+    self->entityAnimation->animationStartedThisFrame = 0;
 }

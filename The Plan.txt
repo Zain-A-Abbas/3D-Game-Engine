@@ -1,30 +1,17 @@
+How to do entity animations:
+"Play animation" function
+Sets animationTimeTracker to 0
+Sets animationFrameTracker to 0
+whenever animationFrameTracker passes (1 / 60), advance frame by 1
+When animationTimeTrakcer passes (fram6eCount / 60), run "animationFinished"
 
-boneIndices is an array of vector4s. An individual vertex would access its index to this array, and get a specific vector4. Each vector4 holds the 4 bone indexes of the vertex.
+Animation setup:
+animationSetup() function that takes a folder and stores that folder as a const char*
 
-STRUCTS:
-Armature3D
-- Filename
-- Armature name
-- Array of bones
-- Array of inverse bind matrices
-- Poses of the current animation (or maybe all poses it could take?) Poses are interpolated.
-
-Bone
-- Name
-- Index (its place in the armature array)
-- Its local transform
-- Its global transform
-- Its children
-- Its parent
-
-Pose3d
-- An array of all bones, containing their global at a specific point (which is multiplied by the bind matrix by the shader to move a vertex). An individual animation may have multiple poses
-
-To set it all up:
-"Get armature" function
-Get number of bones and set bone array length to that
-Add all the bones there
-
+Play animation:
+animationPlay() takes an animation name, appends it to the folder, and then appends ".model" to it
+It loads the model and also gets the count of frames from the obj_list which gets frameCount of the animation. If it returns 0 and it is a regular obj then no animation
+ 
 
 House:
 Figure out how to make the door push the character (Check if detected, and if so, use the actor's velocity as 1 pointed towards the object if velocity is 0?)
@@ -33,6 +20,8 @@ Has positions for ammo/health pickup
 Has position for powerup
 Has position for door
 
+Door:
+Have the door check if it is colliding with any character3d. If so, push the character3d half the distance away
 
 One functioning enemy
 

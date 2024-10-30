@@ -1,0 +1,19 @@
+{
+    "model":
+    {
+        "obj_list":[
+            "models/enemies/zombie/TestWanderer200100000.obj",
+            "models/enemies/zombie/TestWanderer200100001.obj",
+            "models/enemies/zombie/TestWanderer200100002.obj",
+            "models/enemies/zombie/TestWanderer200100003.obj",
+            "models/enemies/zombie/TestWanderer200100004.obj",
+            "models/enemies/zombie/TestWanderer200100005.obj",
+            "models/enemies/zombie/TestWanderer200100006.obj",
+            "models/enemies/zombie/TestWanderer200100007.obj",
+            "models/enemies/zombie/TestWanderer200100008.obj",
+            "models/enemies/zombie/TestWanderer200100009.obj",
+            "models/enemies/zombie/TestWanderer200100010.obj",
+        ]
+        "texture":"models/enemies/zombie/wanderererTexture.png",
+    }
+}

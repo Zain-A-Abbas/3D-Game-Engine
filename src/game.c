@@ -172,9 +172,9 @@ int main(int argc,char *argv[])
         
 
 
-                gf3d_model_draw_sky(sky,skyMat,GFC_COLOR_WHITE);
-                entityDrawAll();
-                draw_origin();
+            gf3d_model_draw_sky(sky,skyMat,GFC_COLOR_WHITE);
+            entityDrawAll();
+            draw_origin();
 
                 // Draw last player raycast
                /*PlayerData* playerData = getPlayerData(player);

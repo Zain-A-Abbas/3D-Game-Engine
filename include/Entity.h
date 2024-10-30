@@ -17,6 +17,13 @@ typedef enum {
     STRUCTURE
 } EntityType;
 
+typedef struct EntityAnimation_S {
+    const char          *animFolder;
+    int                 loopAnimation;
+    int                 animationFrame;
+    int                 animationFrameCount;
+} EntityAnimation;
+
 typedef struct Entity_S {
     Uint8               _in_use; // Active memory
     GFC_TextLine        name; // Entity Name
@@ -28,6 +35,7 @@ typedef struct Entity_S {
     int                 animation;
     Model               *model; // POINTER to model
     struct Entity_S            *parent; // POINTER to parent
+    struct EntityAnimation_S     *entityAnimation; // Animation manager struct
     // Behavior
     void (*think)       (struct Entity_S *self, float delta); // Called every frame on the entity
     void (*update)      (struct Entity_S *self, float delta); // Called every frame for entity state update
@@ -96,5 +104,15 @@ int isOnLayer(Entity* self, int layer);
 GFC_Vector3D entityGlobalPosition(Entity* self);
 GFC_Vector3D entityGlobalRotation(Entity* self);
 GFC_Vector3D entityGlobalScale(Entity* self);
+
+/**
+* @brief Assigns the entityanimation the folder to pull assets from
+*/
+void animationSetup(Entity * self, const char* animFolder);
+
+/**
+* @brief Sets the entity's model to the .model file in the folder that matches the name given
+*/
+void animationPlay(Entity* self, const char* animName);
 
 #endif

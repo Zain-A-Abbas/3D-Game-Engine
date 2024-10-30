@@ -13,11 +13,14 @@ Entity * enemyEntityNew() {
 	enemyEntity->think = enemyThink;
 	enemyEntity->update = enemyUpdate;
 	enemyEntity->type = ENEMY;
-	enemyEntity->model = gf3d_model_load("models/enemies/zombie/zombie.model");
+
+	animationSetup(enemyEntity, "models/enemies/zombie/");
+	animationPlay(enemyEntity, "ZombiePunch");
 
 	EnemyData* enemyData = (EnemyData*)malloc(sizeof(EnemyData));
     if (!enemyData) {
         slog("Failed to allocate memory for enemy data.");
+		gf3d_model_free(enemyEntity->model);
 		free(enemyEntity);
         return NULL;
     }
