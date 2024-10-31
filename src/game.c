@@ -32,6 +32,7 @@
 #include "UI.h"
 #include "Interactable.h"
 #include "Structure.h"
+#include "Zombie.h"
 
 extern int __DEBUG;
 
@@ -122,7 +123,7 @@ int main(int argc,char *argv[])
     initializeUI();
 
     // Create dummy enemies
-    Entity* enemy1 = enemyEntityNew();
+    Entity* enemy1 = createZombie();
     enemy1->position = gfc_vector3d(4, -16, -8);
     enemy1->scale = gfc_vector3d(2, 2, 2);
     /*Entity* enemy2 = enemyEntityNew();

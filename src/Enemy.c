@@ -14,8 +14,6 @@ Entity * enemyEntityNew() {
 	enemyEntity->update = enemyUpdate;
 	enemyEntity->type = ENEMY;
 
-	animationSetup(enemyEntity, "models/enemies/zombie/");
-	animationPlay(enemyEntity, "ZombiePunch");
 
 	EnemyData* enemyData = (EnemyData*)malloc(sizeof(EnemyData));
     if (!enemyData) {
@@ -33,11 +31,19 @@ Entity * enemyEntityNew() {
 	return enemyEntity;
 };
 
-void enemyThink(Entity* self) {
+void enemyThink(Entity* self, float delta) {
+	EnemyData* enemyData = (EnemyData*)self->data;
+	if (enemyData->enemyStateMachine) {
+		enemyData->enemyStateMachine->currentState->think(self, delta);
+	}
 	return;
 }
 
 
-void enemyUpdate(Entity* self) {
+void enemyUpdate(Entity* self, float delta) {
+	EnemyData* enemyData = (EnemyData*)self->data;
+	if (enemyData->enemyStateMachine) {
+		enemyData->enemyStateMachine->currentState->update(self, delta);
+	}
 	return;
 }

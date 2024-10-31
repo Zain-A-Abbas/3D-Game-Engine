@@ -2,10 +2,12 @@
 #define __ENEMY__
 
 #include "Entity.h"
+#include "StateMachine.h"
 
 typedef struct EnemyData_S {
     GFC_Vector3D    enemyVelocity;
     GFC_Vector3D    enemyRotation;
+    StateMachine    *enemyStateMachine;
 } EnemyData;
 
 
@@ -14,7 +16,7 @@ typedef struct EnemyData_S {
 */
 Entity * enemyEntityNew();
 
-void enemyThink(Entity* self);
-void enemyUpdate(Entity* self);
+void enemyThink(Entity* self, float delta);
+void enemyUpdate(Entity* self, float delta);
 
 #endif

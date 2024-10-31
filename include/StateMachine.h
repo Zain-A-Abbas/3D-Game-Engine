@@ -2,10 +2,11 @@
 #define __STATE_MACHINE__
 
 #include "gfc_list.h"
+#include "Entity.h"
 
-struct Entity_S;
 
 typedef struct State_S {
+    char                    stateName[32];
     void (*enter)           (struct Entity_S *self);
     void (*exit)            (struct Entity_S *self);
     void (*think)           (struct Entity_S *self, float delta);
@@ -15,14 +16,15 @@ typedef struct State_S {
 
 typedef struct StateMachine_S
 {
-    int         stateCount;
-    State       *stateList;
+    GFC_List    *stateList;
     State       *currentState;
 } StateMachine;
 
 /**
  * @brief Go to a new state
  */
-void changeState(Entity_S * self, StateMachine stateMachine, State *oldState, State *newState);
+void changeState(Entity * self, StateMachine stateMachine, State *newState);
+
+State* createState(const char* name, void* enterFunction, void* exitFunction, void* thinkFunction, void* updateFunction);
 
 #endif

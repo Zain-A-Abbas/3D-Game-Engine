@@ -6,4 +6,8 @@
 
 Entity * createZombie();
 
+
+void wanderThink(struct Entity_S* self, float delta);
+void wanderUpdate(struct Entity_S* self, float delta);
+
 #endif

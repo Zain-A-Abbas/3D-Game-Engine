@@ -30,6 +30,7 @@ C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Door.c;C:\Users\Zain\Documents\G
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Enemy.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Enemy.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\gf3d_armature.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\gf3d_armature.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Interactable.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Interactable.obj
+C:\Users\Zain\Documents\GitHub\IT466-Engine\src\StateMachine.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\StateMachine.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Structure.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Structure.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\TerrainManager.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\TerrainManager.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Entity.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Entity.obj
@@ -65,3 +66,4 @@ C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Reticle.c;C:\Users\Zain\Document
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\TypesExtra.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\TypesExtra.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\UI.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\UI.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Weapon.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Weapon.obj
+C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Zombie.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Zombie.obj
