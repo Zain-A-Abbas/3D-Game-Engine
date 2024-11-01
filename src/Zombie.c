@@ -2,16 +2,18 @@
 #include "simple_logger.h"
 #include "TypesExtra.h"
 
-const float WANDER_SPEED = 0.125;
-const float WANDER_AI_INTERVAL = 0.12;
+const float WANDER_SPEED = 2;
+const float WANDER_AI_INTERVAL = 4.0;
 const float CHASE_SPEED = 5;
 const float CHASE_TURN_SPEED = 8;
+const float CHASE_AI_INTERVAL = 0.12;
 
 Entity* createZombie(Entity *player) {
 	Entity* newZombie = enemyEntityNew();
 	animationSetup(newZombie, "models/enemies/zombie/");
 	animationPlay(newZombie, "ZombieIdle");
 
+	// Make and assign states
 	StateMachine* stateMachine = (StateMachine*)malloc(sizeof(StateMachine));
 	if (!stateMachine) {
 		slog("Could not allocate enemy state machine");
@@ -21,7 +23,8 @@ Entity* createZombie(Entity *player) {
 	}
 	memset(stateMachine, 0, sizeof(StateMachine));
 
-	State *chaseState = createState("Wander", stateMachine, NULL, NULL, chaseThink, chaseUpdate, calloc(1, sizeof(ChaseData)));
+	State* wanderState = createState("Wander", stateMachine, wanderEnter, NULL, wanderThink, wanderUpdate, calloc(1, sizeof(WanderData)));
+	State* chaseState = createState("Chase", stateMachine, NULL, NULL, chaseThink, chaseUpdate, calloc(1, sizeof(ChaseData)));
 	ChaseData *chaseData = (ChaseData*)chaseState->stateData;
 	chaseData->player = player;
 
@@ -31,10 +34,41 @@ Entity* createZombie(Entity *player) {
 	EnemyData* enemyData = (EnemyData*)newZombie->data;
 	enemyData->enemyStateMachine = stateMachine;
 
+	//Assign collision
+	enemyData->enemyCollision = gf3d_model_load("models/enemies/EnemyCollision.model");
 
 	return newZombie;
 }
 
+
+// WANDER
+
+void wanderEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
+	EnemyData* enemyData = (EnemyData*)self->data;
+	enemyData->aiTime = WANDER_AI_INTERVAL;
+}
+
+void wanderUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
+	EnemyData* enemyData = (EnemyData*)self->data;
+
+	float modelRotation = fMoveTowardsAngle(self->rotation.z, enemyData->character3dData->rotation.z, delta);
+	self->rotation.z = modelRotation;
+	moveAndSlide(self, enemyData->character3dData);
+}
+
+void wanderThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
+	EnemyData* enemyData = (EnemyData*)self->data;
+	WanderData* wanderData = (WanderData*)state->stateData;
+	enemyData->aiTime += delta;
+	if (enemyData->aiTime >= WANDER_AI_INTERVAL) {
+		enemyData->aiTime = 0;
+		enemyData->character3dData->rotation.z = gfc_random() * 4 - 8;
+		enemyData->character3dData->velocity = gfc_vector3d(0, -WANDER_SPEED * delta, 0);
+		gfc_vector3d_rotate_about_z(&enemyData->character3dData->velocity, enemyData->character3dData->rotation.z);
+	}
+}
+
+// CHASE
 
 void chaseUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
 	EnemyData* enemyData = (EnemyData*)self->data;
@@ -42,17 +76,16 @@ void chaseUpdate(struct Entity_S* self, float delta, struct State_S* state, Stat
 	float modelRotation = fMoveTowardsAngle(self->rotation.z, enemyData->character3dData->rotation.z, delta);
 	self->rotation.z = modelRotation;
 	moveAndSlide(self, enemyData->character3dData);
-	printf("\nThe vertical height is: %f", self->position.z);
 }
 
 void chaseThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
 	EnemyData* enemyData = (EnemyData*)self->data;
-	WanderData* wanderData = (WanderData*)state->stateData;
+	ChaseData* chaseData = (ChaseData*)state->stateData;
 	enemyData->aiTime += delta;
-	if (enemyData->aiTime >= WANDER_AI_INTERVAL) {
+	if (enemyData->aiTime >= CHASE_AI_INTERVAL) {
 		enemyData->aiTime = 0;
 
-		GFC_Vector2D positionDifference = gfc_vector2d(wanderData->player->position.x - self->position.x, wanderData->player->position.y - self->position.y);
+		GFC_Vector2D positionDifference = gfc_vector2d(chaseData->player->position.x - self->position.x, chaseData->player->position.y - self->position.y);
 		gfc_vector2d_normalize(&positionDifference);
 		float angleTarget = gfc_vector2d_angle(gfc_vector2d(positionDifference.x, positionDifference.y)) - GFC_HALF_PI;
 		float angleDifference = angleTarget - enemyData->character3dData->rotation.z + GFC_HALF_PI;
@@ -65,10 +98,6 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 
 		float rotationAmount = CHASE_TURN_SPEED * delta;
 
-		//printf("\nAngle target: %f", angleTarget);
-		//printf("\nAngle diff: %f", angleDifference);
-		//printf("\nCurrent rotation: %f", enemyData->character3dData->rotation.z);
-		
 		if (fabsf(angleDifference) <= rotationAmount) {
 			enemyData->character3dData->rotation.z = angleTarget + GFC_HALF_PI;
 		} else if (angleDifference > 0) {

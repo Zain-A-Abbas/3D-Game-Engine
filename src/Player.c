@@ -9,12 +9,12 @@ const float PLAYER_SPEED = 10;
 const float HORIZONTAL_MOUSE_SENSITIVITY = 1.0;
 const float VERTICAL_MOUSE_SENSITIVITY = 0.8;
 const int MAX_RELATIVE_MOUSE_X = 10;
-const int HIGHEST_X_DEGREES = 48;
+const int HIGHEST_X_DEGREES = 40;
 const int LOWEST_X_DEGREES = -20;
 
 const float INTERACT_DISTANCE = 8;
 
-const GFC_Vector3D BASE_CAMERA_OFFSET = { -4, 20, 4 };
+const GFC_Vector3D BASE_CAMERA_OFFSET = { -4, 20, 10.5 };
 GFC_Vector3D actualCameraOffset;
 GFC_Vector3D zoomCameraOffset;
 
@@ -46,12 +46,15 @@ Entity * createPlayer() {
     playerData->cameraTrauma = gfc_vector3d(0, 0, 0);
     playerData->cameraTraumaDecay = gfc_vector3d(0, 0, 0);
     actualCameraOffset = BASE_CAMERA_OFFSET;
-    zoomCameraOffset = gfc_vector3d_multiply(BASE_CAMERA_OFFSET, gfc_vector3d(0.95, 0.75, 0.75));
+    zoomCameraOffset = gfc_vector3d_multiply(BASE_CAMERA_OFFSET, gfc_vector3d(0.95, 0.85, 0.85));
 
     playerData->character3dData = newCharacter3dData();
-    playerData->character3dData->gravityRaycastHeight = 6.5;
+    playerData->character3dData->gravityRaycastHeight = 1;
 
     playerData->attackCooldown = 0;
+
+    GFC_Box boxTest = { 0 };
+    playerData->boundingBoxTest = boxTest;
 
     // UI setup
     assignPlayer(playerData);
@@ -285,7 +288,7 @@ void attack(Entity * self, PlayerData * playerData, Character3DData * character3
         playerData->cameraTrauma = gfc_vector3d_multiply(playerData->cameraTrauma, gfc_vector3d(0.5, 0.5, 0.5));
     }
     playerData->attackCooldown = 0.2;
-    playerData->playerWeapons[0].shoot(&playerData->playerWeapons[0], self->position, character3dData->rotation, getCameraPosition(self));
+    playerData->playerWeapons[0].shoot(self, &playerData->playerWeapons[0], self->position, character3dData->rotation, getCameraPosition(self));
 }
 
 void reload(Entity * self, PlayerData * playerData) {

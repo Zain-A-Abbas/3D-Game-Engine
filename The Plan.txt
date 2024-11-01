@@ -1,8 +1,7 @@
-if diff between 0 and pi
-	rotate left
-otherwise right
+Boudning box, on each axis, should:
+Take min between raycast start and end for x/y/z
+For w/d/h, do max(start, end) - min(start, end)
 
-if diff greater than half pi then 0 velocity
 ---------
 Change guns to gfc_list
 -----

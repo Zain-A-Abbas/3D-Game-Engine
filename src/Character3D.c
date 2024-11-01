@@ -148,8 +148,9 @@ GFC_Vector3D verticalVectorMovement(Entity * self, Character3DData * character3d
 
 int isOnFloor(Entity* self, Character3DData* character3dData, GFC_Vector3D* floorNormal, GFC_Vector3D* contact) {
     GFC_Triangle3D t = { 0 };
-    GFC_Vector3D gravityRaycastDir = gfc_vector3d(0, 0, -character3dData->gravityRaycastHeight);
-    GFC_Edge3D gravityRaycast = gfc_edge3d_from_vectors(entityGlobalPosition(self), gfc_vector3d_added(entityGlobalPosition(self), gravityRaycastDir));
+    GFC_Vector3D gravityRaycastDir = gfc_vector3d(0, 0, character3dData->gravityRaycastHeight);
+    GFC_Edge3D gravityRaycast = gfc_edge3d_from_vectors(gfc_vector3d_added(entityGlobalPosition(self), gravityRaycastDir), entityGlobalPosition(self));
+    
     for (int i = 0; i < entityManager.entityMax; i++) {
         // Get ground entitiesentities
         if (!entityManager.entityList[i]._in_use) {

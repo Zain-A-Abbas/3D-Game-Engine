@@ -20,9 +20,11 @@ typedef struct PlayerData_S {
     float               attackCooldown;
     GFC_Vector3D        cameraTrauma;
     GFC_Vector3D        cameraTraumaDecay;
+    Character3DData     *character3dData;
+
+    GFC_Box             boundingBoxTest;
     GFC_Edge3D          raycastTest;
     GFC_Color           raycastColor;
-    Character3DData     *character3dData;
 } PlayerData;
 
 

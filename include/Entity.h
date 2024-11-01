@@ -71,6 +71,10 @@ void entitySystemInit(Uint32 maxEnts);
  */
 void entityDrawAll();
 
+/**
+* @brief Draws any debug info needed, such as enemy collision boxes.
+*/
+void entityDebugDraw(Entity* self, GFC_Matrix4 matrix);
 
 /**
  * @brief Update all entities
@@ -91,7 +95,7 @@ void _entityFree(Entity *self);
 /**
 * @brief Return whether or not the following raycast intersected an entity or not
 */
-int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact, GFC_Triangle3D * t, GFC_Box * boundingBox);
+int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact, GFC_Triangle3D * t, GFC_Box *boundingBox);
 
 /**
 * @brief Check if the entity is on a collision layer or not

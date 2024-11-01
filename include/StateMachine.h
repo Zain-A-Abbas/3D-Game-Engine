@@ -24,12 +24,12 @@ typedef struct StateMachine_S
 } StateMachine;
 
 /**
- * @brief Go to a new state
+ * @brief Go to a state by name. If the resulting state is not found, the entity will be stateless after exiting the current one.
  */
 void changeState(Entity * self, StateMachine *stateMachine, char newState[32]);
 
 /**
-* @Creates a state of a certain name and adds it to the given state machine
+* @Creates a state of a certain name, assigns it the given function pointers, and adds it to the given state machine.
 */
 State* createState(const char* name, StateMachine *stateMachine, void* enterFunction, void* exitFunction, void* thinkFunction, void* updateFunction, void* stateDate);
 

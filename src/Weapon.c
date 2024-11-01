@@ -1,4 +1,5 @@
 #include "Weapon.h"
+#include "Player.h"
 
 static const char* WEAPON_LIST[] = { "Pistol" };
 
@@ -102,10 +103,10 @@ Entity * shotCollided(GFC_Edge3D raycast, GFC_Box boundingBox) {
     return hitEntity;
 }
 
-void pistolFire(Weapon* weapon, GFC_Vector3D playerPosition, GFC_Vector3D playerRotation, GFC_Vector3D cameraPosition) {
+void pistolFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_Vector3D playerRotation, GFC_Vector3D cameraPosition) {
     gfc_sound_play(weapon->useSound, 0, 0.2, 0, -1);
     GFC_Vector3D raycastStart = cameraPosition;
-    GFC_Vector3D raycastAdd = gfc_vector3d(0, -1024, 0);
+    GFC_Vector3D raycastAdd = gfc_vector3d(0, -1024, 32);
     gfc_vector3d_rotate_about_x(&raycastAdd, playerRotation.x);
     gfc_vector3d_rotate_about_z(&raycastAdd, playerRotation.z);
     GFC_Vector3D raycastVector = gfc_vector3d_added(raycastStart, raycastAdd);
@@ -115,12 +116,18 @@ void pistolFire(Weapon* weapon, GFC_Vector3D playerPosition, GFC_Vector3D player
 
     //Uses a simple bounding box to filter out entities that cannoe possible be hit
     GFC_Box boundingBox;
-    boundingBox.x = raycastStart.x - 2;
-    boundingBox.y = raycastStart.y - 2;
-    boundingBox.z = raycastStart.z - 2;
-    boundingBox.w = raycastAdd.x + 2;
-    boundingBox.d = raycastAdd.y + 2;
-    boundingBox.h = raycastAdd.z - 2;
+    boundingBox.x = min(self->position.x, raycastAdd.x) - 4;
+    boundingBox.y = min(self->position.y, raycastAdd.y) - 4;
+    boundingBox.z = min(self->position.z, raycastAdd.z) - 4;
+    boundingBox.w = max(self->position.x, raycastAdd.x) - boundingBox.x + 4;
+    boundingBox.d = max(self->position.y, raycastAdd.y) - boundingBox.y + 4;
+    boundingBox.h = max(self->position.z, raycastAdd.z) - boundingBox.z + 4;
+
+ 
+
+
+    PlayerData* playerData = (PlayerData*)self->data;
+    playerData->boundingBoxTest = boundingBox;
 
     Entity* hitEntity = shotCollided(raycast, boundingBox);
     if (!hitEntity) {

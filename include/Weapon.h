@@ -24,6 +24,7 @@ typedef struct Weapon_S
     GFC_Sound*      useSound;
     // Behavior
     void (*shoot)   (
+        Entity          *player,
         struct Weapon_S * weapon,
         GFC_Vector3D playerPosition,
         GFC_Vector3D playerRotation,
@@ -43,6 +44,6 @@ Entity* shotCollided(GFC_Edge3D raycast, GFC_Box boundingBox);
 /**
  * @brief Pistol's fire function.
  */
-void pistolFire(Weapon * weapon, GFC_Vector3D playerPosition, GFC_Vector3D playerRotation, GFC_Vector3D cameraPosition);
+void pistolFire(Entity *self, Weapon * weapon, GFC_Vector3D playerPosition, GFC_Vector3D playerRotation, GFC_Vector3D cameraPosition);
 
 #endif

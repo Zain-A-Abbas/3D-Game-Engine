@@ -115,7 +115,7 @@ int main(int argc,char *argv[])
     // Create player
     Entity * player = createPlayer();
     assignCamera(player, gf3dGetCamera());
-    player->position.z = 0;
+    player->position.z = 4;
     
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -178,11 +178,10 @@ int main(int argc,char *argv[])
             draw_origin();
 
                 // Draw last player raycast
-               /*PlayerData* playerData = getPlayerData(player);
+              /* PlayerData* playerData = getPlayerData(player);
                 if (playerData != NULL) {
-                    GFC_Triangle3D t = { 0 };
-                    GFC_Vector3D gravityRaycastDir = gfc_vector3d(0, 0, -6.5);
-                    GFC_Edge3D gravityRaycast = gfc_edge3d_from_vectors(player->position, gfc_vector3d_added(player->position, gravityRaycastDir));
+                    GFC_Vector3D gravityRaycastDir = gfc_vector3d(0, 0, 1);
+                    GFC_Edge3D gravityRaycast = gfc_edge3d_from_vectors(gfc_vector3d_added(entityGlobalPosition(player), gravityRaycastDir), entityGlobalPosition(player));
                     gf3d_draw_edge_3d(
                         gravityRaycast,
                         gfc_vector3d(0, 0, 0),
@@ -191,6 +190,10 @@ int main(int argc,char *argv[])
                         0.5,
                         gfc_color(1.0, 1.0, 0.0, 1.0)
                     );
+
+                    if (playerData->boundingBoxTest.x != 0) {
+                        gf3d_draw_cube_solid(playerData->boundingBoxTest, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), gfc_color(0.5, 0.2, 0.2, 0.8));
+                    }
                 }*/
             //2D draws
                 //gf2d_mouse_draw();

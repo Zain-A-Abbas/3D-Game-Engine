@@ -1,7 +1,8 @@
 #include "simple_logger.h"
 #include "gfc_matrix.h"
-#include "Entity.h"
 #include "gf3d_obj_load.h"
+#include "Entity.h"
+#include "Enemy.h"
 
 
 
@@ -91,6 +92,23 @@ void _entityDraw(Entity * self) {
         NULL,
         animFrame
     );
+    //entityDebugDraw(self, matrix);
+}
+
+void entityDebugDraw(Entity* self, GFC_Matrix4 matrix) {
+
+    if (self->type == ENEMY) {
+        EnemyData* enemyData = (EnemyData*)self->data;
+        if (enemyData->enemyCollision) {
+            gf3d_model_draw(
+                enemyData->enemyCollision,
+                matrix,
+                GFC_COLOR_WHITE,
+                NULL,
+                0
+            );
+        }
+    }
 }
 
 void _entityThink(Entity * self, float delta) {
@@ -184,18 +202,21 @@ GFC_Vector3D entityGlobalScale(Entity* self) {
 }
 
 
-int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact, GFC_Triangle3D * t, GFC_Box * boundingBox) {
+int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact, GFC_Triangle3D * t, GFC_Box *boundingBox) {
     if (boundingBox) {
-        if (!(
-            entityGlobalPosition(entity).x > fminf(boundingBox->x, (boundingBox->x + boundingBox->w)) && entityGlobalPosition(entity).x < fmaxf(boundingBox->x, (boundingBox->x + boundingBox->w)) &&
-            entityGlobalPosition(entity).y > fminf(boundingBox->y, (boundingBox->y + boundingBox->d)) && entityGlobalPosition(entity).y < fmaxf(boundingBox->y, (boundingBox->y + boundingBox->d)) &&
-            entityGlobalPosition(entity).z > fminf(boundingBox->z, (boundingBox->z + boundingBox->h)) && entityGlobalPosition(entity).z < fmaxf(boundingBox->z, (boundingBox->z + boundingBox->h))
-        )) {
+        GFC_Box localBox = { boundingBox->x, boundingBox->y, boundingBox->z, boundingBox->w, boundingBox->d, boundingBox->h };
+        if (!gfc_point_in_box(entityGlobalPosition(entity), localBox)) {
             return false;
         }
     }
 
     Model* entityModel = entity->model;
+    if (entity->type == ENEMY) {
+        EnemyData* enemyData = (EnemyData*)entity->data;
+        if (enemyData->enemyCollision) {
+            entityModel = enemyData->enemyCollision;
+        }
+    }
     // Get meshes
     for (int j = 0; j < gfc_list_get_count(entityModel->mesh_list); j++) {
         Mesh* mesh = (Mesh*)gfc_list_get_nth(entityModel->mesh_list, j);
