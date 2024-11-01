@@ -2,12 +2,13 @@
 #define __ENEMY__
 
 #include "Entity.h"
+#include "Character3D.h"
 #include "StateMachine.h"
 
 typedef struct EnemyData_S {
-    GFC_Vector3D    enemyVelocity;
-    GFC_Vector3D    enemyRotation;
-    StateMachine    *enemyStateMachine;
+    StateMachine        *enemyStateMachine;
+    Character3DData     *character3dData;
+    float               aiTime; // The time used to gauge gaps between AI decisions
 } EnemyData;
 
 

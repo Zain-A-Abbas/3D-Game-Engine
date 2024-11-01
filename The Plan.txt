@@ -1,30 +1,11 @@
-States/state machines
+if diff between 0 and pi
+	rotate left
+otherwise right
 
-Individual enemy types need their own source/header files.
-Call the function to create a specific enemy
-When an enemy is created, the enemy source file should assign it a state machine
-Then it should create a blank state machine
-
-Then, it should create each of the states manually. It should populate them with stateData if relevant, and gives the function pointers for the thinkg/update funcitons
-
-States have a name. When switching states, it iterates through each state and finds the state with the same name then switches to it. Also, changing state sets the entity's update/think functions to those of the state
-
-State machine:
-- A pointer array of states
-- current state pointer
-
-States:
-- Enter function
-- Exit function
-- Process
-- Think
-- Name
-
-moveState(State * currentState, State * nextState) function:
-- Plays exit function on current state
-- Plays enter function on next state
-
+if diff greater than half pi then 0 velocity
 ---------
+Change guns to gfc_list
+-----
 
 How to do entity animations:
 "Play animation" function

@@ -6,8 +6,8 @@
 #include "TypesExtra.h"
 
 const float PLAYER_SPEED = 10;
-const float HORIZONTAL_MOUSE_SENSITIVITY = 1.28;
-const float VERTICAL_MOUSE_SENSITIVITY = 0.96;
+const float HORIZONTAL_MOUSE_SENSITIVITY = 1.0;
+const float VERTICAL_MOUSE_SENSITIVITY = 0.8;
 const int MAX_RELATIVE_MOUSE_X = 10;
 const int HIGHEST_X_DEGREES = 48;
 const int LOWEST_X_DEGREES = -20;

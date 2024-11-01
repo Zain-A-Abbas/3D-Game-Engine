@@ -129,6 +129,9 @@ void entityDrawAll() {
 }
 
 void entityUpdateAll(float delta) {
+    if (delta > 1.0) {
+        return;
+    }
     for (int i = 0; i < entityManager.entityMax; ++i) {
         if (!entityManager.entityList[i]._in_use) continue;
         _entityUpdate(&entityManager.entityList[i], delta);
@@ -136,6 +139,9 @@ void entityUpdateAll(float delta) {
 }
 
 void entityThinkAll(float delta) {
+    if (delta > 1.0) {
+        return;
+    }
     for (int i = 0; i < entityManager.entityMax; ++i) {
         if (!entityManager.entityList[i]._in_use) continue;
         _entityThink(&entityManager.entityList[i], delta);

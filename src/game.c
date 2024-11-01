@@ -115,7 +115,7 @@ int main(int argc,char *argv[])
     // Create player
     Entity * player = createPlayer();
     assignCamera(player, gf3dGetCamera());
-    player->position.z = 20;
+    player->position.z = 0;
     
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -123,8 +123,8 @@ int main(int argc,char *argv[])
     initializeUI();
 
     // Create dummy enemies
-    Entity* enemy1 = createZombie();
-    enemy1->position = gfc_vector3d(4, -16, -8);
+    Entity* enemy1 = createZombie(player);
+    enemy1->position = gfc_vector3d(0, -16, -8);
     enemy1->scale = gfc_vector3d(2, 2, 2);
     /*Entity* enemy2 = enemyEntityNew();
     enemy2->position = gfc_vector3d(-4, 4, 0);*/

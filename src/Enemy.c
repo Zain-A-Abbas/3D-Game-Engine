@@ -24,8 +24,10 @@ Entity * enemyEntityNew() {
     }
 	enemyEntity->data = enemyData;
 	memset(enemyData, 0, sizeof(enemyData));
-	enemyData->enemyVelocity = gfc_vector3d(0, 0, 0);
-	enemyData->enemyRotation = gfc_vector3d(M_PI, 0, 0);
+	enemyData->aiTime = 0.0;
+	
+
+	enemyData->character3dData = newCharacter3dData();
 
 	enemyEntity->collisionLayer = ENEMY_LAYERS;
 	return enemyEntity;
@@ -34,7 +36,7 @@ Entity * enemyEntityNew() {
 void enemyThink(Entity* self, float delta) {
 	EnemyData* enemyData = (EnemyData*)self->data;
 	if (enemyData->enemyStateMachine) {
-		enemyData->enemyStateMachine->currentState->think(self, delta);
+		enemyData->enemyStateMachine->currentState->think(self, delta, enemyData->enemyStateMachine->currentState, enemyData->enemyStateMachine);
 	}
 	return;
 }
@@ -43,7 +45,7 @@ void enemyThink(Entity* self, float delta) {
 void enemyUpdate(Entity* self, float delta) {
 	EnemyData* enemyData = (EnemyData*)self->data;
 	if (enemyData->enemyStateMachine) {
-		enemyData->enemyStateMachine->currentState->update(self, delta);
+		enemyData->enemyStateMachine->currentState->update(self, delta, enemyData->enemyStateMachine->currentState, enemyData->enemyStateMachine);
 	}
 	return;
 }
