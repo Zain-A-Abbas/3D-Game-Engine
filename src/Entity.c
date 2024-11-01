@@ -19,6 +19,10 @@ Entity * entityNew() {
     return NULL;
 }
 
+void entityDelete(Entity* self) {
+
+}
+
 void entitySystemInit(Uint32 maxEnts) {
     if (entityManager.entityList) {
         slog("Entity Manager exists.");
@@ -169,6 +173,7 @@ void entityThinkAll(float delta) {
 void _entityFree(Entity *self) {
     if (!self) return;
     gf3d_model_free(self->model);
+    free(self->entityAnimation);
     memset(self, 0, sizeof(Entity));
 }
 
@@ -293,4 +298,10 @@ void animationPlay(Entity* self, const char* animName) {
         }
     }
     self->entityAnimation->animationFrame = 0;
+}
+
+void entityAttacked(Entity* self, int damage) {
+    if (self->type == ENEMY) {
+        enemyAttacked(self, damage);
+    }
 }

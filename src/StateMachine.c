@@ -1,7 +1,7 @@
 #include "StateMachine.h"
 #include "simple_logger.h"
 
-State* createState(const char* name, StateMachine *stateMachine, void* enterFunction, void* exitFunction, void* thinkFunction, void* updateFunction, void *stateData) {
+State* createState(const char* name, StateMachine *stateMachine, void* enterFunction, void* exitFunction, void* thinkFunction, void* updateFunction, void* onHitFunction, void *stateData) {
 	State* newState = (State*)malloc(sizeof(State));
 	if (!newState) {
 		slog("Could not allocate new state");
@@ -18,6 +18,7 @@ State* createState(const char* name, StateMachine *stateMachine, void* enterFunc
 	newState->exit = exitFunction;
 	newState->think = thinkFunction;
 	newState->update = updateFunction;
+	newState->onHit = onHitFunction;
 	newState->stateMachine = stateMachine;
 	newState->stateData = stateData;
 	gfc_list_append(stateMachine->stateList, newState);
@@ -50,4 +51,17 @@ void changeState(Entity* self, StateMachine *stateMachine, char newStateName[32]
 		newState->enter(self, newState, stateMachine);
 	}
 	
+}
+
+void stateMachineFree(StateMachine* stateMachine) {
+	int i;
+	State* currentState;
+	for (i = 0; i < stateMachine->stateList->count; ++i) {
+		currentState = (State*)gfc_list_get_nth(stateMachine->stateList, i);
+		if (currentState->stateData) {
+			free(currentState->stateData);
+		}
+		free(currentState); 
+	}
+	free(stateMachine);
 }

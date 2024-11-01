@@ -49,3 +49,33 @@ void enemyUpdate(Entity* self, float delta) {
 	}
 	return;
 }
+
+void enemyAttacked(Entity* self, int damage) {
+	EnemyData* enemyData = (EnemyData*)self->data;
+	enemyData->hp -= damage;
+	if (enemyData->hp <= 0) {
+		enemyDelete(self);
+		return;
+	}
+	if (enemyData->enemyStateMachine) {
+		if (enemyData->enemyStateMachine->currentState) {
+			if (enemyData->enemyStateMachine->currentState->onHit) {
+				enemyData->enemyStateMachine->currentState->onHit(self, enemyData->enemyStateMachine->currentState, enemyData->enemyStateMachine);
+			}
+		}
+	}
+}
+
+void enemyDelete(Entity* self) {
+	EnemyData* enemyData = (EnemyData*)self->data;
+	if (enemyData->enemyStateMachine) {
+		stateMachineFree(enemyData->enemyStateMachine);
+	}
+	if (enemyData->enemyCollision) {
+		gf3d_model_free(enemyData->enemyCollision);
+	}
+	if (enemyData->character3dData) {
+		free(enemyData->character3dData);
+	}
+	_entityFree(self);
+}

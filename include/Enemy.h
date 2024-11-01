@@ -10,6 +10,7 @@ typedef struct EnemyData_S {
     Character3DData     *character3dData;
     float               aiTime; // The time used to gauge gaps between AI decisions
     Model               *enemyCollision;
+    int                 hp;
 } EnemyData;
 
 
@@ -20,5 +21,8 @@ Entity * enemyEntityNew();
 
 void enemyThink(Entity* self, float delta);
 void enemyUpdate(Entity* self, float delta);
+
+void enemyAttacked(Entity* self, int damage);
+void enemyDelete(Entity* self);
 
 #endif

@@ -1,4 +1,5 @@
 #include "Weapon.h"
+#include "Entity.h"
 #include "Player.h"
 
 static const char* WEAPON_LIST[] = { "Pistol" };
@@ -133,7 +134,6 @@ void pistolFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_V
     if (!hitEntity) {
         return;
     }
-    slog("Hit enemy");
-    //slog("Hit enemy: %s", hitEntity->name);
+    entityAttacked(hitEntity, weapon->damage);
 
 }

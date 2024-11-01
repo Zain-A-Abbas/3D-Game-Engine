@@ -2,8 +2,12 @@
 #include "simple_logger.h"
 #include "TypesExtra.h"
 
+const int HP = 20;
+const float AGGRO_RANGE = 32;
+
 const float WANDER_SPEED = 2;
 const float WANDER_AI_INTERVAL = 4.0;
+
 const float CHASE_SPEED = 5;
 const float CHASE_TURN_SPEED = 8;
 const float CHASE_AI_INTERVAL = 0.12;
@@ -23,15 +27,18 @@ Entity* createZombie(Entity *player) {
 	}
 	memset(stateMachine, 0, sizeof(StateMachine));
 
-	State* wanderState = createState("Wander", stateMachine, wanderEnter, NULL, wanderThink, wanderUpdate, calloc(1, sizeof(WanderData)));
-	State* chaseState = createState("Chase", stateMachine, NULL, NULL, chaseThink, chaseUpdate, calloc(1, sizeof(ChaseData)));
-	ChaseData *chaseData = (ChaseData*)chaseState->stateData;
+	State* wanderState = createState("Wander", stateMachine, wanderEnter, NULL, wanderThink, wanderUpdate, wanderOnHit, calloc(1, sizeof(WanderData)));
+	State* chaseState = createState("Chase", stateMachine, NULL, NULL, chaseThink, chaseUpdate, NULL, calloc(1, sizeof(ChaseData)));
+	ChaseData* chaseData = (ChaseData*)chaseState->stateData;
 	chaseData->player = player;
+	WanderData* wanderData = (WanderData*)wanderState->stateData;
+	wanderData->player = player;
 
 	changeState(newZombie, stateMachine, "Wander");
 
 
 	EnemyData* enemyData = (EnemyData*)newZombie->data;
+	enemyData->hp = HP;
 	enemyData->enemyStateMachine = stateMachine;
 
 	//Assign collision
@@ -60,12 +67,22 @@ void wanderThink(struct Entity_S* self, float delta, struct State_S* state, Stat
 	EnemyData* enemyData = (EnemyData*)self->data;
 	WanderData* wanderData = (WanderData*)state->stateData;
 	enemyData->aiTime += delta;
+
 	if (enemyData->aiTime >= WANDER_AI_INTERVAL) {
+		if (gfc_vector3d_distance_between_less_than(entityGlobalPosition(wanderData->player), entityGlobalPosition(self), AGGRO_RANGE)) {
+			changeState(self, stateMachine, "Chase");
+			return;
+		}
 		enemyData->aiTime = 0;
 		enemyData->character3dData->rotation.z = gfc_random() * 4 - 8;
 		enemyData->character3dData->velocity = gfc_vector3d(0, -WANDER_SPEED * delta, 0);
 		gfc_vector3d_rotate_about_z(&enemyData->character3dData->velocity, enemyData->character3dData->rotation.z);
 	}
+}
+
+
+void wanderOnHit(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
+	changeState(self, stateMachine, "Chase");
 }
 
 // CHASE
@@ -83,6 +100,7 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 	ChaseData* chaseData = (ChaseData*)state->stateData;
 	enemyData->aiTime += delta;
 	if (enemyData->aiTime >= CHASE_AI_INTERVAL) {
+
 		enemyData->aiTime = 0;
 
 		GFC_Vector2D positionDifference = gfc_vector2d(chaseData->player->position.x - self->position.x, chaseData->player->position.y - self->position.y);

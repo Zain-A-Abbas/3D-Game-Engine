@@ -58,6 +58,8 @@ extern EntityManager entityManager;
  */
 Entity * entityNew();
 
+
+
 void entitySystemClose();
 
 /**
@@ -118,5 +120,11 @@ void animationSetup(Entity * self, const char* animFolder);
 * @brief Sets the entity's model to the .model file in the folder that matches the name given
 */
 void animationPlay(Entity* self, const char* animName);
+
+
+/**
+* @brief This function is called on an entity when it is attacked
+*/
+void entityAttacked(Entity *self, int damage);
 
 #endif
