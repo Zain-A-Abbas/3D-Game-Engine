@@ -2,6 +2,7 @@
 #include "Structure.h"
 #include "Interactable.h"
 #include "Door.h"
+#include "AmmoPickup.h"
 
 const Uint8 STRUCTURE_LAYERS = 0b00001010;
 
@@ -32,6 +33,8 @@ Entity* structureNew(StructureType type) {
 	// Making a door
 	Entity* testDoor = createDoor(newStructure);
 	testDoor->position = gfc_vector3d(4, -20, 0);
+	Entity* testPickup = createAmmoPickup(newStructure);
+	testPickup->position = gfc_vector3d(0, 4, 0);
 
 	return newStructure;
 }

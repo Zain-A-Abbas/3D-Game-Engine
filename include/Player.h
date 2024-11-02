@@ -8,23 +8,27 @@
 #include "Weapon.h"
 #include "gf3d_draw.h"
 #include "Character3D.h"
+#include "Interactable.h"
 
 #define FAR_CAMERA_OFFSET gfc_vector3d(-8, 32, 4)
 #define CAMERA_ROTATION gfc_vector3d(M_PI, 0, M_PI)
 
 typedef struct PlayerData_S {
     Camera              *camera;    // Pointer to camera
-    Weapon              *playerWeapons;
-    int                 currentweapon;
+    GFC_List              *playerWeapons;
+    int                 currentWeapon;
     int                 weaponsUnlocked;
     float               attackCooldown;
     GFC_Vector3D        cameraTrauma;
     GFC_Vector3D        cameraTraumaDecay;
     Character3DData     *character3dData;
+    Interactable        *currentInteractable;
+
 
     GFC_Box             boundingBoxTest;
     GFC_Edge3D          raycastTest;
     GFC_Color           raycastColor;
+
 } PlayerData;
 
 
@@ -63,9 +67,14 @@ GFC_Vector3D getCameraPosition(Entity *self);
 void addCameraTrauma(PlayerData* playerData, GFC_Vector3D trauma, GFC_Vector3D traumaDecay);
 
 /**
-* @brief Interacts with all objects in a radius in front of the player
+* @brief Checks all objects in an area in front of the player to see if they can be interacted with.
 */
-void interact(Entity* self);
+void interactScan(Entity* self);
+
+/**
+* @brief Interacts with the current interactable object set by interactScan
+*/
+void interact(Entity * self, PlayerData* playerData);
 
 /**
 * @brief Triggered when the player hits the attack button.

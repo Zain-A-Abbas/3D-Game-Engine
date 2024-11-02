@@ -125,7 +125,6 @@ int main(int argc,char *argv[])
     // Create dummy enemies
     Entity* enemy1 = createZombie(player);
     enemy1->position = gfc_vector3d(0, -40, -8);
-    enemy1->scale = gfc_vector3d(2, 2, 2);
     /*Entity* enemy2 = enemyEntityNew();
     enemy2->position = gfc_vector3d(-4, 4, 0);*/
     

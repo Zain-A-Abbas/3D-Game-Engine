@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj": "models/interactables/Ammo.obj",
+        "texture": "models/interactables/PistolAmmo.png"
+    }
+}

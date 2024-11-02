@@ -1,13 +1,12 @@
 #include "Player.h"
 #include "gf2d_mouse.h"
-#include "Interactable.h"
 #include "Character3D.h"
 #include "UI.h"
 #include "TypesExtra.h"
 
-const float PLAYER_SPEED = 10;
-const float HORIZONTAL_MOUSE_SENSITIVITY = 1.0;
-const float VERTICAL_MOUSE_SENSITIVITY = 0.8;
+const float PLAYER_SPEED = 16;
+const float HORIZONTAL_MOUSE_SENSITIVITY = 2.0;
+const float VERTICAL_MOUSE_SENSITIVITY = 1.6;
 const int MAX_RELATIVE_MOUSE_X = 10;
 const int HIGHEST_X_DEGREES = 40;
 const int LOWEST_X_DEGREES = -20;
@@ -39,6 +38,8 @@ Entity * createPlayer() {
 
     memset(playerData, 0, sizeof(PlayerData));
     playerEntity->data = playerData;
+    playerData->playerWeapons = gfc_list_new();
+
     
     playerData->weaponsUnlocked = 0;
     giveWeapon(playerEntity, playerData, "GameData/WeaponData/Pistol.json");
@@ -97,7 +98,7 @@ void _playerControls(Entity * self, float delta) {
     Character3DData* character3dData = playerData->character3dData;
     
     if (gfc_input_command_pressed("interact")) {
-        interact(self);
+        interact(self, playerData);
     }
 
     // Horizontal movement
@@ -118,8 +119,11 @@ void _playerControls(Entity * self, float delta) {
     playerData->character3dData->velocity.y = movementVelocity.y;
 
     // Mouse rotation
-    int mouseX, mouseY;
-    SDL_GetRelativeMouseState(&mouseX, &mouseY);
+    int xRel, yRel;
+    float mouseX, mouseY;
+    SDL_GetRelativeMouseState(&xRel, &yRel);
+    mouseX = xRel * 0.1;
+    mouseY = yRel * 0.1;
     if (mouseX > 10) {
         mouseX = 10;
     } else if (mouseX < -10) {
@@ -159,10 +163,10 @@ void _playerUpdate(Entity * self, float delta) {
     Character3DData* character3dData = playerData->character3dData;
 
 
+    moveAndSlide(self, character3dData);
     horizontalWallSlide(self, character3dData, delta);
     verticalVectorMovement(self, character3dData, delta);
 
-    moveAndSlide(self, character3dData);
 
     playerData->attackCooldown = fMoveTowards(playerData->attackCooldown, 0, delta);
 
@@ -208,32 +212,23 @@ void _playerUpdate(Entity * self, float delta) {
         self->rotation.z = targetRotation;
     }
 
-        
-    // Floor raycast
-    if (playerData != NULL) {
-        GFC_Triangle3D t = { 0 };
-        GFC_Vector3D gravityRaycastDir = gfc_vector3d(0, 0, -6.5);
-        GFC_Edge3D gravityRaycast = gfc_edge3d_from_vectors(self->position, gfc_vector3d_added(self->position, gravityRaycastDir));
-        gf3d_draw_edge_3d(
-            gravityRaycast,
-            gfc_vector3d(0, 0, 0),
-            gfc_vector3d(0, 0, 0),
-            gfc_vector3d(1, 1, 1),
-            0.5,
-            gfc_color(1.0, 1.0, 0.0, 1.0)
-        );
-    }
+    interactScan(self);
 
 }
 
-void interact(Entity* self) {
+void interactScan(Entity* self) {
     GFC_Vector3D interactPoint = gfc_vector3d(0, -INTERACT_DISTANCE, 0);
+    GFC_Vector3D interactPosition;
+    Interactable* interactable = NULL;
+    Interactable* tempInteractable = NULL;
+    Entity* currEntity;
+    PlayerData* playerData = getPlayerData(self);
     gfc_vector3d_rotate_about_z(&interactPoint, self->rotation.z);
-    interactPoint = gfc_vector3d_added(interactPoint, self->position);
+    interactPoint = gfc_vector3d_added(interactPoint, entityGlobalPosition(self));
 
     for (int i = 0; i < entityManager.entityMax; i++) {
         // Filter out inactive entities, non-interactables, and interactables out of range
-        Entity* currEntity = &entityManager.entityList[i];
+        currEntity = &entityManager.entityList[i];
         if (!currEntity->_in_use) {
             continue;
         }
@@ -242,15 +237,22 @@ void interact(Entity* self) {
             continue;
         }
 
-        Interactable* interactable = (Interactable*)currEntity->data;
-
-        GFC_Vector3D interactPosition = gfc_vector3d_added(entityGlobalPosition(currEntity), interactable->interactOrigin);
-
+        tempInteractable = (Interactable*)currEntity->data;
+        interactPosition = gfc_vector3d_added(entityGlobalPosition(currEntity), tempInteractable->interactOrigin);
         if (!gfc_vector3d_distance_between_less_than(interactPoint, interactPosition, INTERACT_DISTANCE)) {
             continue;
         }
+        interactable = tempInteractable;
 
-        interactable->interact(currEntity, interactable);
+    }
+
+    playerData->currentInteractable = interactable;
+
+}
+
+void interact(Entity * self, PlayerData* playerData) {
+    if (playerData->currentInteractable) {
+        playerData->currentInteractable->interact(self, playerData->currentInteractable->interactEntity, playerData->currentInteractable);
     }
 }
 
@@ -276,7 +278,7 @@ void attack(Entity * self, PlayerData * playerData, Character3DData * character3
         return;
     }
 
-    Weapon* weaponData = &playerData->playerWeapons[playerData->currentweapon];
+    Weapon* weaponData = gfc_list_get_nth(playerData->playerWeapons, playerData->currentWeapon);
     if (weaponData->currentAmmo <= 0) {
         return;
     }
@@ -288,7 +290,7 @@ void attack(Entity * self, PlayerData * playerData, Character3DData * character3
         playerData->cameraTrauma = gfc_vector3d_multiply(playerData->cameraTrauma, gfc_vector3d(0.5, 0.5, 0.5));
     }
     playerData->attackCooldown = 0.2;
-    playerData->playerWeapons[0].shoot(self, &playerData->playerWeapons[0], self->position, character3dData->rotation, getCameraPosition(self));
+    weaponData->shoot(self, weaponData, self->position, character3dData->rotation, getCameraPosition(self));
 }
 
 void reload(Entity * self, PlayerData * playerData) {
@@ -296,11 +298,13 @@ void reload(Entity * self, PlayerData * playerData) {
         return;
     }
     reloading = true;
-    Weapon* weaponData = &playerData->playerWeapons[playerData->currentweapon];
-    
+    Weapon* weaponData = gfc_list_get_nth(playerData->playerWeapons, playerData->currentWeapon);
+
+
     int reloadAmount = min(weaponData->cartridgeSize - weaponData->currentAmmo, min(weaponData->cartridgeSize, weaponData->reserveAmmo));
     
     if (reloadAmount == 0) {
+        reloading = false;
         return;
     }
 
@@ -314,16 +318,11 @@ void reload(Entity * self, PlayerData * playerData) {
 void giveWeapon(Entity* self, PlayerData* playerData, const char *weapon) {
     int newWeaponIndex = playerData->weaponsUnlocked;
     playerData->weaponsUnlocked += 1;
-    playerData->playerWeapons = (Weapon*)realloc(playerData->playerWeapons, sizeof(Weapon) * playerData->weaponsUnlocked);
-    if (!playerData->playerWeapons) {
-        slog("\n\nFailed to allocate weapons\n\n");
-        return;
-    }
-    playerData->playerWeapons[newWeaponIndex] = loadWeapon(weapon);
+    gfc_list_append(playerData->playerWeapons, loadWeapon(weapon));
     setWeapon(playerData, newWeaponIndex);
 }
 
 void setWeapon(PlayerData* playerData, int weaponIndex) {
-    playerData->currentweapon = weaponIndex;
-    playerSwitchWeapon(playerData->playerWeapons[weaponIndex]);
+    playerData->currentWeapon = weaponIndex;
+    playerSwitchWeapon((Weapon*)gfc_list_get_nth(playerData->playerWeapons, weaponIndex));
 }

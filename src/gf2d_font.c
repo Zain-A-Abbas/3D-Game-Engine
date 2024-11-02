@@ -197,6 +197,10 @@ FontTypes gf2d_font_type_from_text(const char *buf)
     {
         return FT_Ammo;
     }
+    else if (strcmp(buf, "Interactable") == 0)
+    {
+        return FT_Interactable;
+    }
     return FT_MAX;
 }
 

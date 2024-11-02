@@ -45,6 +45,7 @@ typedef enum
     FT_H5,
     FT_H6,
     FT_Ammo,
+    FT_Interactable,
     FT_MAX
 }FontTypes;
 

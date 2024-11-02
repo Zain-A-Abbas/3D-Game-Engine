@@ -1,9 +1,7 @@
 {
     "model":
     {
-        "obj_list":[
-            "models/enemies/zombie/TestWanderer200100000.obj",
-        ]
+        "gltf": "models/enemies/zombie/ZombieIdle.gltf",
         "texture":"models/enemies/zombie/wanderererTexture.png",
     }
 }

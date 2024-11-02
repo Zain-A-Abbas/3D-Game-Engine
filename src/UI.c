@@ -5,6 +5,8 @@
 const char* reticleActor = "actors/reticle.actor";
 const char* uiBGActor = "actors/WeaponBG.actor";
 
+const GFC_Rect TEXT_RECT = {200, 200, 200, 200};
+
 UIData uiData = { 0 };
 
 void initializeUI() {
@@ -28,8 +30,8 @@ void assignPlayer(PlayerData* playerData) {
 	uiData.playerData = playerData;
 }
 
-void playerSwitchWeapon(Weapon weapon) {
-	actorLoad(&uiData.currentWeaponActor, weapon.actorFile);
+void playerSwitchWeapon(Weapon *weapon) {
+	actorLoad(&uiData.currentWeaponActor, weapon->actorFile);
 }
 
 void drawUI() {
@@ -44,6 +46,24 @@ void drawPlayerUI(GFC_Vector2D resolution) {
 	}
 	if (uiData.playerData->weaponsUnlocked < 1) {
 		return;
+	}
+
+	if (uiData.playerData->currentInteractable) {
+		if (strlen(uiData.playerData->currentInteractable->interactText) > 0) {
+			GFC_Vector2D textPosition = gfc_vector2d(resolution.x / 2 - 20 * strlen(uiData.playerData->currentInteractable->interactText), resolution.y / 2 + 20);
+			gf2d_font_draw_line_tag(
+				uiData.playerData->currentInteractable->interactText,
+				FT_Interactable,
+				GFC_COLOR_BLACK,
+				gfc_vector2d(textPosition.x + 2, textPosition.y + 2)
+			);
+			gf2d_font_draw_line_tag(
+				uiData.playerData->currentInteractable->interactText,
+				FT_Interactable,
+				GFC_COLOR_WHITE,
+				textPosition
+			);
+		}
 	}
 
 	GFC_Vector2D weaponUiPosition = gfc_vector2d_multiply(resolution, gfc_vector2d(0.128, 0.8));
@@ -72,10 +92,10 @@ void drawPlayerUI(GFC_Vector2D resolution) {
 			NULL
 		);
 
-		Weapon currentWeaponData = uiData.playerData->playerWeapons[uiData.playerData->currentweapon];
+		Weapon* currentWeaponData = (Weapon*)gfc_list_get_nth(uiData.playerData->playerWeapons, uiData.playerData->currentWeapon);//uiData.playerData->playerWeapons[uiData.playerData->currentWeapon];
 
 		char* ammoText = malloc(8);
-		snprintf(ammoText, 8, "%02d | %02d", currentWeaponData.currentAmmo, currentWeaponData.reserveAmmo);
+		snprintf(ammoText, 8, "%02d | %02d", currentWeaponData->currentAmmo, currentWeaponData->reserveAmmo);
 		gf2d_font_draw_line_tag(ammoText, FT_Ammo, GFC_COLOR_WHITE, ammoTextPosition);
 
 	}

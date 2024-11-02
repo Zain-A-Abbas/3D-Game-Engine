@@ -18,6 +18,6 @@ Entity* createDoor(Entity *parent);
 
 void doorUpdate(Entity* self, float delta);
 
-void doorInteract(Entity* entity, Interactable* interact);
+void doorInteract(Entity* player, Entity* entity, Interactable* interact);
 
 #endif

@@ -3,6 +3,7 @@
     "CartridgeSize": 8,
     "ReloadSpeed": 2,
     "MaxReserveAmmo": 999,
+    "AmmoType": "Pistol",
     "Damage": 3,
     "UseSound": "Gun1"
 }

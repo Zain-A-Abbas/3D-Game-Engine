@@ -4,7 +4,7 @@
 
 static const char* WEAPON_LIST[] = { "Pistol" };
 
-Weapon loadWeapon(const char *weaponFile) {
+Weapon *loadWeapon(const char *weaponFile) {
     SJson *weaponJson;
     weaponJson = sj_load(weaponFile);
     if (!weaponJson) {
@@ -35,14 +35,18 @@ Weapon loadWeapon(const char *weaponFile) {
     SJson *SJcartridgeSize = sj_object_get_value(weaponJson, "CartridgeSize");
     SJson *SJreloadSpeed = sj_object_get_value(weaponJson, "ReloadSpeed");
     SJson *SJmaxReserveAmmo = sj_object_get_value(weaponJson, "MaxReserveAmmo");
-    SJson *SJdamage = sj_object_get_value(weaponJson, "Damage");
+    SJson* SJammoType= sj_object_get_value(weaponJson, "AmmoType");
+    SJson* SJdamage = sj_object_get_value(weaponJson, "Damage");
     
     int cartridgeSize, maxReserveAmmo, damage;
     float reloadSpeed; 
+    const char* ammoType;
     sj_get_integer_value(SJcartridgeSize, &cartridgeSize);
     sj_get_float_value(SJreloadSpeed, &reloadSpeed);
     sj_get_integer_value(SJmaxReserveAmmo, &maxReserveAmmo);
     sj_get_integer_value(SJdamage, &damage);
+    ammoType = malloc(strlen(sj_get_string_value(SJammoType)));
+    strcpy(ammoType, sj_get_string_value(SJammoType));
 
     // Get weapon audio
     SJson* SJweaponUseSound = sj_object_get_value(weaponJson, "UseSound");
@@ -53,23 +57,21 @@ Weapon loadWeapon(const char *weaponFile) {
     GFC_Sound* useSound = gfc_sound_load(useSoundString, 1.0, 0);
 
     
+    Weapon* newWeapon = (Weapon*)malloc(sizeof(Weapon));
+    newWeapon->name = weaponName;
+    newWeapon->actorFile = weaponActor;
+    newWeapon->cartridgeSize = cartridgeSize;
+    newWeapon->reloadSpeed = reloadSpeed;
+    newWeapon->maxReserveAmmo = maxReserveAmmo;
+    newWeapon->currentAmmo = cartridgeSize;
+    newWeapon->reserveAmmo = 40;
+    strcpy(newWeapon->ammoType, ammoType);
+    newWeapon->damage = damage;
+    newWeapon->useSound = useSound;
 
-    Weapon newWeapon = {
-        weaponName,
-        weaponActor,
-        cartridgeSize,
-        reloadSpeed,
-        maxReserveAmmo,
-        cartridgeSize,
-        20,
-        damage,
-        useSound
-    };
+    newWeapon->shoot = pistolFire;
 
-    newWeapon.shoot = pistolFire;
-
-    slog("Weapon successfully created!");
-    slog(newWeapon.name);
+    printf("\n%s successfully created!", newWeapon->name);
 
     return newWeapon;
 }
@@ -116,7 +118,7 @@ void pistolFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_V
     //slog("Raycast end: %f, %f, %f", raycastAdd.x, raycastAdd.y, raycastAdd.z);
 
     //Uses a simple bounding box to filter out entities that cannoe possible be hit
-    GFC_Box boundingBox;
+    GFC_Box boundingBox = { 0 };
     boundingBox.x = min(self->position.x, raycastAdd.x) - 4;
     boundingBox.y = min(self->position.y, raycastAdd.y) - 4;
     boundingBox.z = min(self->position.z, raycastAdd.z) - 4;

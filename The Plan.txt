@@ -1,7 +1,3 @@
-Boudning box, on each axis, should:
-Take min between raycast start and end for x/y/z
-For w/d/h, do max(start, end) - min(start, end)
-
 ---------
 Change guns to gfc_list
 -----

@@ -96,7 +96,7 @@ void _entityDraw(Entity * self) {
         NULL,
         animFrame
     );
-    //entityDebugDraw(self, matrix);
+    entityDebugDraw(self, matrix);
 }
 
 void entityDebugDraw(Entity* self, GFC_Matrix4 matrix) {
@@ -283,19 +283,26 @@ void animationPlay(Entity* self, const char* animName) {
     }
     self->model = newModel;
 
-    SJson *json, *config, *array;
-    json = sj_load(animation);
-    config = sj_object_get_value(json, "model");
-    if (sj_object_get_value(config, "obj_list"))
-    {
-        array = sj_object_get_value(config, "obj_list");
-        if (!array)
+    if (!self->model->armature) {
+        printf("\No armature");
+        SJson* json, * config, * array;
+        json = sj_load(animation);
+        config = sj_object_get_value(json, "model");
+        if (sj_object_get_value(config, "obj_list"))
         {
-            self->entityAnimation->animationFrameCount = 0;
+            array = sj_object_get_value(config, "obj_list");
+            if (!array)
+            {
+                self->entityAnimation->animationFrameCount = 0;
+            }
+            else {
+                self->entityAnimation->animationFrameCount = max(0, sj_array_get_count(array) - 1);
+            }
         }
-        else {
-            self->entityAnimation->animationFrameCount = max(0, sj_array_get_count(array) - 1);
-        }
+
+    }
+    else {
+        self->entityAnimation->animationFrameCount = max(0, self->model->armature->maxFrames);
     }
     self->entityAnimation->animationFrame = 0;
 }

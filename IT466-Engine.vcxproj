@@ -165,6 +165,7 @@
     <ClCompile Include="gfc\src\gfc_types.c" />
     <ClCompile Include="gfc\src\gfc_vector.c" />
     <ClCompile Include="gfc\src\miniz.c" />
+    <ClCompile Include="src\AmmoPickup.c" />
     <ClCompile Include="src\Character3D.c" />
     <ClCompile Include="src\Door.c" />
     <ClCompile Include="src\Enemy.c" />
@@ -238,6 +239,7 @@
     <ClInclude Include="gfc\simple_json\include\simple_json_types.h" />
     <ClInclude Include="gfc\simple_json\include\simple_json_value.h" />
     <ClInclude Include="gfc\simple_logger\include\simple_logger.h" />
+    <ClInclude Include="include\AmmoPickup.h" />
     <ClInclude Include="include\Bullet.h" />
     <ClInclude Include="include\Door.h" />
     <ClInclude Include="include\Enemy.h" />
