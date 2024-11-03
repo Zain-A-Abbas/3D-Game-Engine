@@ -2,7 +2,7 @@
 #include "simple_logger.h"
 #include "TypesExtra.h"
 
-const int HP = 20;
+const int HP = 200;
 const float AGGRO_RANGE = 32;
 
 const float WANDER_SPEED = 2;
@@ -43,6 +43,9 @@ Entity* createZombie(Entity *player) {
 
 	//Assign collision
 	enemyData->enemyCollision = gf3d_model_load("models/enemies/EnemyCollision.model");
+	enemyData->enemyCollision->matrix[0][0] *= 1.5;
+	enemyData->enemyCollision->matrix[1][1] *= 1.5;
+	enemyData->enemyCollision->matrix[2][2] *= 2;
 
 	return newZombie;
 }

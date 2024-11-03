@@ -4,6 +4,8 @@
 
 const char* reticleActor = "actors/reticle.actor";
 const char* uiBGActor = "actors/WeaponBG.actor";
+const char* hpBorderActor = "actors/HPBorder.actor";
+const char* hpBarActor = "actors/HPBar.actor";
 
 const GFC_Rect TEXT_RECT = {200, 200, 200, 200};
 
@@ -11,8 +13,9 @@ UIData uiData = { 0 };
 
 void initializeUI() {
 	actorLoad(&uiData.bgActor, uiBGActor);
-
 	actorLoad(&reticle.actor, reticleActor);
+	actorLoad(&uiData.hpBorderActor, hpBorderActor);
+	actorLoad(&uiData.hpBarActor, hpBarActor);
 	reticle.hidden = false;
 
 }
@@ -66,6 +69,7 @@ void drawPlayerUI(GFC_Vector2D resolution) {
 		}
 	}
 
+	// Weapons
 	GFC_Vector2D weaponUiPosition = gfc_vector2d_multiply(resolution, gfc_vector2d(0.128, 0.8));
 	GFC_Vector2D ammoTextPosition = gfc_vector2d(weaponUiPosition.x - 24, weaponUiPosition.y + 8);
 
@@ -95,8 +99,38 @@ void drawPlayerUI(GFC_Vector2D resolution) {
 		Weapon* currentWeaponData = (Weapon*)gfc_list_get_nth(uiData.playerData->playerWeapons, uiData.playerData->currentWeapon);//uiData.playerData->playerWeapons[uiData.playerData->currentWeapon];
 
 		char* ammoText = malloc(8);
-		snprintf(ammoText, 8, "%02d | %02d", currentWeaponData->currentAmmo, currentWeaponData->reserveAmmo);
+		snprintf(ammoText, 8, "%02d | %02d", currentWeaponData->currentAmmo, uiData.playerData->ammo[currentWeaponData->reserveAmmoIndex]);
 		gf2d_font_draw_line_tag(ammoText, FT_Ammo, GFC_COLOR_WHITE, ammoTextPosition);
 
+	}
+
+	// HP
+	GFC_Vector2D hpUIPosition = weaponUiPosition;
+	hpUIPosition.y += 80;
+	gf2d_actor_draw(
+		uiData.hpBorderActor,
+		0,
+		hpUIPosition,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL
+	);
+	GFC_Vector2D hpBarPosition = hpUIPosition;
+	hpBarPosition.y += 2;
+	int i = 0;
+	for (i = 0; i < 128 * ((float)uiData.playerData->hp / 100); i++) {
+		hpBarPosition.x = hpUIPosition.x + (i + 2);
+		gf2d_actor_draw(
+			uiData.hpBarActor,
+			0,
+			hpBarPosition,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		);
 	}
 }

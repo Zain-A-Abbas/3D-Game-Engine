@@ -577,12 +577,18 @@ Uint8 gf3d_obj_line_test(ObjData *obj, GFC_Edge3D e, GFC_Vector3D *contact) {
     
 }
 
-Uint8 gf3d_entity_obj_line_test(ObjData* obj, Entity* ent, GFC_Edge3D e, GFC_Vector3D* contact, GFC_Triangle3D *t) {
+Uint8 gf3d_entity_obj_line_test(ObjData* obj, Entity* ent, GFC_Edge3D e, GFC_Vector3D* contact, GFC_Triangle3D *t, GFC_Vector3D *modelScale) {
     int i;
     Uint32 index;
     GFC_Vector3D entityPosition = entityGlobalPosition(ent);
     GFC_Vector3D entityRotation = entityGlobalRotation(ent);
     GFC_Vector3D entityScale = entityGlobalScale(ent);
+    // If the model scale was provided, pass that n to the local vector
+    if (modelScale) {
+        entityScale.x *= modelScale->x;
+        entityScale.y *= modelScale->y;
+        entityScale.z *= modelScale->z;
+    }
     if (!obj) return 0;
     if (!obj->outFace || !obj->faceVertices) return 0;
     for (i = 0; i < obj->face_count; i++) {

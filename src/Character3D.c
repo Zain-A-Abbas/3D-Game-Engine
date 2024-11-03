@@ -1,5 +1,6 @@
 #include "Character3D.h"
 #include "simple_logger.h"
+#include "Player.h"
 
 const float BASE_GRAVITY = -1;
 const float BASE_HORIZONTAL_COLLISION_RADIUS = 2;
@@ -51,6 +52,13 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
     float speedMod = 0;
     float velocityMagnitude = 0;
 
+    //PlayerData* playerData = NULL;
+    //if (self->type == PLAYER) {
+    //    playerData = (PlayerData*)self->data;
+    //    gfc_list_clear(playerData->raycastTests);
+    //    playerData->raycastTests = gfc_list_new_size(8);
+    //}
+
     for (int i = 0; i < entityManager.entityMax; i++) {
         // Filter out inactive entities, non-collideable, and collideable out of range
         Entity* currEntity = &entityManager.entityList[i];
@@ -67,13 +75,21 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
         // Constructs 16 raycasts in a circular perimeter around the entity
         for (int j = 0; j < 16; j++) {
             angle = M_PI / 8 * j;
-            raycastStart = gfc_vector3d(0, character3dData->horizontalCollisionRadius, 0);
+            raycastStart = gfc_vector3d(0, character3dData->horizontalCollisionRadius, 4);
             gfc_vector3d_rotate_about_z(&raycastStart, angle);
             raycastStart = gfc_vector3d_added(raycastStart, entityGlobalPosition(self));
             raycastEnd = gfc_vector3d_added(raycastStart, velocity);
             movementRaycast = gfc_edge3d_from_vectors(raycastStart, raycastEnd);
             normalizedVelocity = velocity;
             velocityMagnitude = gfc_vector3d_magnitude(velocity);
+
+            /*if (playerData) {
+                GFC_Edge3D* testRaycast = (GFC_Edge3D*)malloc(sizeof(GFC_Edge3D));
+                memset(testRaycast, 0, sizeof(testRaycast));
+                testRaycast->a = movementRaycast.a;
+                testRaycast->b = movementRaycast.b;
+                gfc_list_append(playerData->raycastTests, testRaycast);
+            }*/
 
             // Check each raycast in the direction of movement
             //slog("Velocity start: %f, %f, %f", raycastStart.x, raycastStart.y, raycastStart.z);

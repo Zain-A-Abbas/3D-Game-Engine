@@ -51,6 +51,7 @@ void enemyUpdate(Entity* self, float delta) {
 }
 
 void enemyAttacked(Entity* self, int damage) {
+	printf("\nHit for %d", damage);
 	EnemyData* enemyData = (EnemyData*)self->data;
 	enemyData->hp -= damage;
 	if (enemyData->hp <= 0) {
@@ -78,4 +79,15 @@ void enemyDelete(Entity* self) {
 		free(enemyData->character3dData);
 	}
 	_entityFree(self);
+}
+
+void enemyScalePreserveModel(Entity* self, GFC_Vector3D scale) {
+	EnemyData* enemyData = (EnemyData*)self->data;
+	self->scale = gfc_vector3d_multiply(self->scale, scale);
+	GFC_Vector3D modelScale = gfc_vector3d(1.0 / scale.x, 1.0 / scale.y, 1.0 / scale.z);
+	enemyData->enemyCollision->matrix[0][0] *= modelScale.x;
+	enemyData->enemyCollision->matrix[1][1] *= modelScale.y;
+	enemyData->enemyCollision->matrix[2][2] *= modelScale.z;
+	enemyData->enemyCollision->matrix[3][3] = 1;
+
 }

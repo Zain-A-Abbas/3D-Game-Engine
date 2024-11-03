@@ -22,7 +22,7 @@ Entity* createAmmoPickup(Entity* parent) {
 		return NULL;
 	}
 	memset(pickupData, 0, sizeof(pickupData));
-	strcpy(pickupData->ammoType, "Pistol");
+	pickupData->ammoType = 0;
 
 	pickupInteractable->data = pickupData;
 	setInteractText(pickupInteractable, "Pick up ammo.");
@@ -37,11 +37,11 @@ void ammoPickupInteract(Entity* player, Entity* entity, Interactable* interact) 
 	Weapon* weapon;
 	AmmoPickupData* ammoPickupData = (AmmoPickupData*)interact->data;
 	int i = 0;
-	int ammoUsed;
+	int ammoUsed = 0;
 	for (i = 0; i < gfc_list_get_count(playerData->playerWeapons); i++) {
 		weapon = (Weapon*)gfc_list_get_nth(playerData->playerWeapons, i);
-		if (strcmp(weapon->ammoType, ammoPickupData->ammoType) == 0) {
-			weapon->reserveAmmo = min(weapon->reserveAmmo + 8, weapon->maxReserveAmmo);
+		if (weapon->reserveAmmoIndex = ammoPickupData->ammoType) {
+			playerData->ammo[weapon->reserveAmmoIndex] = min(playerData->ammo[weapon->reserveAmmoIndex] + 8, 999);
 			ammoUsed = 1;
 		}
 	}

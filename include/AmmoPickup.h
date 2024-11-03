@@ -6,7 +6,7 @@
 
 
 typedef struct {
-	char	ammoType[16];
+	int		ammoType;
 } AmmoPickupData;
 
 Entity* createAmmoPickup(Entity* parent);

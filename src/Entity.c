@@ -215,11 +215,18 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
         }
     }
 
+    GFC_Vector3D* modelScale = NULL;
+
     Model* entityModel = entity->model;
     if (entity->type == ENEMY) {
         EnemyData* enemyData = (EnemyData*)entity->data;
         if (enemyData->enemyCollision) {
             entityModel = enemyData->enemyCollision;
+            modelScale = (GFC_Vector3D*) malloc(sizeof(GFC_Vector3D));
+            memset(modelScale, 0, sizeof(GFC_Vector3D));
+            modelScale->x = entityModel->matrix[0][0];
+            modelScale->y = entityModel->matrix[1][1];
+            modelScale->z = entityModel->matrix[2][2];
         }
     }
     // Get meshes
@@ -231,7 +238,7 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
                 MeshPrimitive* primitive = (MeshPrimitive*)gfc_list_get_nth(mesh->primitives, k);
                 if (primitive) {
                     if (primitive->objData) {
-                        if (gf3d_entity_obj_line_test(primitive->objData, entity, raycast, contact, t)) {
+                        if (gf3d_entity_obj_line_test(primitive->objData, entity, raycast, contact, t, modelScale)) {
                             return true;
                         }
                     }

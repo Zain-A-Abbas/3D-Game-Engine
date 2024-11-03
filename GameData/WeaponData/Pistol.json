@@ -1,9 +1,12 @@
 {
     "Name": "Pistol",
     "CartridgeSize": 8,
-    "ReloadSpeed": 2,
+    "AttackCooldown": 0.2,
+    "ReloadTime": 2,
     "MaxReserveAmmo": 999,
-    "AmmoType": "Pistol",
-    "Damage": 3,
+    "AmmoType": "Handgun",
+    "Damage": 4,
+    "Spread": 4,
+    "Auto": 0,
     "UseSound": "Gun1"
 }

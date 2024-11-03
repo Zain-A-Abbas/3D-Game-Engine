@@ -10,6 +10,8 @@ typedef struct {
 	PlayerData*		playerData;
 	Actor*			bgActor;
 	Actor*			currentWeaponActor;
+	Actor*			hpBorderActor;
+	Actor*			hpBarActor;
 } UIData ;
 
 void initializeUI();

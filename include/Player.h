@@ -5,19 +5,28 @@
 #include "Entity.h"
 #include "gfc_input.h"
 #include "gf3d_camera.h"
-#include "Weapon.h"
 #include "gf3d_draw.h"
 #include "Character3D.h"
 #include "Interactable.h"
+#include "Weapon.h"
 
 #define FAR_CAMERA_OFFSET gfc_vector3d(-8, 32, 4)
 #define CAMERA_ROTATION gfc_vector3d(M_PI, 0, M_PI)
 
+typedef enum {
+    PS_NONE,
+    PS_FREE,
+    PS_SHOP
+} PlayerState;
+
 typedef struct PlayerData_S {
     Camera              *camera;    // Pointer to camera
-    GFC_List              *playerWeapons;
+    int                 hp;
+    PlayerState         state;
+    GFC_List            *playerWeapons;
     int                 currentWeapon;
     int                 weaponsUnlocked;
+    int                 ammo[3]; // 0 is handgun, 1 is shotgun, 2 is AR
     float               attackCooldown;
     GFC_Vector3D        cameraTrauma;
     GFC_Vector3D        cameraTraumaDecay;
@@ -26,8 +35,7 @@ typedef struct PlayerData_S {
 
 
     GFC_Box             boundingBoxTest;
-    GFC_Edge3D          raycastTest;
-    GFC_Color           raycastColor;
+    GFC_List            *raycastTests;
 
 } PlayerData;
 

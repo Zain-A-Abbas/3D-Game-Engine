@@ -125,6 +125,7 @@ int main(int argc,char *argv[])
     // Create dummy enemies
     Entity* enemy1 = createZombie(player);
     enemy1->position = gfc_vector3d(0, -40, -8);
+    enemyScalePreserveModel(enemy1, gfc_vector3d(0.08, 0.08, 0.08));
     /*Entity* enemy2 = enemyEntityNew();
     enemy2->position = gfc_vector3d(-4, 4, 0);*/
     
@@ -177,23 +178,33 @@ int main(int argc,char *argv[])
             draw_origin();
 
                 // Draw last player raycast
-              /* PlayerData* playerData = getPlayerData(player);
+              PlayerData* playerData = getPlayerData(player);
                 if (playerData != NULL) {
-                    GFC_Vector3D gravityRaycastDir = gfc_vector3d(0, 0, 1);
-                    GFC_Edge3D gravityRaycast = gfc_edge3d_from_vectors(gfc_vector3d_added(entityGlobalPosition(player), gravityRaycastDir), entityGlobalPosition(player));
-                    gf3d_draw_edge_3d(
-                        gravityRaycast,
-                        gfc_vector3d(0, 0, 0),
-                        gfc_vector3d(0, 0, 0),
-                        gfc_vector3d(1, 1, 1),
-                        0.5,
-                        gfc_color(1.0, 1.0, 0.0, 1.0)
-                    );
+                    if (playerData->raycastTests) {
+                        int i = 0;
+                        for (i = 0; i < playerData->raycastTests->count; i++) {
+                            GFC_Edge3D drawEdge;
+                            GFC_Edge3D* edgeptr = (GFC_Edge3D*)gfc_list_get_nth(playerData->raycastTests, i);
+                            drawEdge.a = edgeptr->a;
+                            drawEdge.b = edgeptr->b;
+                            gf3d_draw_edge_3d(
+                                drawEdge,
+                                gfc_vector3d(0, 0, 0),
+                                gfc_vector3d(0, 0, 0),
+                                gfc_vector3d(1, 1, 1),
+                                0.25,
+                                gfc_color(1.0, 1.0, 0.0, 1.0)
+                            );
 
-                    if (playerData->boundingBoxTest.x != 0) {
-                        gf3d_draw_cube_solid(playerData->boundingBoxTest, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), gfc_color(0.5, 0.2, 0.2, 0.8));
+
+                        }
                     }
-                }*/
+
+
+                    //if (playerData->boundingBoxTest.x != 0) {
+                      //  gf3d_draw_cube_solid(playerData->boundingBoxTest, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), gfc_color(0.5, 0.2, 0.2, 0.8));
+                    //}
+                }
             //2D draws
                 //gf2d_mouse_draw();
                 drawUI();

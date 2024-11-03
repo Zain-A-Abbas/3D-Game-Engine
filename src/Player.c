@@ -29,6 +29,7 @@ Entity * createPlayer() {
     playerEntity->think = think;
     playerEntity->update = update;
     playerEntity->model = gf3d_model_load("models/dino.model");
+  
 
     PlayerData * playerData = (PlayerData*) malloc(sizeof(PlayerData));
     if (!playerData) {
@@ -36,13 +37,25 @@ Entity * createPlayer() {
         return NULL;
     }
 
+    playerEntity->type = PLAYER;
+
     memset(playerData, 0, sizeof(PlayerData));
     playerEntity->data = playerData;
+    playerData->state = PS_FREE;
+    playerData->hp = 100;
     playerData->playerWeapons = gfc_list_new();
 
     
     playerData->weaponsUnlocked = 0;
+    playerData->ammo[0] = 0;
+    playerData->ammo[1] = 0;
+    playerData->ammo[2] = 20;
     giveWeapon(playerEntity, playerData, "GameData/WeaponData/Pistol.json");
+    giveWeapon(playerEntity, playerData, "GameData/WeaponData/Shotgun.json");
+    giveWeapon(playerEntity, playerData, "GameData/WeaponData/Magnum.json");
+    giveWeapon(playerEntity, playerData, "GameData/WeaponData/AssaultRifle.json");
+    giveWeapon(playerEntity, playerData, "GameData/WeaponData/SMG.json");
+
 
     playerData->cameraTrauma = gfc_vector3d(0, 0, 0);
     playerData->cameraTraumaDecay = gfc_vector3d(0, 0, 0);
@@ -98,6 +111,7 @@ void _playerControls(Entity * self, float delta) {
     Character3DData* character3dData = playerData->character3dData;
     
     if (gfc_input_command_pressed("interact")) {
+        playerData->hp -= 10;
         interact(self, playerData);
     }
 
@@ -139,18 +153,39 @@ void _playerControls(Entity * self, float delta) {
     playerData->character3dData->rotation.x += mouseY * VERTICAL_MOUSE_SENSITIVITY * delta;
     if (playerData->character3dData->rotation.x > HIGHEST_X_DEGREES * GFC_DEGTORAD) playerData->character3dData->rotation.x = HIGHEST_X_DEGREES * GFC_DEGTORAD;
     if (playerData->character3dData->rotation.x < LOWEST_X_DEGREES * GFC_DEGTORAD) playerData->character3dData->rotation.x = LOWEST_X_DEGREES * GFC_DEGTORAD;
-    // Camera shake
+
 
     // Zoom
     aimZoom = gf2d_mouse_button_held(2);
 
+    int weaponSwitch = (int)gfc_input_mouse_wheel_up() - (int)gfc_input_mouse_wheel_down();
+    if (weaponSwitch) {
+        //printf("\nWeapon count: %d", gfc_list_get_count(playerData->playerWeapons));
+        //printf("\nCurrent weapon: %d", playerData->currentWeapon);
+        weaponSwitch += playerData->currentWeapon;
+
+        if (weaponSwitch >= (int)gfc_list_get_count(playerData->playerWeapons)) {
+
+;            weaponSwitch = 0;
+        }
+        else if (weaponSwitch < 0) {
+            weaponSwitch = gfc_list_get_count(playerData->playerWeapons) - 1;
+        }
+        setWeapon(playerData, weaponSwitch);
+
+    }
+
     // Attacking
-    if (gf2d_mouse_button_held(0)) {
+    Weapon* weaponData = (Weapon*)gfc_list_get_nth(playerData->playerWeapons, playerData->currentWeapon);
+    if (gf2d_mouse_button_pressed(0) || (gf2d_mouse_button_held(0) && weaponData->automatic)) {
         attack(self, playerData, character3dData);
     }
 
     if (gfc_input_command_pressed("reload")) {
         reload(self, playerData);
+    }
+    if (playerData->state != PS_FREE) {
+        return;
     }
 }
 
@@ -289,7 +324,7 @@ void attack(Entity * self, PlayerData * playerData, Character3DData * character3
     if (gf2d_mouse_button_held(2)) {
         playerData->cameraTrauma = gfc_vector3d_multiply(playerData->cameraTrauma, gfc_vector3d(0.5, 0.5, 0.5));
     }
-    playerData->attackCooldown = 0.2;
+    playerData->attackCooldown = weaponData->attackCooldown;
     weaponData->shoot(self, weaponData, self->position, character3dData->rotation, getCameraPosition(self));
 }
 
@@ -299,16 +334,16 @@ void reload(Entity * self, PlayerData * playerData) {
     }
     reloading = true;
     Weapon* weaponData = gfc_list_get_nth(playerData->playerWeapons, playerData->currentWeapon);
+    int ammoIndex = weaponData->reserveAmmoIndex;
 
-
-    int reloadAmount = min(weaponData->cartridgeSize - weaponData->currentAmmo, min(weaponData->cartridgeSize, weaponData->reserveAmmo));
+    int reloadAmount = min(weaponData->cartridgeSize - weaponData->currentAmmo, min(weaponData->cartridgeSize, playerData->ammo[ammoIndex]));
     
     if (reloadAmount == 0) {
         reloading = false;
         return;
     }
 
-    weaponData->reserveAmmo -= reloadAmount;
+    playerData->ammo[ammoIndex] -= reloadAmount;
     weaponData->currentAmmo += reloadAmount;
     
     reloading = false;
@@ -318,7 +353,7 @@ void reload(Entity * self, PlayerData * playerData) {
 void giveWeapon(Entity* self, PlayerData* playerData, const char *weapon) {
     int newWeaponIndex = playerData->weaponsUnlocked;
     playerData->weaponsUnlocked += 1;
-    gfc_list_append(playerData->playerWeapons, loadWeapon(weapon));
+    gfc_list_append(playerData->playerWeapons, loadWeapon(weapon, playerData));
     setWeapon(playerData, newWeaponIndex);
 }
 

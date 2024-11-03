@@ -25,4 +25,6 @@ void enemyUpdate(Entity* self, float delta);
 void enemyAttacked(Entity* self, int damage);
 void enemyDelete(Entity* self);
 
+void enemyScalePreserveModel(Entity* self, GFC_Vector3D scale);
+
 #endif

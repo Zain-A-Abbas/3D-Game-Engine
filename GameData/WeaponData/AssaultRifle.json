@@ -1,0 +1,12 @@
+{
+    "Name": "Assault Rifle",
+    "CartridgeSize": 20,
+    "AttackCooldown": 0.2,
+    "ReloadTime": 4,
+    "MaxReserveAmmo": 999,
+    "AmmoType": "AR",
+    "Damage": 3,
+    "Spread": 4,
+    "Auto": 1,
+    "UseSound": "Gun1"
+}

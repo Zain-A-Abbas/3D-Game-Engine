@@ -1,0 +1,12 @@
+{
+    "Name": "Magnum",
+    "CartridgeSize": 8,
+    "AttackCooldown": 0.8,
+    "ReloadTime": 2,
+    "MaxReserveAmmo": 999,
+    "AmmoType": "Handgun",
+    "Damage": 20,
+    "Spread": 0,
+    "Auto": 0,
+    "UseSound": "Gun1"
+}

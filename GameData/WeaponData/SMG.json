@@ -1,0 +1,12 @@
+{
+    "Name": "SMG",
+    "CartridgeSize": 28,
+    "AttackCooldown": 0.1,
+    "ReloadTime": 4,
+    "MaxReserveAmmo": 999,
+    "AmmoType": "AR",
+    "Damage": 2,
+    "Spread": 6,
+    "Auto": 1,
+    "UseSound": "Gun1"
+}

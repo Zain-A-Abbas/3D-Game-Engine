@@ -1,21 +1,5 @@
----------
-Change guns to gfc_list
------
-
-How to do entity animations:
-"Play animation" function
-Sets animationTimeTracker to 0
-Sets animationFrameTracker to 0
-whenever animationFrameTracker passes (1 / 60), advance frame by 1
-When animationTimeTrakcer passes (fram6eCount / 60), run "animationFinished"
-
-Animation setup:
-animationSetup() function that takes a folder and stores that folder as a const char*
-
-Play animation:
-animationPlay() takes an animation name, appends it to the folder, and then appends ".model" to it
-It loads the model and also gets the count of frames from the obj_list which gets frameCount of the animation. If it returns 0 and it is a regular obj then no animation
- 
+Give player an array of 3 ammo types. Handgun, shotgun, and machinegun. Then,
+just assign the gun's ammo to be a pointer to that type rather than its own value
 
 House:
 Figure out how to make the door push the character (Check if detected, and if so, use the actor's velocity as 1 pointed towards the object if velocity is 0?)
@@ -36,42 +20,26 @@ the enemy will approach the player. If the player is too far, the enemy will mak
 
 
 
-	Pickups
-
-
-
-DONE:
-Transfer some stuff from the player to Character3D
-
-add screenshake on using gun:
-- Hehe camera trauma implemented
-
-One functioning gun UI
-- UI object has a "drawUI" function
-- "drawUI" checks if the player data is valid, and if so, runs the "drawPlayerUI" function
-- "drawPlayerUI" draws the sprites associated with the current weapon as well as remaining ammo in the bottom left (shoot for basic grey circle, text, and 1 png of pistol)
-
 DELIVERABLES:
 
-UI Elements reflecting in game information
-Functioning Entity System
-Basic Collision Detection
-Basic User Controls
+UI Elements reflecting in game information - DONE
+Functioning Entity System - DONE
+Basic Collision Detection - DONE
+Basic User Controls - DONE
 A contained game world
 
-
-10 weapons
-5 enemy types
-2 stages with a shop between them
-5 powerups
+10 weapons - 2/10
+5 enemy types - 1/5
+2 stages with a shop between them - 0/2
+5 powerups - 0/5
 	Infinite ammo
 	No jerk
 	Half cooldown
 	Invincible
 	Double speed
 5 map interactable elements
-    Interact button
-    Doors that can be opened
-    Ammo that can be found in abandoned houses?
-    A melee QTE attack on enemies after a headshot
+    Interact button DONE
+    Doors that can be opened DONE
+    Ammo that can be found in abandoned houses? DONE
+    Reload DONE
     The shop
