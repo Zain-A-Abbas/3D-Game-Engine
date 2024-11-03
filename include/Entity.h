@@ -14,7 +14,8 @@ typedef enum {
     INTERACTABLE,
     TERRAIN,
     OBJECT,
-    STRUCTURE
+    STRUCTURE,
+    PROJECTILE
 } EntityType;
 
 typedef struct EntityAnimation_S {

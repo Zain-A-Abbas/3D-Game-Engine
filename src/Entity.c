@@ -3,6 +3,8 @@
 #include "gf3d_obj_load.h"
 #include "Entity.h"
 #include "Enemy.h"
+#include "Projectile.h"
+#include "gf3d_draw.h"
 
 
 
@@ -113,6 +115,19 @@ void entityDebugDraw(Entity* self, GFC_Matrix4 matrix) {
             );
         }
     }
+
+    /*if (self->type == PROJECTILE) {
+        Projectile* data = (Projectile*)self->data;
+
+            gf3d_draw_edge_3d(
+                data->raycast,
+                gfc_vector3d(0, 0, 0),
+                gfc_vector3d(0, 0, 0),
+                gfc_vector3d(1, 1, 1),
+                1.0,
+                GFC_COLOR_RED
+            );
+    }*/
 }
 
 void _entityThink(Entity * self, float delta) {

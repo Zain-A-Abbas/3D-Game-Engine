@@ -1,12 +1,14 @@
 #include "Weapon.h"
 #include "Entity.h"
 #include "gfc_types.h"
+#include "Projectile.h"
 
 
 const int PISTOL_RANGE = 256;
 const int SHOTGUN_RANGE = 32;
 const int ASSAULT_RIFLE_RANGE = 256;
 const int SMG_RANGE = 64;
+const int ROCKET_SPEED = 256;
 
 Weapon *loadWeapon(const char *weaponFile, PlayerData *playerData) {
     SJson *weaponJson;
@@ -28,7 +30,8 @@ Weapon *loadWeapon(const char *weaponFile, PlayerData *playerData) {
     SJson *SJcartridgeSize = sj_object_get_value(weaponJson, "CartridgeSize");
     SJson *SJreloadTime = sj_object_get_value(weaponJson, "ReloadTime");
 
-    SJson* SJammoType= sj_object_get_value(weaponJson, "AmmoType");
+    SJson* SJammoType = sj_object_get_value(weaponJson, "AmmoType");
+    SJson* SJModel = sj_object_get_value(weaponJson, "Model");
     SJson* SJdamage = sj_object_get_value(weaponJson, "Damage");
     SJson* SJspread= sj_object_get_value(weaponJson, "Spread");
     SJson* SJauto= sj_object_get_value(weaponJson, "Auto");
@@ -37,6 +40,7 @@ Weapon *loadWeapon(const char *weaponFile, PlayerData *playerData) {
     int automatic;
     float reloadTime, attackCooldown, spread; 
     const char* ammoType;
+    const char* model = NULL;
     sj_get_integer_value(SJcartridgeSize, &cartridgeSize);
     sj_get_float_value(SJattackCooldown, &attackCooldown);
     sj_get_float_value(SJreloadTime, &reloadTime);
@@ -45,6 +49,10 @@ Weapon *loadWeapon(const char *weaponFile, PlayerData *playerData) {
     sj_get_integer_value(SJauto, &automatic);
     ammoType = malloc(strlen(sj_get_string_value(SJammoType)));
     strcpy(ammoType, sj_get_string_value(SJammoType));
+    if (SJModel) {
+        model = malloc(strlen(sj_get_string_value(SJModel)));
+        strcpy(model, sj_get_string_value(SJModel));
+    }
 
     // Get weapon audio
     SJson* SJweaponUseSound = sj_object_get_value(weaponJson, "UseSound");
@@ -66,6 +74,8 @@ Weapon *loadWeapon(const char *weaponFile, PlayerData *playerData) {
     newWeapon->spreadDegrees = spread;
     newWeapon->automatic = automatic;
     newWeapon->useSound = useSound;
+    newWeapon->modelFile = model;
+
 
     for (int i = 0; i < sizeof(playerData->ammo) / sizeof(playerData->ammo[0]); i++) {
         if (strcmp(ammoType, AMMO_TYPES[i]) == 0) {
@@ -77,6 +87,12 @@ Weapon *loadWeapon(const char *weaponFile, PlayerData *playerData) {
     newWeapon->shoot = singleFire;
     if (strcmp(weaponName, "Shotgun") == 0) {
         newWeapon->shoot = shotgunFire;
+    }
+    else if (strcmp(weaponName, "Auto Shotgun") == 0) {
+        newWeapon->shoot = shotgunFire;
+    }
+    else if (strcmp(weaponName, "Rocket Launcher") == 0) {
+        newWeapon->shoot = projectileFire;
     }
 
     //printf("\n%s successfully created!", newWeapon->name);
@@ -199,4 +215,36 @@ void shotgunFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_
         entityAttacked(hitEntity, weapon->damage);
 
     }
+}
+
+void projectileFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_Vector3D playerRotation, GFC_Vector3D cameraPosition) {
+    Projectile* data = (Projectile*)malloc(sizeof(Projectile));
+    PlayerData* playerData = (PlayerData*)self->data;
+    data->damage = weapon->damage;
+    data->layers = 0b00000110;
+    data->maxLifetime = 1.0;
+    data->lifetime = 0.0;
+    data->velocity = gfc_vector3d(0, -ROCKET_SPEED, 0);
+    gfc_vector3d_rotate_about_x(&data->velocity, M_PI - playerData->camera->rotation.x);
+    gfc_vector3d_rotate_about_z(&data->velocity, playerRotation.z);
+    Entity * projectile = newProjectile(data, weapon->modelFile);
+    if (!projectile) {
+        return NULL;
+    }
+
+    GFC_Vector3D normalizedVelocity = data->velocity;
+    gfc_vector3d_normalize(&normalizedVelocity);
+    projectile->rotation.y = -sinf(normalizedVelocity.z);
+    projectile->rotation.z = playerRotation.z;
+    GFC_Vector3D projectilePosition = cameraPosition;
+    projectile->position = projectilePosition;
+    
+    // Keep projectile invisible until X time has passed
+    projectile->scale = gfc_vector3d(0, 0, 0);
+
+    // Make projectile raycast
+
+    GFC_Vector3D raycastStart = {0};
+    GFC_Vector3D raycastEnd = { 0 };
+    data->raycast = gfc_edge3d_from_vectors(raycastStart, raycastEnd);
 }

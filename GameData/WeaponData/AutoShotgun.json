@@ -1,0 +1,11 @@
+{
+    "Name": "Auto Shotgun",
+    "CartridgeSize": 10,
+    "AttackCooldown": 0.3,
+    "ReloadTime": 2,
+    "AmmoType": "Shotgun",
+    "Damage": 2,
+    "Spread": 15,
+    "Auto": 1,
+    "UseSound": "Gun1"
+}

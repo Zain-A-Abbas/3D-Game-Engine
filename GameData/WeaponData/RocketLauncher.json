@@ -1,0 +1,12 @@
+{
+    "Name": "Rocket Launcher",
+    "CartridgeSize": 49,
+    "AttackCooldown": 0.5,
+    "ReloadTime": 6,
+    "AmmoType": "Rocket",
+    "Damage": 50,
+    "Spread": 0,
+    "Auto": 0,
+    "UseSound": "Gun1",
+    "Model": "rocket"
+}

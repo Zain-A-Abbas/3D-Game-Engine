@@ -15,6 +15,7 @@ Entity* structureNew(StructureType type) {
 		return NULL;
 	}
 
+	newStructure->type = STRUCTURE;
 	newStructure->model = gf3d_model_load("models/structures/house.model");
 
 	StructureData* structureData = (StructureData*)malloc(sizeof(StructureData));

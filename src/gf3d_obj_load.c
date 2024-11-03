@@ -614,6 +614,7 @@ Uint8 gf3d_entity_obj_line_test(ObjData* obj, Entity* ent, GFC_Edge3D e, GFC_Vec
             return true;
         };
     }
+
     return false;
 
 }

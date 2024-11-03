@@ -3,7 +3,6 @@
     "CartridgeSize": 6,
     "AttackCooldown": 0.4,
     "ReloadTime": 2,
-    "MaxReserveAmmo": 999,
     "AmmoType": "Shotgun",
     "Damage": 2,
     "Spread": 12,

@@ -17,13 +17,15 @@ typedef struct PlayerData_S PlayerData;
 static const char* AMMO_TYPES[] = { 
     "Handgun",
     "Shotgun",
-    "AR"
+    "AR",
+    "Rocket"
 };
 
 typedef struct Weapon_S
 {
     const char*     name;
     const char*     actorFile;
+    const char*     modelFile;
     int             cartridgeSize;
     float           attackCooldown;
     float           reloadTime;
@@ -62,5 +64,9 @@ void singleFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_V
  */
 void shotgunFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_Vector3D playerRotation, GFC_Vector3D cameraPosition);
 
+/**
+* @brief Projectile's fire function.
+*/
+void projectileFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_Vector3D playerRotation, GFC_Vector3D cameraPosition);
 
 #endif

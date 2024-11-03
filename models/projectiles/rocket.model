@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj": "models/projectiles/Rocket.obj",
+        "texture": "models/projectiles/rocket.png"
+    }
+}

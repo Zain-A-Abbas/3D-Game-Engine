@@ -52,12 +52,12 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
     float speedMod = 0;
     float velocityMagnitude = 0;
 
-    //PlayerData* playerData = NULL;
-    //if (self->type == PLAYER) {
-    //    playerData = (PlayerData*)self->data;
-    //    gfc_list_clear(playerData->raycastTests);
-    //    playerData->raycastTests = gfc_list_new_size(8);
-    //}
+    PlayerData* playerData = NULL;
+    if (self->type == PLAYER) {
+        playerData = (PlayerData*)self->data;
+        gfc_list_clear(playerData->raycastTests);
+        playerData->raycastTests = gfc_list_new_size(8);
+    }
 
     for (int i = 0; i < entityManager.entityMax; i++) {
         // Filter out inactive entities, non-collideable, and collideable out of range
@@ -65,7 +65,7 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
         if (!currEntity->_in_use) {
             continue;
         }
-        if (!isOnLayer(currEntity, 3)) {
+        if (!isOnLayer(currEntity, 3) && !isOnLayer(currEntity, 2)) {
             continue;
         }
         if (!gfc_vector3d_distance_between_less_than(entityGlobalPosition(self), entityGlobalPosition(currEntity), character3dData->horizontalCollisionRadius * 24)) {
@@ -83,13 +83,13 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
             normalizedVelocity = velocity;
             velocityMagnitude = gfc_vector3d_magnitude(velocity);
 
-            /*if (playerData) {
+            if (playerData) {
                 GFC_Edge3D* testRaycast = (GFC_Edge3D*)malloc(sizeof(GFC_Edge3D));
                 memset(testRaycast, 0, sizeof(testRaycast));
                 testRaycast->a = movementRaycast.a;
                 testRaycast->b = movementRaycast.b;
                 gfc_list_append(playerData->raycastTests, testRaycast);
-            }*/
+            }
 
             // Check each raycast in the direction of movement
             //slog("Velocity start: %f, %f, %f", raycastStart.x, raycastStart.y, raycastStart.z);

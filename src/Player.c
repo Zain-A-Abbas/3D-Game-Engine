@@ -17,10 +17,7 @@ const GFC_Vector3D BASE_CAMERA_OFFSET = { -4, 20, 10.5 };
 GFC_Vector3D actualCameraOffset;
 GFC_Vector3D zoomCameraOffset;
 
-float previousFloorAngle = 0.0;
-float snapZ = 0.0;
-bool snapToSnapZ = false;
-
+float speedMod = 1.0;
 bool reloading = false;
 bool aimZoom = false;
 
@@ -55,6 +52,9 @@ Entity * createPlayer() {
     giveWeapon(playerEntity, playerData, "GameData/WeaponData/Magnum.json");
     giveWeapon(playerEntity, playerData, "GameData/WeaponData/AssaultRifle.json");
     giveWeapon(playerEntity, playerData, "GameData/WeaponData/SMG.json");
+    giveWeapon(playerEntity, playerData, "GameData/WeaponData/AutoShotgun.json");
+    giveWeapon(playerEntity, playerData, "GameData/WeaponData/Minigun.json");
+    giveWeapon(playerEntity, playerData, "GameData/WeaponData/RocketLauncher.json");
 
 
     playerData->cameraTrauma = gfc_vector3d(0, 0, 0);
@@ -98,6 +98,7 @@ void playerFree(Entity * self) {
 }
 
 void think(Entity * self, float delta) {
+    speedMod = 1.0;
     _playerControls(self, delta);
 }
 
@@ -175,11 +176,18 @@ void _playerControls(Entity * self, float delta) {
 
     }
 
+    
+
     // Attacking
     Weapon* weaponData = (Weapon*)gfc_list_get_nth(playerData->playerWeapons, playerData->currentWeapon);
     if (gf2d_mouse_button_pressed(0) || (gf2d_mouse_button_held(0) && weaponData->automatic)) {
         attack(self, playerData, character3dData);
     }
+
+    if (gf2d_mouse_button_held(0) && strcmp(weaponData->name, "Minigun") == 0) {
+        speedMod *= 0.25;
+    }
+
 
     if (gfc_input_command_pressed("reload")) {
         reload(self, playerData);
@@ -197,9 +205,11 @@ void _playerUpdate(Entity * self, float delta) {
     
     Character3DData* character3dData = playerData->character3dData;
 
+    character3dData->velocity.x *= speedMod;
+    character3dData->velocity.y *= speedMod;
 
-    moveAndSlide(self, character3dData);
     horizontalWallSlide(self, character3dData, delta);
+    moveAndSlide(self, character3dData);
     verticalVectorMovement(self, character3dData, delta);
 
 
@@ -304,8 +314,10 @@ GFC_Vector3D getCameraPosition(Entity *self) {
 }
 
 void addCameraTrauma(PlayerData* playerData, GFC_Vector3D trauma, GFC_Vector3D traumaDecay) {
-    playerData->cameraTrauma = gfc_vector3d_added(playerData->cameraTrauma, trauma);
-    playerData->cameraTraumaDecay = traumaDecay;
+    if (gfc_vector3d_magnitude(trauma) > gfc_vector3d_magnitude(playerData->cameraTrauma)) {
+        playerData->cameraTrauma = trauma;
+        playerData->cameraTraumaDecay = traumaDecay;
+    }
 }
 
 void attack(Entity * self, PlayerData * playerData, Character3DData * character3dData) {

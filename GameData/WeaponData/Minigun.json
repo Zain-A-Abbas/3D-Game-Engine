@@ -1,0 +1,11 @@
+{
+    "Name": "Minigun",
+    "CartridgeSize": 64,
+    "AttackCooldown": 0.05,
+    "ReloadTime": 6,
+    "AmmoType": "AR",
+    "Damage": 1,
+    "Spread": 2,
+    "Auto": 1,
+    "UseSound": "Gun1"
+}
