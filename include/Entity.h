@@ -19,10 +19,12 @@ typedef enum {
 } EntityType;
 
 typedef struct EntityAnimation_S {
-    const char          *animFolder;
+    char                *animFolder;
+    char                currentAnimName[32];
     int                 loopAnimation;
     int                 animationFrame;
     int                 animationFrameCount;
+    GFC_List            *animationList;
 } EntityAnimation;
 
 typedef struct Entity_S {
@@ -58,7 +60,6 @@ extern EntityManager entityManager;
  * @return NULL on failure (no memory) | POINTER to entity
  */
 Entity * entityNew();
-
 
 
 void entitySystemClose();
@@ -115,7 +116,12 @@ GFC_Vector3D entityGlobalScale(Entity* self);
 /**
 * @brief Assigns the entityanimation the folder to pull assets from
 */
-void animationSetup(Entity * self, const char* animFolder);
+void animationSetup(Entity* self, const char* animFolder, char* animations[], int animationCount);
+
+/**
+* @brief Frees the animation handler
+*/
+void animationFree(Entity* self);
 
 /**
 * @brief Sets the entity's model to the .model file in the folder that matches the name given

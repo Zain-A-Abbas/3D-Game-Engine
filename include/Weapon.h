@@ -23,9 +23,9 @@ static const char* AMMO_TYPES[] = {
 
 typedef struct Weapon_S
 {
-    const char*     name;
-    const char*     actorFile;
-    const char*     modelFile;
+    char*     name;
+    char*     actorFile;
+    char*     modelFile;
     int             cartridgeSize;
     float           attackCooldown;
     float           reloadTime;

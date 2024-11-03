@@ -1,7 +1,7 @@
 {
     "Name": "Rocket Launcher",
-    "CartridgeSize": 49,
-    "AttackCooldown": 0.5,
+    "CartridgeSize": 1,
+    "AttackCooldown": 4,
     "ReloadTime": 6,
     "AmmoType": "Rocket",
     "Damage": 50,

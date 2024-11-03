@@ -1,0 +1,8 @@
+{
+    "model":
+    {
+        "gltf":"models/player/Idle.gltf",
+        "texture":"models/player/PlayerTexture.png",
+        "loop":1
+    }
+}

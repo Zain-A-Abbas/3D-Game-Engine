@@ -1,4 +1,7 @@
+Give animationsetup a list of animations
+It takes each of those animations and stores them in a gfc_list
 
+free animatoin list on entity free
 
 In the future properly redo cylinder collisions and use that for player instead:
 If a cylinder collides with a triangle, then add that triangle's normal*overlap to the entity with the cylinder's position
@@ -31,7 +34,7 @@ Basic Collision Detection - DONE
 Basic User Controls - DONE
 A contained game world
 
-10 weapons - 7/10
+10 weapons - 8/10
 5 enemy types - 1/5
 2 stages with a shop between them - 0/2
 5 powerups - 0/5

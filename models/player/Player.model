@@ -1,0 +1,11 @@
+{
+    "model":
+    {
+        "gltf_list": {
+            "Idle": "models/player/Idle.gltf",
+            "WalkForward": "models/player/WalkForward.gltf",
+        }
+        "texture":"models/player/PlayerTexture.png",
+        "loop":1
+    }
+}

@@ -123,9 +123,9 @@ int main(int argc,char *argv[])
     initializeUI();
 
     // Create dummy enemies
-    Entity* enemy1 = createZombie(player);
-    enemy1->position = gfc_vector3d(0, -40, -8);
-    enemyScalePreserveModel(enemy1, gfc_vector3d(0.08, 0.08, 0.08));
+    //Entity* enemy1 = createZombie(player);
+    //enemy1->position = gfc_vector3d(0, -40, -8);
+    //enemyScalePreserveModel(enemy1, gfc_vector3d(0.08, 0.08, 0.08));
     /*Entity* enemy2 = enemyEntityNew();
     enemy2->position = gfc_vector3d(-4, 4, 0);*/
     

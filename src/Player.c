@@ -13,9 +13,12 @@ const int LOWEST_X_DEGREES = -20;
 
 const float INTERACT_DISTANCE = 8;
 
-const GFC_Vector3D BASE_CAMERA_OFFSET = { -4, 20, 10.5 };
+const GFC_Vector3D BASE_CAMERA_OFFSET = { -2, 10, 12 };
+const GFC_Vector3D ZOOM_CAMERA_OFFSET = { -1.75, 6, 11.75 };
 GFC_Vector3D actualCameraOffset;
 GFC_Vector3D zoomCameraOffset;
+
+GFC_Vector2D walkDirection = { 0 };
 
 float speedMod = 1.0;
 bool reloading = false;
@@ -25,7 +28,6 @@ Entity * createPlayer() {
     Entity * playerEntity = entityNew();
     playerEntity->think = think;
     playerEntity->update = update;
-    playerEntity->model = gf3d_model_load("models/dino.model");
   
 
     PlayerData * playerData = (PlayerData*) malloc(sizeof(PlayerData));
@@ -60,7 +62,7 @@ Entity * createPlayer() {
     playerData->cameraTrauma = gfc_vector3d(0, 0, 0);
     playerData->cameraTraumaDecay = gfc_vector3d(0, 0, 0);
     actualCameraOffset = BASE_CAMERA_OFFSET;
-    zoomCameraOffset = gfc_vector3d_multiply(BASE_CAMERA_OFFSET, gfc_vector3d(0.95, 0.85, 0.85));
+    zoomCameraOffset = ZOOM_CAMERA_OFFSET;
 
     playerData->character3dData = newCharacter3dData();
     playerData->character3dData->gravityRaycastHeight = 1;
@@ -72,6 +74,21 @@ Entity * createPlayer() {
 
     // UI setup
     assignPlayer(playerData);
+
+    // Model/animations
+
+    //playerEntity->model = gf3d_model_load("models/dino.model");
+    animationSetup(
+        playerEntity,
+        "models/player/", 
+        (char *[]){
+            "PlayerIdle",
+            "PlayerWalkForward"
+        },
+        2
+    );
+    animationPlay(playerEntity, "models/player/PlayerIdle.model");
+    playerEntity->scale = gfc_vector3d(0.075, 0.075, 0.075);
 
     return playerEntity;
 }
@@ -121,6 +138,23 @@ void _playerControls(Entity * self, float delta) {
         gfc_input_command_down("walkright") - gfc_input_command_down("walkleft"),
         gfc_input_command_down("walkforward") - gfc_input_command_down("walkback")
     );
+
+    // Movement animations
+    GFC_Vector2D tempWalkDirection = inputVector;
+    if ((int)tempWalkDirection.x != 0 && (int)tempWalkDirection.y != 0) {
+        tempWalkDirection.x = 0;
+    }
+    if (tempWalkDirection.x != walkDirection.x || tempWalkDirection.y != walkDirection.y) {
+        walkDirection = tempWalkDirection;
+        //printf("\nWalk direction: %f, %f", walkDirection.x, walkDirection.y);
+        /*if (walkDirection.y == 1 && walkDirection.x == 0) {
+            animationPlay(self, "models/player/PlayerWalkForward.model");
+        }
+        else {
+            animationPlay(self, "models/player/PlayerIdle.model");
+        }*/
+    }
+
     inputVector = gfc_vector2d_rotate(inputVector, character3dData->rotation.z);
 
     GFC_Vector3D movementVelocity = gfc_vector3d(inputVector.x, inputVector.y, 0);

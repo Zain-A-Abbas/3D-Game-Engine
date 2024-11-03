@@ -6,8 +6,6 @@
 #include "Projectile.h"
 #include "gf3d_draw.h"
 
-
-
 EntityManager entityManager = { 0 };
 
 Entity * entityNew() {
@@ -187,6 +185,7 @@ void entityThinkAll(float delta) {
 
 void _entityFree(Entity *self) {
     if (!self) return;
+    animationFree(self);
     gf3d_model_free(self->model);
     free(self->entityAnimation);
     memset(self, 0, sizeof(Entity));
@@ -266,67 +265,91 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
 }
 
 
-void animationSetup(Entity* self, const char* animFolder) {
-    if (self->entityAnimation) {
-        free(self->entityAnimation);
-    }
-    self->entityAnimation = (EntityAnimation*)malloc(sizeof(EntityAnimation));
-    if (!self->entityAnimation) {
+void animationSetup(Entity* self, const char* animFolder, char *animations[], int animationCount) {
+    animationFree(self);
+    EntityAnimation* newEntityAnim = (EntityAnimation*)malloc(sizeof(EntityAnimation));
+    if (!newEntityAnim) {
         slog("Could not create entity animation handler");
         return;
     }
+    memset(newEntityAnim, 0, sizeof(EntityAnimation));
 
-    memset(self->entityAnimation, 0, sizeof(EntityAnimation));
-    self->entityAnimation->animFolder = animFolder;
+    newEntityAnim->animationList = gfc_list_new();
+
+
+    newEntityAnim->animFolder = animFolder;
+    strcpy(newEntityAnim->currentAnimName, "");
+    char* animation;
+
+    for (int i = 0; i < animationCount; i++) {
+        animation = malloc(strlen(newEntityAnim->animFolder) + strlen(animations[i]) + strlen(".model"));
+        strcpy(animation, newEntityAnim->animFolder);
+        strcat(animation, animations[i]);
+        strcat(animation, ".model");
+
+        Model* newModel = gf3d_model_load(animation);
+        if (!newModel) {
+            slog("Gltf animation could not be found");
+            return;
+        }
+
+        gfc_list_append(newEntityAnim->animationList, newModel);
+    }
+    self->entityAnimation = newEntityAnim;
 }
 
+void animationFree(Entity* self) {
+    if (self->entityAnimation) {
+        if (self->entityAnimation->animationList) {
+            for (int i = 0; i < gfc_list_get_count(self->entityAnimation->animationList); i++) {
+                if (gfc_list_get_nth(self->entityAnimation->animationList, i)) {
+                    gf3d_model_free((Model*)gfc_list_get_nth(self->entityAnimation->animationList, i));
+                }
+            }
+            gfc_list_delete(self->entityAnimation->animationList);
+        }
+        free(self->entityAnimation->animFolder);
+        free(self->entityAnimation);
+    }
+}
 
 void animationPlay(Entity* self, const char* animName) {
     if (!self->entityAnimation) {
         slog("Entity animation handler does not exist");
         return;
     }
-    if (!self->entityAnimation->animFolder) {
-        slog("Animlocation not defined");
+    if (!self->entityAnimation->animationList) {
+        slog("No animation list");
         return;
     }
 
-    const char* animation = malloc(strlen(self->entityAnimation->animFolder) + strlen(animName) + strlen(".model"));
-    strcpy(animation, self->entityAnimation->animFolder);
-    strcat(animation, animName);
-    strcat(animation, ".model");
+    Model* modelCheck;
+    int modelIndex = -1;
 
-    gf3d_model_free(self->model);
-
-    Model *newModel = gf3d_model_load(animation);
-    if (!newModel) {
-        slog("newModel animation could not be found");
-        return;
+    printf("\nList size: %d", gfc_list_get_count(self->entityAnimation->animationList));
+    for (int i = 0; i < gfc_list_get_count(self->entityAnimation->animationList); i++) {
+        modelCheck = (Model*)gfc_list_get_nth(self->entityAnimation->animationList, i);
+        printf("\nAnimation in list is: %s", modelCheck->filename);
+        printf("\nAnimation given is: %s", animName);
+        if (strcmp(modelCheck->filename, animName) == 0) {
+            modelIndex = i;
+            break;
+        }
     }
-    self->model = newModel;
+
+
+    printf("\nModel index is: %d", modelIndex);
+    self->model = gfc_list_get_nth(self->entityAnimation->animationList, modelIndex);
 
     if (!self->model->armature) {
-        printf("\No armature");
-        SJson* json, * config, * array;
-        json = sj_load(animation);
-        config = sj_object_get_value(json, "model");
-        if (sj_object_get_value(config, "obj_list"))
-        {
-            array = sj_object_get_value(config, "obj_list");
-            if (!array)
-            {
-                self->entityAnimation->animationFrameCount = 0;
-            }
-            else {
-                self->entityAnimation->animationFrameCount = max(0, sj_array_get_count(array) - 1);
-            }
-        }
-
+        // TODO: Add support for non-armatures in this animation format
+        printf("\nNot armature using animationPlay");
     }
     else {
         self->entityAnimation->animationFrameCount = max(0, self->model->armature->maxFrames);
     }
     self->entityAnimation->animationFrame = 0;
+
 }
 
 void entityAttacked(Entity* self, int damage) {

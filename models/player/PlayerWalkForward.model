@@ -1,0 +1,8 @@
+{
+    "model":
+    {
+        "gltf":"models/player/WalkForward.gltf",
+        "texture":"models/player/PlayerTexture.png",
+        "loop":1
+    }
+}
