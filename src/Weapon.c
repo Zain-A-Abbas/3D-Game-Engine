@@ -151,12 +151,12 @@ void singleFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_V
 
     //Uses a simple bounding box to filter out entities that cannoe possibly be hit
     GFC_Box boundingBox = { 0 };
-    boundingBox.x = min(self->position.x, raycastAdd.x) - 4;
-    boundingBox.y = min(self->position.y, raycastAdd.y) - 4;
-    boundingBox.z = min(self->position.z, raycastAdd.z) - 4;
-    boundingBox.w = max(self->position.x, raycastAdd.x) - boundingBox.x + 4;
-    boundingBox.d = max(self->position.y, raycastAdd.y) - boundingBox.y + 4;
-    boundingBox.h = max(self->position.z, raycastAdd.z) - boundingBox.z + 4;
+    boundingBox.x = MIN(self->position.x, raycastAdd.x) - 4;
+    boundingBox.y = MIN(self->position.y, raycastAdd.y) - 4;
+    boundingBox.z = MIN(self->position.z, raycastAdd.z) - 4;
+    boundingBox.w = MAX(self->position.x, raycastAdd.x) - boundingBox.x + 4;
+    boundingBox.d = MAX(self->position.y, raycastAdd.y) - boundingBox.y + 4;
+    boundingBox.h = MAX(self->position.z, raycastAdd.z) - boundingBox.z + 4;
 
 
     PlayerData* playerData = (PlayerData*)self->data;
@@ -194,12 +194,12 @@ void shotgunFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_
     playerData->raycastTests = gfc_list_new_size(8);
 
     GFC_Box boundingBox = { 0 };
-    boundingBox.x = min(self->position.x, raycastAdd.x) - 16;
-    boundingBox.y = min(self->position.y, raycastAdd.y) - 16;
-    boundingBox.z = min(self->position.z, raycastAdd.z) - 8;
-    boundingBox.w = max(self->position.x, raycastAdd.x) - boundingBox.x + 16;
-    boundingBox.d = max(self->position.y, raycastAdd.y) - boundingBox.y + 16;
-    boundingBox.h = max(self->position.z, raycastAdd.z) - boundingBox.z + 8;
+    boundingBox.x = MIN(self->position.x, raycastAdd.x) - 16;
+    boundingBox.y = MIN(self->position.y, raycastAdd.y) - 16;
+    boundingBox.z = MIN(self->position.z, raycastAdd.z) - 8;
+    boundingBox.w = MAX(self->position.x, raycastAdd.x) - boundingBox.x + 16;
+    boundingBox.d = MAX(self->position.y, raycastAdd.y) - boundingBox.y + 16;
+    boundingBox.h = MAX(self->position.z, raycastAdd.z) - boundingBox.z + 8;
 
     int i = 0;
     for (i = 0; i < 8; i++) {

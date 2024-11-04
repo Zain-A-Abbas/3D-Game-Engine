@@ -41,7 +41,7 @@ void ammoPickupInteract(Entity* player, Entity* entity, Interactable* interact) 
 	for (i = 0; i < gfc_list_get_count(playerData->playerWeapons); i++) {
 		weapon = (Weapon*)gfc_list_get_nth(playerData->playerWeapons, i);
 		if (weapon->reserveAmmoIndex == ammoPickupData->ammoType) {
-			playerData->ammo[weapon->reserveAmmoIndex] = min(playerData->ammo[weapon->reserveAmmoIndex] + 8, 999);
+			playerData->ammo[weapon->reserveAmmoIndex] = MIN(playerData->ammo[weapon->reserveAmmoIndex] + 8, 999);
 			ammoUsed = 1;
 			break;
 		}

@@ -32,9 +32,9 @@ Basic Collision Detection - DONE
 Basic User Controls - DONE
 A contained game world
 
-10 weapons - 8/10
+10 weapons - 9/10
 5 enemy types - 1/5
-2 stages with a shop between them - 0/2
+2 stages with a shop between them - 1/2
 5 powerups - 0/5
 	Infinite ammo
 	No jerk
