@@ -1,7 +1,7 @@
 {
     "actor":
     {
-        "sprite": "images/flare.png",
+        "sprite": "images/reticle.png",
         "frameWidth": 64,
         "frameHeight": 64,
         "framesPerLine": 1,

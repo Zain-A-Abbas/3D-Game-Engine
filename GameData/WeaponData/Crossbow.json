@@ -1,6 +1,6 @@
 {
     "Name": "Crossbow",
-    "CartridgeSize": 100,
+    "CartridgeSize": 1,
     "AttackCooldown": 0.2,
     "ReloadTime": 1,
     "AmmoType": "Bolt",
