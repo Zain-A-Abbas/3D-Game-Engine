@@ -250,7 +250,19 @@ void _playerUpdate(Entity * self, float delta) {
 
     playerData->attackCooldown = fMoveTowards(playerData->attackCooldown, 0, delta);
 
-    
+
+
+    // Zoom
+    GFC_Vector3D cameraMove;
+    if (aimZoom) {
+        cameraMove = gfc_vector3d_subbed(actualCameraOffset, zoomCameraOffset);
+    }
+    else {
+        cameraMove = gfc_vector3d_subbed(actualCameraOffset, BASE_CAMERA_OFFSET);
+    }
+    cameraMove = gfc_vector3d_multiply(cameraMove, gfc_vector3d(delta * 16, delta * 16, delta * 16));
+    actualCameraOffset = gfc_vector3d_subbed(actualCameraOffset, cameraMove);
+
 
     // Mouse update
     if (playerData->camera) {
@@ -283,18 +295,6 @@ void _playerUpdate(Entity * self, float delta) {
     if (playerData->cameraTrauma.z == 0) {
         playerData->cameraTraumaDecay.z = 0;
     }
-
-    // Zoom
-    GFC_Vector3D cameraMove;
-    if (aimZoom) {
-        cameraMove = gfc_vector3d_subbed(actualCameraOffset, zoomCameraOffset);
-    }
-    else {
-        cameraMove = gfc_vector3d_subbed(actualCameraOffset, BASE_CAMERA_OFFSET);
-    }
-    cameraMove = gfc_vector3d_multiply(cameraMove, gfc_vector3d(delta * 16, delta * 16, delta * 16));
-    actualCameraOffset = gfc_vector3d_subbed(actualCameraOffset, cameraMove);
-
 
     interactScan(self);
 
@@ -374,7 +374,7 @@ void attack(Entity * self, PlayerData * playerData, Character3DData * character3
 
     weaponData->currentAmmo -= 1;
 
-    addCameraTrauma(playerData, gfc_vector3d(-0.08, 0, 0.04), gfc_vector3d(1.0, 0, 2.0));
+    addCameraTrauma(playerData, gfc_vector3d(-0.08, 0, 0), gfc_vector3d(1.0, 0, 0));
     if (gf2d_mouse_button_held(2)) {
         playerData->cameraTrauma = gfc_vector3d_multiply(playerData->cameraTrauma, gfc_vector3d(0.5, 0.5, 0.5));
     }
