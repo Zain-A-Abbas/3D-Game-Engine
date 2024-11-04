@@ -390,7 +390,7 @@ void reload(Entity * self, PlayerData * playerData) {
     Weapon* weaponData = gfc_list_get_nth(playerData->playerWeapons, playerData->currentWeapon);
     int ammoIndex = weaponData->reserveAmmoIndex;
 
-    int reloadAmount = min(weaponData->cartridgeSize - weaponData->currentAmmo, min(weaponData->cartridgeSize, playerData->ammo[ammoIndex]));
+    int reloadAmount = MIN(weaponData->cartridgeSize - weaponData->currentAmmo, MIN(weaponData->cartridgeSize, playerData->ammo[ammoIndex]));
     
     if (reloadAmount == 0) {
         reloading = false;

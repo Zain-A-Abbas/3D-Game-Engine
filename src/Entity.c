@@ -375,7 +375,7 @@ void animationPlay(Entity* self, const char* animName) {
         printf("\nNot armature using animationPlay");
     }
     else {
-        self->entityAnimation->animationFrameCount = max(0, self->model->armature->maxFrames);
+        self->entityAnimation->animationFrameCount = MAX(0, self->model->armature->maxFrames);
     }
     self->entityAnimation->animationFrame = 0;
 
