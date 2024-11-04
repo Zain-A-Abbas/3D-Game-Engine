@@ -3,6 +3,10 @@
 
 #include "Entity.h"
 
+typedef struct TerrainData_S {
+	Model* terrainCollision;
+} TerrainData;
+
 /**
 * @brief Creates an entity and assigns it the proper collision layer.
 */

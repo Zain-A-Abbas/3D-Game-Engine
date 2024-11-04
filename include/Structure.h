@@ -9,6 +9,7 @@ typedef enum {
 
 typedef struct StructureData_S {
 	StructureType		structureType;
+	Model				*structureCollision;
 } StructureData;
 
 Entity* structureNew(StructureType type);

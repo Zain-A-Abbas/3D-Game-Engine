@@ -18,20 +18,22 @@ static const char* AMMO_TYPES[] = {
     "Handgun",
     "Shotgun",
     "AR",
-    "Rocket"
+    "Rocket",
+    "Bolt"
 };
 
 typedef struct Weapon_S
 {
-    char*     name;
-    char*     actorFile;
-    char*     modelFile;
+    char*           name;
+    char*           actorFile;
+    char*           modelFile;
     int             cartridgeSize;
     float           attackCooldown;
     float           reloadTime;
     int             currentAmmo;
     int             reserveAmmoIndex;
     int             damage;
+    float           projectileSpeed;
     float           spreadDegrees;
     Uint8           automatic;
     GFC_Sound*      useSound;

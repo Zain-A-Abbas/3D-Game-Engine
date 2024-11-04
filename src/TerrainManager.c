@@ -12,5 +12,12 @@ Entity * terrainEntityNew() {
 	}
 	terrainEntity->type = TERRAIN;
 	terrainEntity->collisionLayer = TERRAIN_LAYERS;
+
+	TerrainData *newData = (TerrainData*)malloc(sizeof(TerrainData));
+	memset(newData, 0, sizeof(TerrainData));
+	newData->terrainCollision = NULL;
+	terrainEntity->data = newData;
+	
+
 	return terrainEntity;
 }

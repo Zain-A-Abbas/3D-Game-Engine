@@ -3,6 +3,8 @@
 #include "gf3d_obj_load.h"
 #include "Entity.h"
 #include "Enemy.h"
+#include "Structure.h"
+#include "TerrainManager.h"
 #include "Projectile.h"
 #include "gf3d_draw.h"
 
@@ -106,6 +108,17 @@ void entityDebugDraw(Entity* self, GFC_Matrix4 matrix) {
         if (enemyData->enemyCollision) {
             gf3d_model_draw(
                 enemyData->enemyCollision,
+                matrix,
+                GFC_COLOR_WHITE,
+                NULL,
+                0
+            );
+        }
+    } else if (self->type == TERRAIN) {
+        TerrainData* terrainData = (TerrainData*)self->data;
+        if (terrainData->terrainCollision) {
+            gf3d_model_draw(
+                terrainData->terrainCollision,
                 matrix,
                 GFC_COLOR_WHITE,
                 NULL,
@@ -243,6 +256,17 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
             modelScale->z = entityModel->matrix[2][2];
         }
     }
+    else if (entity->type == TERRAIN) {
+        TerrainData* terrainData = (TerrainData*)entity->data;
+        if (terrainData->terrainCollision) {
+            entityModel = terrainData->terrainCollision;
+            modelScale = (GFC_Vector3D*)malloc(sizeof(GFC_Vector3D));
+            memset(modelScale, 0, sizeof(GFC_Vector3D));
+            modelScale->x = entityModel->matrix[0][0];
+            modelScale->y = entityModel->matrix[1][1];
+            modelScale->z = entityModel->matrix[2][2];
+        }
+    }
     // Get meshes
     for (int j = 0; j < gfc_list_get_count(entityModel->mesh_list); j++) {
         Mesh* mesh = (Mesh*)gfc_list_get_nth(entityModel->mesh_list, j);
@@ -308,8 +332,13 @@ void animationFree(Entity* self) {
             }
             gfc_list_delete(self->entityAnimation->animationList);
         }
-        free(self->entityAnimation->animFolder);
-        free(self->entityAnimation);
+        if (self->entityAnimation->animFolder) {
+            self->entityAnimation->animFolder = NULL;
+        }
+        if (self->entityAnimation) {
+            free(self->entityAnimation);
+            self->entityAnimation = NULL;
+        }    
     }
 }
 
@@ -326,11 +355,11 @@ void animationPlay(Entity* self, const char* animName) {
     Model* modelCheck;
     int modelIndex = -1;
 
-    printf("\nList size: %d", gfc_list_get_count(self->entityAnimation->animationList));
+    //printf("\nList size: %d", gfc_list_get_count(self->entityAnimation->animationList));
     for (int i = 0; i < gfc_list_get_count(self->entityAnimation->animationList); i++) {
         modelCheck = (Model*)gfc_list_get_nth(self->entityAnimation->animationList, i);
-        printf("\nAnimation in list is: %s", modelCheck->filename);
-        printf("\nAnimation given is: %s", animName);
+        //printf("\nAnimation in list is: %s", modelCheck->filename);
+        //printf("\nAnimation given is: %s", animName);
         if (strcmp(modelCheck->filename, animName) == 0) {
             modelIndex = i;
             break;
@@ -338,7 +367,7 @@ void animationPlay(Entity* self, const char* animName) {
     }
 
 
-    printf("\nModel index is: %d", modelIndex);
+    //printf("\nModel index is: %d", modelIndex);
     self->model = gfc_list_get_nth(self->entityAnimation->animationList, modelIndex);
 
     if (!self->model->armature) {

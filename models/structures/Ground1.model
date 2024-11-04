@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/structures/Ground1.obj",
+        "texture":"models/structures/Ground1.png"
+    }
+}

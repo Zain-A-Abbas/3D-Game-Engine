@@ -1,11 +1,9 @@
-Give animationsetup a list of animations
-It takes each of those animations and stores them in a gfc_list
-
-free animatoin list on entity free
-
 In the future properly redo cylinder collisions and use that for player instead:
 If a cylinder collides with a triangle, then add that triangle's normal*overlap to the entity with the cylinder's position
 ONLY CHECK IF A TRIANGLE'S VERTICAL ANGLE IS WITHIN SOME RANGE
+
+
+Can make it so weapons use the .mtl files using the provided functions
 
 House:
 Figure out how to make the door push the character (Check if detected, and if so, use the actor's velocity as 1 pointed towards the object if velocity is 0?)

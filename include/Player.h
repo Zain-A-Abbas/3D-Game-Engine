@@ -26,7 +26,7 @@ typedef struct PlayerData_S {
     GFC_List            *playerWeapons;
     int                 currentWeapon;
     int                 weaponsUnlocked;
-    int                 ammo[4]; // 0 is handgun, 1 is shotgun, 2 is AR, 3 is rocket
+    int                 ammo[5]; // 0 is handgun, 1 is shotgun, 2 is AR, 3 is rocket, 4 is bolts
     float               attackCooldown;
     GFC_Vector3D        cameraTrauma;
     GFC_Vector3D        cameraTraumaDecay;

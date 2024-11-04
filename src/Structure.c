@@ -34,7 +34,7 @@ Entity* structureNew(StructureType type) {
 	// Making a door
 	Entity* testDoor = createDoor(newStructure);
 	testDoor->position = gfc_vector3d(4, -20, 0);
-	Entity* testPickup = createAmmoPickup(newStructure);
+	Entity* testPickup = createAmmoPickup(newStructure, 0);
 	testPickup->position = gfc_vector3d(0, 4, 0);
 
 	return newStructure;

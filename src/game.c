@@ -115,7 +115,7 @@ int main(int argc,char *argv[])
     // Create player
     Entity * player = createPlayer();
     assignCamera(player, gf3dGetCamera());
-    player->position.z = 4;
+    player->position.z = 0;
     
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -131,15 +131,35 @@ int main(int argc,char *argv[])
     
     // Create land
     Entity* testGround = terrainEntityNew();
-    testGround->model = gf3d_model_load("models/primitives/testground.model");
+    testGround->model = gf3d_model_load("models/structures/Ground1.model");
     testGround->position = gfc_vector3d(0, 0, -8);
-    testGround->scale = gfc_vector3d(4, 4, 4);
 
     // Create house
     Entity* testHouse = structureNew(HOUSE);
-    testHouse->position = gfc_vector3d(0, 64, -8);
+    testHouse->position = gfc_vector3d(0, 64, 2);
     testHouse->scale = gfc_vector3d(1, 1, 1);
-    //testHouse->rotation.z = M_PI;
+
+
+    // Create Tree
+    TerrainData*treeData;
+    int treeCount = 160 + gfc_random_int(40);
+    for (int i = 0; i < treeCount; i++) {
+        float treeX = -375 + gfc_random_int(750);
+        float treeY = -375 + gfc_random_int(750);
+        float treeZ = -16 + gfc_random_int(4);
+        Entity* testTree = terrainEntityNew();
+        testTree->model = gf3d_model_load("models/structures/Tree.model");
+        testTree->position = gfc_vector3d(treeX, treeY, treeZ);
+        testTree->rotation.z = gfc_random() * GFC_2PI;
+        testTree->collisionLayer = 0b00000100;
+        treeData = (TerrainData*)testTree->data;
+        treeData->terrainCollision = gf3d_model_load("models/enemies/EnemyCollision.model");
+        treeData->terrainCollision->matrix[0][0] = 1.5;
+        treeData->terrainCollision->matrix[1][1] = 1.5;
+        treeData->terrainCollision->matrix[2][2] = 2.5;
+        //printf("\nTree location: %f, %f, %f", treeX, treeY, treeZ);
+    }
+
 
 
     // Create interactable

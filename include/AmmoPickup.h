@@ -9,7 +9,7 @@ typedef struct {
 	int		ammoType;
 } AmmoPickupData;
 
-Entity* createAmmoPickup(Entity* parent);
+Entity* createAmmoPickup(Entity* parent, int ammoType);
 
 void ammoPickupInteract(Entity* player, Entity* entity, Interactable* interact);
 

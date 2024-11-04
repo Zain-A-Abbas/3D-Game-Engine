@@ -53,11 +53,11 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
     float velocityMagnitude = 0;
 
     PlayerData* playerData = NULL;
-    if (self->type == PLAYER) {
+    /*if (self->type == PLAYER) {
         playerData = (PlayerData*)self->data;
         gfc_list_clear(playerData->raycastTests);
         playerData->raycastTests = gfc_list_new_size(8);
-    }
+    }*/
 
     for (int i = 0; i < entityManager.entityMax; i++) {
         // Filter out inactive entities, non-collideable, and collideable out of range
@@ -83,13 +83,13 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
             normalizedVelocity = velocity;
             velocityMagnitude = gfc_vector3d_magnitude(velocity);
 
-            if (playerData) {
+            /*if (playerData) {
                 GFC_Edge3D* testRaycast = (GFC_Edge3D*)malloc(sizeof(GFC_Edge3D));
                 memset(testRaycast, 0, sizeof(testRaycast));
                 testRaycast->a = movementRaycast.a;
                 testRaycast->b = movementRaycast.b;
                 gfc_list_append(playerData->raycastTests, testRaycast);
-            }
+            }*/
 
             // Check each raycast in the direction of movement
             //slog("Velocity start: %f, %f, %f", raycastStart.x, raycastStart.y, raycastStart.z);
@@ -164,9 +164,9 @@ GFC_Vector3D verticalVectorMovement(Entity * self, Character3DData * character3d
 
 int isOnFloor(Entity* self, Character3DData* character3dData, GFC_Vector3D* floorNormal, GFC_Vector3D* contact) {
     GFC_Triangle3D t = { 0 };
-    GFC_Vector3D gravityRaycastDir = gfc_vector3d(0, 0, character3dData->gravityRaycastHeight);
-    GFC_Edge3D gravityRaycast = gfc_edge3d_from_vectors(gfc_vector3d_added(entityGlobalPosition(self), gravityRaycastDir), entityGlobalPosition(self));
-    
+    GFC_Vector3D gravityRaycastDir;
+    GFC_Edge3D gravityRaycast;
+
     for (int i = 0; i < entityManager.entityMax; i++) {
         // Get ground entitiesentities
         if (!entityManager.entityList[i]._in_use) {
@@ -177,13 +177,19 @@ int isOnFloor(Entity* self, Character3DData* character3dData, GFC_Vector3D* floo
         }
 
         // Found terrain
-        if (entityRaycastTest(&entityManager.entityList[i], gravityRaycast, contact, &t, NULL)) {
-            /*slog("%f, %f, %f", t.a.x, t.a.y, t.a.z);
-            slog("%f, %f, %f", t.b.x, t.b.y, t.b.z);
-            slog("%f, %f, %f", t.c.x, t.c.y, t.c.z);*/
-            *floorNormal = gfc_trigfc_angle_get_normal(t);
-            return true;
+        for (int j = 0; j < 4; j++) {
+            gravityRaycastDir = gfc_vector3d(0.125, 0, character3dData->gravityRaycastHeight);
+            gfc_vector3d_rotate_about_z(&gravityRaycastDir, j * GFC_HALF_PI);
+            gravityRaycast = gfc_edge3d_from_vectors(gfc_vector3d_added(entityGlobalPosition(self), gravityRaycastDir), entityGlobalPosition(self));
+            if (entityRaycastTest(&entityManager.entityList[i], gravityRaycast, contact, &t, NULL)) {
+                /*printf("%f, %f, %f", t.a.x, t.a.y, t.a.z);
+                printf("%f, %f, %f", t.b.x, t.b.y, t.b.z);
+                printf("%f, %f, %f", t.c.x, t.c.y, t.c.z);*/
+                *floorNormal = gfc_trigfc_angle_get_normal(t);
+                return true;
+            }
         }
+
     }
     return false;
 }

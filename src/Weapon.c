@@ -34,11 +34,12 @@ Weapon *loadWeapon(const char *weaponFile, PlayerData *playerData) {
     SJson* SJModel = sj_object_get_value(weaponJson, "Model");
     SJson* SJdamage = sj_object_get_value(weaponJson, "Damage");
     SJson* SJspread= sj_object_get_value(weaponJson, "Spread");
-    SJson* SJauto= sj_object_get_value(weaponJson, "Auto");
+    SJson* SJauto = sj_object_get_value(weaponJson, "Auto");
+    SJson* SJspeed = sj_object_get_value(weaponJson, "Speed");
     
     int cartridgeSize, damage;
     int automatic;
-    float reloadTime, attackCooldown, spread; 
+    float reloadTime, attackCooldown, spread, speed = 0;
     const char* ammoType;
     const char* model = NULL;
     sj_get_integer_value(SJcartridgeSize, &cartridgeSize);
@@ -52,6 +53,9 @@ Weapon *loadWeapon(const char *weaponFile, PlayerData *playerData) {
     if (SJModel) {
         model = malloc(strlen(sj_get_string_value(SJModel)));
         strcpy(model, sj_get_string_value(SJModel));
+    }
+    if (SJspeed) {
+        sj_get_float_value(SJspeed, &speed);
     }
 
     // Get weapon audio
@@ -73,6 +77,7 @@ Weapon *loadWeapon(const char *weaponFile, PlayerData *playerData) {
     newWeapon->damage = damage;
     newWeapon->spreadDegrees = spread;
     newWeapon->automatic = automatic;
+    newWeapon->projectileSpeed = speed;
     newWeapon->useSound = useSound;
     newWeapon->modelFile = model;
 
@@ -92,6 +97,9 @@ Weapon *loadWeapon(const char *weaponFile, PlayerData *playerData) {
         newWeapon->shoot = shotgunFire;
     }
     else if (strcmp(weaponName, "Rocket Launcher") == 0) {
+        newWeapon->shoot = projectileFire;
+    }
+    else if (strcmp(weaponName, "Crossbow") == 0) {
         newWeapon->shoot = projectileFire;
     }
 
@@ -151,17 +159,17 @@ void singleFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_V
     boundingBox.h = max(self->position.z, raycastAdd.z) - boundingBox.z + 4;
 
 
-    //PlayerData* playerData = (PlayerData*)self->data;
-    //playerData->boundingBoxTest = boundingBox;
+    PlayerData* playerData = (PlayerData*)self->data;
+    playerData->boundingBoxTest = boundingBox;
     
-    //gfc_list_clear(playerData->raycastTests);
-    //playerData->raycastTests = gfc_list_new_size(8);
+    gfc_list_clear(playerData->raycastTests);
+    playerData->raycastTests = gfc_list_new_size(8);
 
-    //GFC_Edge3D* testRaycast = (GFC_Edge3D*)malloc(sizeof(GFC_Edge3D));
-    //memset(testRaycast, 0, sizeof(testRaycast));
-    //testRaycast->a = raycast.a;
-    //testRaycast->b = raycast.b;
-    //gfc_list_append(playerData->raycastTests, testRaycast);
+    GFC_Edge3D* testRaycast = (GFC_Edge3D*)malloc(sizeof(GFC_Edge3D));
+    memset(testRaycast, 0, sizeof(testRaycast));
+    testRaycast->a = raycast.a;
+    testRaycast->b = raycast.b;
+    gfc_list_append(playerData->raycastTests, testRaycast);
 
 
     Entity* hitEntity = shotCollided(raycast, &boundingBox);
@@ -181,9 +189,9 @@ void shotgunFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_
     GFC_Vector3D raycastVector;
     GFC_Edge3D raycast;
 
-    //PlayerData* playerData = (PlayerData*)self->data;
-    //gfc_list_clear(playerData->raycastTests);
-    //playerData->raycastTests = gfc_list_new_size(8);
+    PlayerData* playerData = (PlayerData*)self->data;
+    gfc_list_clear(playerData->raycastTests);
+    playerData->raycastTests = gfc_list_new_size(8);
 
     GFC_Box boundingBox = { 0 };
     boundingBox.x = min(self->position.x, raycastAdd.x) - 16;
@@ -201,11 +209,11 @@ void shotgunFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_
         raycastVector = gfc_vector3d_added(raycastStart, raycastAdd);
         raycast = gfc_edge3d_from_vectors(raycastStart, raycastVector);
 
-        //GFC_Edge3D* testRaycast = (GFC_Edge3D*)malloc(sizeof(GFC_Edge3D));
-        //memset(testRaycast, 0, sizeof(testRaycast));
-        //testRaycast->a = raycast.a;
-        //testRaycast->b = raycast.b;
-        //gfc_list_append(playerData->raycastTests, testRaycast);
+        GFC_Edge3D* testRaycast = (GFC_Edge3D*)malloc(sizeof(GFC_Edge3D));
+        memset(testRaycast, 0, sizeof(testRaycast));
+        testRaycast->a = raycast.a;
+        testRaycast->b = raycast.b;
+        gfc_list_append(playerData->raycastTests, testRaycast);
         
             
         Entity* hitEntity = shotCollided(raycast, &boundingBox);
@@ -222,9 +230,9 @@ void projectileFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, G
     PlayerData* playerData = (PlayerData*)self->data;
     data->damage = weapon->damage;
     data->layers = 0b00000110;
-    data->maxLifetime = 1.0;
+    data->maxLifetime = 4.0;
     data->lifetime = 0.0;
-    data->velocity = gfc_vector3d(0, -ROCKET_SPEED, 0);
+    data->velocity = gfc_vector3d(0, -weapon->projectileSpeed, 0);
     gfc_vector3d_rotate_about_x(&data->velocity, M_PI - playerData->camera->rotation.x);
     gfc_vector3d_rotate_about_z(&data->velocity, playerRotation.z);
     Entity * projectile = newProjectile(data, weapon->modelFile);

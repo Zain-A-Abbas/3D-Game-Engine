@@ -1,0 +1,13 @@
+{
+    "Name": "Crossbow",
+    "CartridgeSize": 100,
+    "AttackCooldown": 0.2,
+    "ReloadTime": 1,
+    "AmmoType": "Bolt",
+    "Damage": 6,
+    "Spread": 0,
+    "Auto": 0,
+    "Speed":384,
+    "UseSound": "Gun1",
+    "Model": "bolt"
+}
