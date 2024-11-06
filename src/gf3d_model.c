@@ -266,6 +266,7 @@ Model *gf3d_model_load_from_config(SJson *json,const char *filename)
     modelFile = sj_get_string_value(sj_object_get_value(json,"gltf"));
     if (modelFile)
     {
+
         model = gf3d_gltf_parse_model(modelFile);
         if (!model)return NULL;
         armatureFile = sj_get_string_value(sj_object_get_value(json, "gltf"));

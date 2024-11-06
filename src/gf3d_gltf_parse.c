@@ -370,6 +370,7 @@ Mesh *gf3d_gltf_parse_mesh(SJson *meshData,GLTF *gltf)
 
 Model *gf3d_gltf_parse_model(const char *filename)
 {
+    printf("\nNo (%s) worked out\n", filename);
     int i,c;
     GLTF *gltf;
     SJson *meshes,*meshData;
@@ -387,6 +388,7 @@ Model *gf3d_gltf_parse_model(const char *filename)
     model = gf3d_model_new();
     if (!model)
     {
+
         gf3d_gltf_free(gltf);
         return NULL;
     }

@@ -372,7 +372,7 @@ void animationPlay(Entity* self, const char* animName) {
 
     if (!self->model->armature) {
         // TODO: Add support for non-armatures in this animation format
-        printf("\nNot armature using animationPlay");
+        printf("\n OBJ list using animationPlay");
     }
     else {
         self->entityAnimation->animationFrameCount = MAX(0, self->model->armature->maxFrames);

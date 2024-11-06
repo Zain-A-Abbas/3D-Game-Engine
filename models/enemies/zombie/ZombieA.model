@@ -1,0 +1,8 @@
+{
+    "model":
+    {
+        "gltf": "models/enemies/zombie/ZombieA.gltf",
+        "texture":"models/player/PlayerTexture.png",
+        "loop":1
+    }
+}

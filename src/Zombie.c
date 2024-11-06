@@ -14,8 +14,6 @@ const float CHASE_AI_INTERVAL = 0.12;
 
 Entity* createZombie(Entity *player) {
 	Entity* newZombie = enemyEntityNew();
-	//animationSetup(newZombie, "models/enemies/zombie/");
-	//animationPlay(newZombie, "ZombieIdle");
 
 	// Make and assign states
 	StateMachine* stateMachine = (StateMachine*)malloc(sizeof(StateMachine));
@@ -46,6 +44,16 @@ Entity* createZombie(Entity *player) {
 	enemyData->enemyCollision->matrix[0][0] *= 1.5;
 	enemyData->enemyCollision->matrix[1][1] *= 1.5;
 	enemyData->enemyCollision->matrix[2][2] *= 2;
+
+	animationSetup(
+        newZombie,
+        "models/enemies/zombie/", 
+        (char *[]){
+            "ZombieA"
+        },
+        1
+    );
+    animationPlay(newZombie, "models/enemies/zombie/ZombieA.model");
 
 	return newZombie;
 }
