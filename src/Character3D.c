@@ -39,18 +39,9 @@ void moveAndSlide(Entity* self, Character3DData* character3dData) {
 
 void horizontalWallSlide(Entity* self, Character3DData* character3dData, float delta) {
     GFC_Vector3D velocity = character3dData->velocity;
-    GFC_Vector3D raycastStart = gfc_vector3d(0, 0, 0);
-    GFC_Vector3D raycastEnd = gfc_vector3d(0, 0, 0);
-    GFC_Edge3D movementRaycast = gfc_edge3d_from_vectors(raycastStart, raycastEnd);
-    GFC_Vector3D contact = gfc_vector3d(0, 0, 0);
-    GFC_Triangle3D t = { 0 };
-    GFC_Vector3D normalizedVelocity = gfc_vector3d(0, 0, 0);
-    GFC_Vector3D triangleNormal = gfc_vector3d(0, 0, 0);
-    GFC_Vector3D velocitySubtract = gfc_vector3d(0, 0, 0);
-    float angle = 0;
-    float dot = 0;
-    float speedMod = 0;
-    float velocityMagnitude = 0;
+    GFC_Vector3D intersectionPoint = { 0 };
+    GFC_Vector3D penetrationNormal = { 0 };
+    float penetrationDepth = 0;
 
     PlayerData* playerData = NULL;
     /*if (self->type == PLAYER) {
@@ -72,6 +63,49 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
             continue;
         }
         
+        if (entityCapsuleTest(currEntity, self->entityCollision->s.c, &intersectionPoint, &penetrationNormal, &penetrationDepth, NULL)) {
+            GFC_Vector3D pushBack = penetrationNormal;
+
+            pushBack.x *= penetrationDepth;// *0.01;
+            pushBack.y *= penetrationDepth;// *0.01;
+            pushBack.z *= penetrationDepth;// *0.01;
+            velocity = gfc_vector3d_added(velocity, pushBack);
+        }
+
+    }
+    character3dData->velocity = velocity;
+}
+
+void enemyHorizontalWallSlide(Entity* self, Character3DData* character3dData, float delta) {
+    GFC_Vector3D velocity = character3dData->velocity;
+    GFC_Vector3D raycastStart = gfc_vector3d(0, 0, 0);
+    GFC_Vector3D raycastEnd = gfc_vector3d(0, 0, 0);
+    GFC_Edge3D movementRaycast = gfc_edge3d_from_vectors(raycastStart, raycastEnd);
+    GFC_Vector3D contact = gfc_vector3d(0, 0, 0);
+    GFC_Triangle3D t = { 0 };
+    GFC_Vector3D normalizedVelocity = gfc_vector3d(0, 0, 0);
+    GFC_Vector3D triangleNormal = gfc_vector3d(0, 0, 0);
+    GFC_Vector3D velocitySubtract = gfc_vector3d(0, 0, 0);
+    float angle = 0;
+    float dot = 0;
+    float speedMod = 0;
+    float velocityMagnitude = 0;
+
+
+
+    for (int i = 0; i < entityManager.entityMax; i++) {
+        // Filter out inactive entities, non-collideable, and collideable out of range
+        Entity* currEntity = &entityManager.entityList[i];
+        if (!currEntity->_in_use) {
+            continue;
+        }
+        if (!isOnLayer(currEntity, 7)) {
+            continue;
+        }
+        if (!gfc_vector3d_distance_between_less_than(entityGlobalPosition(self), entityGlobalPosition(currEntity), character3dData->horizontalCollisionRadius * 24)) {
+            continue;
+        }
+
         // Constructs 16 raycasts in a circular perimeter around the entity
         for (int j = 0; j < 16; j++) {
             angle = M_PI / 8 * j;
@@ -114,6 +148,7 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
     }
     character3dData->velocity = velocity;
 }
+
 
 GFC_Vector3D verticalVectorMovement(Entity * self, Character3DData * character3dData, float delta) {
     

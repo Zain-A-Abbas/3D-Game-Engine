@@ -40,10 +40,12 @@ Entity* createZombie(Entity *player) {
 	enemyData->enemyStateMachine = stateMachine;
 
 	//Assign collision
-	enemyData->enemyCollision = gf3d_model_load("models/enemies/EnemyCollision.model");
-	enemyData->enemyCollision->matrix[0][0] *= 1.5;
-	enemyData->enemyCollision->matrix[1][1] *= 1.5;
-	enemyData->enemyCollision->matrix[2][2] *= 2;
+	GFC_ExtendedPrimitive* collision = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
+	memset(collision, 0, sizeof(GFC_ExtendedPrimitive));
+	collision->type = E_Capsule;
+	GFC_Capsule zombieCapsule = gfc_capsule(8, 2);
+	collision->s.c = zombieCapsule;
+	newZombie->entityCollision = collision;
 
 	animationSetup(
         newZombie,
@@ -104,6 +106,7 @@ void chaseUpdate(struct Entity_S* self, float delta, struct State_S* state, Stat
 	float modelRotation = fMoveTowardsAngle(self->rotation.z, enemyData->character3dData->rotation.z, delta);
 	self->rotation.z = modelRotation;
 	moveAndSlide(self, enemyData->character3dData);
+	enemyHorizontalWallSlide(self, enemyData->character3dData, delta);
 }
 
 void chaseThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {

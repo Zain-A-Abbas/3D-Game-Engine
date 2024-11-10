@@ -27,8 +27,10 @@ C:\Users\Zain\Documents\GitHub\IT466-Engine\gfc\src\gfc_vector.c;C:\Users\Zain\D
 C:\Users\Zain\Documents\GitHub\IT466-Engine\gfc\src\miniz.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\miniz.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\AmmoPickup.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\AmmoPickup.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Character3D.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Character3D.obj
+C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Collision.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Collision.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Door.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Door.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Enemy.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Enemy.obj
+C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Extra_Primitives.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Extra_Primitives.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\gf3d_armature.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\gf3d_armature.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Interactable.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Interactable.obj
 C:\Users\Zain\Documents\GitHub\IT466-Engine\src\Projectile.c;C:\Users\Zain\Documents\GitHub\IT466-Engine\x64\Debug\Projectile.obj

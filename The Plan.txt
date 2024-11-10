@@ -30,7 +30,7 @@ UI Elements reflecting in game information - DONE
 Functioning Entity System - DONE
 Basic Collision Detection - DONE
 Basic User Controls - DONE
-A contained game world
+A contained game world - DONEish
 
 10 weapons - 9/10
 5 enemy types - 1/5

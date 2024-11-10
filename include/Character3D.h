@@ -31,7 +31,7 @@ void moveAndSlide(Entity* self, Character3DData* character3dData);
 * @brief Adjusts the speed and direction of the character if pushing against a wall
 */
 void horizontalWallSlide(Entity* self, Character3DData* character3dData, float delta);
-
+void enemyHorizontalWallSlide(Entity* self, Character3DData* character3dData, float delta);
 /**
 * @brief Adjusts the vertical movement based on the slope.
 * @param The character entity.

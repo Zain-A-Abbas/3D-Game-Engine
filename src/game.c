@@ -123,40 +123,44 @@ int main(int argc,char *argv[])
     initializeUI();
 
     // Create dummy enemies
-    Entity* enemy1 = createZombie(player);
-    enemy1->position = gfc_vector3d(0, -40, -8);
-    //enemyScalePreserveModel(enemy1, gfc_vector3d(0.08, 0.08, 0.08));
+    //Entity* enemy1 = createZombie(player);
+    //enemy1->position = gfc_vector3d(0, -40, -8);
+    //entityScalePreserveModel(enemy1, gfc_vector3d(0.08, 0.08, 0.08));
     /*Entity* enemy2 = enemyEntityNew();
     enemy2->position = gfc_vector3d(-4, 4, 0);*/
     
     // Create land
     Entity* testGround = terrainEntityNew();
+    //testGround->model = gf3d_model_load("models/primitives/testground.model");
+    //testGround->scale = gfc_vector3d(4, 4, 1);
     testGround->model = gf3d_model_load("models/structures/Ground1.model");
     testGround->position = gfc_vector3d(0, 0, -8);
 
     // Create house
-    Entity* testHouse = structureNew(HOUSE);
-    testHouse->position = gfc_vector3d(0, 64, 2);
-    testHouse->scale = gfc_vector3d(1, 1, 1);
+    //Entity* testHouse = structureNew(HOUSE);
+    //testHouse->position = gfc_vector3d(0, 64, 2);
+    //testHouse->scale = gfc_vector3d(1, 1, 1);
 
 
     // Create Tree
     TerrainData*treeData;
-    int treeCount = 160 + gfc_random_int(40);
+    int treeCount = 1;// 160 + gfc_random_int(40);
     for (int i = 0; i < treeCount; i++) {
-        float treeX = -375 + gfc_random_int(750);
-        float treeY = -375 + gfc_random_int(750);
-        float treeZ = -16 + gfc_random_int(4);
+        float treeX = -375*0.1 + gfc_random_int(750*0.1);
+        float treeY = -375*0.1 + gfc_random_int(750*0.1);
+        float treeZ = -8;// -16 + gfc_random_int(4);
         Entity* testTree = terrainEntityNew();
         testTree->model = gf3d_model_load("models/structures/Tree.model");
         testTree->position = gfc_vector3d(treeX, treeY, treeZ);
         testTree->rotation.z = gfc_random() * GFC_2PI;
         testTree->collisionLayer = 0b00000100;
         treeData = (TerrainData*)testTree->data;
-        treeData->terrainCollision = gf3d_model_load("models/enemies/EnemyCollision.model");
-        treeData->terrainCollision->matrix[0][0] = 1.5;
-        treeData->terrainCollision->matrix[1][1] = 1.5;
-        treeData->terrainCollision->matrix[2][2] = 2.5;
+        GFC_ExtendedPrimitive* collision = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
+        memset(collision, 0, sizeof(GFC_ExtendedPrimitive));
+        collision->type = E_Capsule;
+        GFC_Capsule treeCapsule = gfc_capsule(8, 1);
+        collision->s.c = treeCapsule;
+        testTree->entityCollision = collision;
         //printf("\nTree location: %f, %f, %f", treeX, treeY, treeZ);
     }
 

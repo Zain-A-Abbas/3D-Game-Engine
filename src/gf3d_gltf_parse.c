@@ -370,7 +370,6 @@ Mesh *gf3d_gltf_parse_mesh(SJson *meshData,GLTF *gltf)
 
 Model *gf3d_gltf_parse_model(const char *filename)
 {
-    printf("\nNo (%s) worked out\n", filename);
     int i,c;
     GLTF *gltf;
     SJson *meshes,*meshData;

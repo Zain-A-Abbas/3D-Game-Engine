@@ -6,6 +6,7 @@
 #include "gfc_vector.h"
 #include "gf3d_model.h"
 #include "gfc_primitives.h"
+#include "Collision.h"
 
 typedef enum {
     NONE,
@@ -37,6 +38,7 @@ typedef struct Entity_S {
     EntityType          type;
     int                 animation;
     Model               *model; // POINTER to model
+    GFC_ExtendedPrimitive      *entityCollision;
     struct Entity_S            *parent; // POINTER to parent
     struct EntityAnimation_S     *entityAnimation; // Animation manager struct
     // Behavior
@@ -102,6 +104,10 @@ void _entityFree(Entity *self);
 int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact, GFC_Triangle3D * t, GFC_Box *boundingBox);
 
 /**
+* @brief Return whether or not the following capsule intersected with an entity or not
+*/
+Uint8 entityCapsuleTest(Entity* entity, GFC_Capsule c, GFC_Vector3D* intersectionPoint, GFC_Vector3D* penetrationNormal, float* penetrationDepth, GFC_Box* boundingBox);
+/**
 * @brief Check if the entity is on a collision layer or not
 */
 int isOnLayer(Entity* self, int layer);
@@ -133,5 +139,6 @@ void animationPlay(Entity* self, const char* animName);
 * @brief This function is called on an entity when it is attacked
 */
 void entityAttacked(Entity *self, int damage);
+
 
 #endif

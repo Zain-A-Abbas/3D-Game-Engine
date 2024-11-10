@@ -237,7 +237,7 @@ void projectileFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, G
     gfc_vector3d_rotate_about_z(&data->velocity, playerRotation.z);
     Entity * projectile = newProjectile(data, weapon->modelFile);
     if (!projectile) {
-        return NULL;
+        return;
     }
 
     GFC_Vector3D normalizedVelocity = data->velocity;

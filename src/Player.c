@@ -4,6 +4,8 @@
 #include "UI.h"
 #include "TypesExtra.h"
 
+const Uint8 PLAYER_LAYERS = 0b10000000;
+
 const float PLAYER_SPEED = 16;
 const float HORIZONTAL_MOUSE_SENSITIVITY = 2.0;
 const float VERTICAL_MOUSE_SENSITIVITY = 1.6;
@@ -37,12 +39,14 @@ Entity * createPlayer() {
     }
 
     playerEntity->type = PLAYER;
+    playerEntity->collisionLayer = PLAYER_LAYERS;
 
     memset(playerData, 0, sizeof(PlayerData));
     playerEntity->data = playerData;
     playerData->state = PS_FREE;
     playerData->hp = 100;
     playerData->playerWeapons = gfc_list_new();
+    
 
     
     playerData->weaponsUnlocked = 0;
@@ -90,6 +94,14 @@ Entity * createPlayer() {
     );
     animationPlay(playerEntity, "models/player/PlayerIdle.model");
     playerEntity->scale = gfc_vector3d(0.075, 0.075, 0.075);
+
+    // Collision
+    GFC_ExtendedPrimitive* collision = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
+    memset(collision, 0, sizeof(GFC_ExtendedPrimitive));
+    collision->type = E_Capsule;
+    GFC_Capsule playerCapsule = gfc_capsule(8, 2);
+    collision->s.c = playerCapsule;
+    playerEntity->entityCollision = collision;
 
     return playerEntity;
 }

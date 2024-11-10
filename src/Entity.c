@@ -98,34 +98,22 @@ void _entityDraw(Entity * self) {
         NULL,
         animFrame
     );
-    entityDebugDraw(self, matrix);
+    //entityDebugDraw(self, matrix);
 }
 
 void entityDebugDraw(Entity* self, GFC_Matrix4 matrix) {
 
-    if (self->type == ENEMY) {
-        EnemyData* enemyData = (EnemyData*)self->data;
-        if (enemyData->enemyCollision) {
-            gf3d_model_draw(
-                enemyData->enemyCollision,
-                matrix,
-                GFC_COLOR_WHITE,
-                NULL,
-                0
-            );
-        }
-    } else if (self->type == TERRAIN) {
-        TerrainData* terrainData = (TerrainData*)self->data;
-        if (terrainData->terrainCollision) {
-            gf3d_model_draw(
-                terrainData->terrainCollision,
-                matrix,
-                GFC_COLOR_WHITE,
-                NULL,
-                0
-            );
-        }
-    }
+    /*if (self->entityCollision) {
+        gf3d_model_draw(
+            self->entityCollision,
+            matrix,
+            GFC_COLOR_WHITE,
+            NULL,
+            0
+        );
+    }*/
+
+
 
     /*if (self->type == PROJECTILE) {
         Projectile* data = (Projectile*)self->data;
@@ -144,6 +132,13 @@ void entityDebugDraw(Entity* self, GFC_Matrix4 matrix) {
 void _entityThink(Entity * self, float delta) {
     if (!self) return;
     
+    if (self->entityCollision) {
+        if (self->entityCollision->type == E_Capsule) {
+            setCapsuleFinalBase(&self->entityCollision->s.c, self);
+            setCapsuleFinalTip(&self->entityCollision->s.c, self);
+        }
+    }
+
     if (self->think) {
         self->think(self, delta);
         return;
@@ -201,6 +196,9 @@ void _entityFree(Entity *self) {
     animationFree(self);
     gf3d_model_free(self->model);
     free(self->entityAnimation);
+    if (self->entityCollision) {
+        free(self->entityCollision);
+    }
     memset(self, 0, sizeof(Entity));
 }
 
@@ -233,6 +231,43 @@ GFC_Vector3D entityGlobalScale(Entity* self) {
     return scale;
 }
 
+Uint8 entityCapsuleTest(Entity* entity, GFC_Capsule c, GFC_Vector3D* intersectionPoint, GFC_Vector3D* penetrationNormal, float* penetrationDepth, GFC_Box *boundingBox) {
+    if (boundingBox) {
+        GFC_Box localBox = { boundingBox->x, boundingBox->y, boundingBox->z, boundingBox->w, boundingBox->d, boundingBox->h };
+        if (!gfc_point_in_box(entityGlobalPosition(entity), localBox)) {
+            return false;
+        }
+    }
+
+    if (entity->entityCollision) {
+        if (entity->entityCollision->type == E_Capsule) {
+            if (capsuleToCapsuleTest(c, entity->entityCollision->s.c, intersectionPoint, penetrationNormal, penetrationDepth)) {
+                return true;
+            }
+            return false;
+        }
+    }
+    else {
+        for (int j = 0; j < gfc_list_get_count(entity->model->mesh_list); j++) {
+            Mesh* mesh = (Mesh*)gfc_list_get_nth(entity->model->mesh_list, j);
+            if (mesh) {
+                // Get primitives
+                for (int k = 0; k < gfc_list_get_count(mesh->primitives); k++) {
+                    MeshPrimitive* primitive = (MeshPrimitive*)gfc_list_get_nth(mesh->primitives, k);
+                    if (primitive) {
+                        if (primitive->objData) {
+                            if (gf3d_entity_obj_capsule_test(primitive->objData, entity, c, intersectionPoint, penetrationNormal, penetrationDepth)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+
+}
 
 int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact, GFC_Triangle3D * t, GFC_Box *boundingBox) {
     if (boundingBox) {
@@ -245,28 +280,16 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
     GFC_Vector3D* modelScale = NULL;
 
     Model* entityModel = entity->model;
-    if (entity->type == ENEMY) {
-        EnemyData* enemyData = (EnemyData*)entity->data;
-        if (enemyData->enemyCollision) {
-            entityModel = enemyData->enemyCollision;
-            modelScale = (GFC_Vector3D*) malloc(sizeof(GFC_Vector3D));
-            memset(modelScale, 0, sizeof(GFC_Vector3D));
-            modelScale->x = entityModel->matrix[0][0];
-            modelScale->y = entityModel->matrix[1][1];
-            modelScale->z = entityModel->matrix[2][2];
-        }
-    }
-    else if (entity->type == TERRAIN) {
-        TerrainData* terrainData = (TerrainData*)entity->data;
-        if (terrainData->terrainCollision) {
-            entityModel = terrainData->terrainCollision;
-            modelScale = (GFC_Vector3D*)malloc(sizeof(GFC_Vector3D));
-            memset(modelScale, 0, sizeof(GFC_Vector3D));
-            modelScale->x = entityModel->matrix[0][0];
-            modelScale->y = entityModel->matrix[1][1];
-            modelScale->z = entityModel->matrix[2][2];
-        }
-    }
+    /*if (entity->entityCollision) {
+        entityModel = entity->entityCollision;
+        modelScale = (GFC_Vector3D*)malloc(sizeof(GFC_Vector3D));
+        memset(modelScale, 0, sizeof(GFC_Vector3D));
+        modelScale->x = entityModel->matrix[0][0];
+        modelScale->y = entityModel->matrix[1][1];
+        modelScale->z = entityModel->matrix[2][2];
+    }*/
+
+
     // Get meshes
     for (int j = 0; j < gfc_list_get_count(entityModel->mesh_list); j++) {
         Mesh* mesh = (Mesh*)gfc_list_get_nth(entityModel->mesh_list, j);
@@ -282,7 +305,6 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
                     }
                 }
             }
-
         }
     }
     return 0;
@@ -313,7 +335,7 @@ void animationSetup(Entity* self, const char* animFolder, char *animations[], in
 
         Model* newModel = gf3d_model_load(animation);
         if (!newModel) {
-            slog("Gltf animation could not be found");
+            slog("Animation could not be found");
             return;
         }
 
@@ -372,7 +394,13 @@ void animationPlay(Entity* self, const char* animName) {
 
     if (!self->model->armature) {
         // TODO: Add support for non-armatures in this animation format
-        printf("\n OBJ list using animationPlay");
+        if (self->model->mesh_as_frame) {
+            printf("\nFrame count: %d", gfc_list_get_count(self->model->mesh_list));
+            self->entityAnimation->animationFrameCount = MAX(0, gfc_list_get_count(self->model->mesh_list));
+        }
+        else {
+            self->entityAnimation->animationFrameCount = 0;
+        }
     }
     else {
         self->entityAnimation->animationFrameCount = MAX(0, self->model->armature->maxFrames);

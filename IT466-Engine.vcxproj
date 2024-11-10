@@ -167,8 +167,10 @@
     <ClCompile Include="gfc\src\miniz.c" />
     <ClCompile Include="src\AmmoPickup.c" />
     <ClCompile Include="src\Character3D.c" />
+    <ClCompile Include="src\Collision.c" />
     <ClCompile Include="src\Door.c" />
     <ClCompile Include="src\Enemy.c" />
+    <ClCompile Include="src\Extra_Primitives.c" />
     <ClCompile Include="src\gf3d_armature.c" />
     <ClCompile Include="src\Interactable.c" />
     <ClCompile Include="src\Projectile.c" />
@@ -242,8 +244,11 @@
     <ClInclude Include="gfc\simple_logger\include\simple_logger.h" />
     <ClInclude Include="include\AmmoPickup.h" />
     <ClInclude Include="include\Bullet.h" />
+    <ClInclude Include="include\Character3D.h" />
+    <ClInclude Include="include\Collision.h" />
     <ClInclude Include="include\Door.h" />
     <ClInclude Include="include\Enemy.h" />
+    <ClInclude Include="include\Extra_Primitives.h" />
     <ClInclude Include="include\gf3d_armature.h" />
     <ClInclude Include="include\Interactable.h" />
     <ClInclude Include="include\Projectile.h" />

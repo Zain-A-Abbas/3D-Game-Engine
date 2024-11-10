@@ -9,7 +9,6 @@ typedef struct EnemyData_S {
     StateMachine        *enemyStateMachine;
     Character3DData     *character3dData;
     float               aiTime; // The time used to gauge gaps between AI decisions
-    Model               *enemyCollision;
     int                 hp;
 } EnemyData;
 
@@ -25,6 +24,6 @@ void enemyUpdate(Entity* self, float delta);
 void enemyAttacked(Entity* self, int damage);
 void enemyDelete(Entity* self);
 
-void enemyScalePreserveModel(Entity* self, GFC_Vector3D scale);
+
 
 #endif

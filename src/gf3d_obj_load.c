@@ -3,6 +3,7 @@
 #include "simple_logger.h"
 
 #include "gf3d_obj_load.h"
+#include "Collision.h"
 
 int gf3d_obj_edge_test(ObjData *obj,GFC_Matrix4 offset, GFC_Edge3D e,GFC_Vector3D *contact)
 {
@@ -577,18 +578,12 @@ Uint8 gf3d_obj_line_test(ObjData *obj, GFC_Edge3D e, GFC_Vector3D *contact) {
     
 }
 
-Uint8 gf3d_entity_obj_line_test(ObjData* obj, Entity* ent, GFC_Edge3D e, GFC_Vector3D* contact, GFC_Triangle3D *t, GFC_Vector3D *modelScale) {
+Uint8 gf3d_entity_obj_line_test(ObjData* obj, Entity* ent, GFC_Edge3D e, GFC_Vector3D* contact, GFC_Triangle3D* t) {
     int i;
     Uint32 index;
     GFC_Vector3D entityPosition = entityGlobalPosition(ent);
     GFC_Vector3D entityRotation = entityGlobalRotation(ent);
     GFC_Vector3D entityScale = entityGlobalScale(ent);
-    // If the model scale was provided, pass that n to the local vector
-    if (modelScale) {
-        entityScale.x *= modelScale->x;
-        entityScale.y *= modelScale->y;
-        entityScale.z *= modelScale->z;
-    }
     if (!obj) return 0;
     if (!obj->outFace || !obj->faceVertices) return 0;
     for (i = 0; i < obj->face_count; i++) {
@@ -611,6 +606,44 @@ Uint8 gf3d_entity_obj_line_test(ObjData* obj, Entity* ent, GFC_Edge3D e, GFC_Vec
         t->b = gfc_vector3d_added(t->b, entityPosition);
         t->c = gfc_vector3d_added(t->c, entityPosition);
         if (gfc_trigfc_angle_edge_test(e, *t, contact)) {
+            return true;
+        };
+    }
+
+    return false;
+
+}
+
+Uint8 gf3d_entity_obj_capsule_test(ObjData* obj, Entity* ent, GFC_Capsule c, GFC_Vector3D* intersectionPoint, GFC_Vector3D* penetrationNormal, float* penetrationDepth) {
+    int i;
+    Uint32 index;
+    GFC_Vector3D entityPosition = entityGlobalPosition(ent);
+    GFC_Vector3D entityRotation = entityGlobalRotation(ent);
+    GFC_Vector3D entityScale = entityGlobalScale(ent);
+    // If the model scale was provided, pass that n to the local vector
+    if (!obj) return 0;
+    if (!obj->outFace || !obj->faceVertices) return 0;
+    GFC_Triangle3D t = { 0 };
+    for (i = 0; i < obj->face_count; i++) {
+        index = obj->outFace[i].verts[0];
+        t.a = obj->faceVertices[index].vertex;
+        index = obj->outFace[i].verts[1];
+        t.b = obj->faceVertices[index].vertex;
+        index = obj->outFace[i].verts[2];
+        t.c = obj->faceVertices[index].vertex;
+
+        t.a = gfc_vector3d_multiply(t.a, entityScale);
+        t.b = gfc_vector3d_multiply(t.b, entityScale);
+        t.c = gfc_vector3d_multiply(t.c, entityScale);
+
+        gfc_vector3d_rotate_about_z(&t.a, entityRotation.z);
+        gfc_vector3d_rotate_about_z(&t.b, entityRotation.z);
+        gfc_vector3d_rotate_about_z(&t.c, entityRotation.z);
+
+        t.a = gfc_vector3d_added(t.a, entityPosition);
+        t.b = gfc_vector3d_added(t.b, entityPosition);
+        t.c = gfc_vector3d_added(t.c, entityPosition);
+        if (capsuleToTriangleTest(c, t, intersectionPoint, penetrationNormal, penetrationDepth)) {
             return true;
         };
     }
