@@ -7,6 +7,7 @@
 #include "gf3d_model.h"
 #include "gfc_primitives.h"
 #include "Collision.h"
+#include "Quadtree.h"
 
 typedef enum {
     NONE,
@@ -18,6 +19,12 @@ typedef enum {
     STRUCTURE,
     PROJECTILE
 } EntityType;
+
+typedef struct EntityCollisions_S {
+    GFC_ExtendedPrimitive       *collisionPrimitive;
+    GFC_Box                     AABB;
+    Quadtree                    *quadTree;
+} EntityCollision;
 
 typedef struct EntityAnimation_S {
     char                *animFolder;
@@ -38,7 +45,7 @@ typedef struct Entity_S {
     EntityType          type;
     int                 animation;
     Model               *model; // POINTER to model
-    GFC_ExtendedPrimitive      *entityCollision;
+    EntityCollision     *entityCollision;
     struct Entity_S            *parent; // POINTER to parent
     struct EntityAnimation_S     *entityAnimation; // Animation manager struct
     // Behavior
