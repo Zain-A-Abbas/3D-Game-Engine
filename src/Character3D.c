@@ -104,39 +104,22 @@ GFC_Vector3D verticalVectorMovement(Entity * self, Character3DData * character3d
 
 
         if (entityCapsuleTest(currEntity, self->entityCollision->collisionPrimitive->s.c, &intersectionPoint, &penetrationNormal, &penetrationDepth, NULL)) {
-            float floorAngle = M_PI / 2 - asinf(penetrationNormal.z);
-            // Make it snap to a certain height when traversing on ground with a lower angle than on the previous frame to account for slightly dipping into the floor
-            if (character3dData->previousFloorAngle > floorAngle) {
-                character3dData->zSnapTarget = intersectionPoint.z;
-            }
+            //printf("\nPenetraion Normal: %f, %f, %f", penetrationNormal.x, penetrationNormal.y, penetrationNormal.z);
+            //printf("\nPenetration depth: %f", penetrationDepth);
+            velocity.z = 0;
+            float velocityLength = gfc_vector3d_magnitude(velocity);
+            GFC_Vector3D velocityNormalized = gfc_vector3d_multiply(velocity, gfc_vector3d(velocityLength / 1, velocityLength / 1, velocityLength / 1));
+            float normalizedDot = gfc_vector3d_dot_product(velocityNormalized, penetrationNormal);
+            GFC_Vector3D undesiredMotion = gfc_vector3d_multiply(penetrationNormal, gfc_vector3d(normalizedDot, normalizedDot, normalizedDot));
+            GFC_Vector3D desiredMotion = gfc_vector3d_subbed(velocityNormalized, undesiredMotion);
 
-            character3dData->previousFloorAngle = floorAngle;
-
-            // Get the normalized non-vertical movement
-            GFC_Vector3D horizontalDirection = gfc_vector3d(character3dData->velocity.x, character3dData->velocity.y, 0);
-            gfc_vector3d_normalize(&horizontalDirection);
-            // Used to determine if moving up or down
-            float dotProduct = gfc_vector3d_dot_product(penetrationNormal, horizontalDirection);
-            float horizontalMagnitude = sqrtf(pow(character3dData->velocity.x, 2) + pow(character3dData->velocity.y, 2));
-
-            // Get the dot product as if parallel to the slope, to slow down vertical movement in case the player is not moving parallel to it
-            GFC_Vector3D opposite = gfc_vector3d(-penetrationNormal.x, -penetrationNormal.y, 0);
-            gfc_vector3d_normalize(&opposite);
-            float parallelDotProduct = gfc_vector3d_dot_product(penetrationNormal, opposite);
-
-            // Uses tanf rather than sinf as the horizontal speed should not adjust with the angle of the slope
-            float floorRatio = tanf(floorAngle) * fabs(dotProduct / parallelDotProduct);
-            
-
-            if (dotProduct < 0) {
-                velocity.z = horizontalMagnitude * floorRatio;
-            }
-            else if (dotProduct > 0) {
-                velocity.z = -horizontalMagnitude * floorRatio;
-            }
-            else {
+            if (gfc_vector3d_dot_product(gfc_vector3d(0, 0, 1), penetrationNormal) > 0.7) {
                 velocity.z = 0;
             }
+            float epsilonDepth = penetrationDepth + GFC_EPSILON * 0.1;
+            GFC_Vector3D epsilonAdjustment = gfc_vector3d_multiply(penetrationNormal, gfc_vector3d(epsilonDepth, epsilonDepth, epsilonDepth));
+            self->position = gfc_vector3d_added(self->position, epsilonAdjustment);
+            
             //printf("\n%f", penetrationNormal.z);
             isOnFloor = true;
 
@@ -145,7 +128,6 @@ GFC_Vector3D verticalVectorMovement(Entity * self, Character3DData * character3d
     }
 
 
-    //character3dData->zSnap = 0;
     if (!isOnFloor) {
         character3dData->zSnap = 0;
         velocity.z += character3dData->gravity * delta;

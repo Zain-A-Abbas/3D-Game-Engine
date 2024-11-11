@@ -4,7 +4,7 @@
 #include "gfc_primitives.h"
 
 typedef struct GFC_Capsule_S {
-    float radius, height; // Height starts from base
+    float radius, height, finalRadius; // Height starts from base
     float rotation_x, rotation_z;
     GFC_Vector3D tip, finalBase, finalTip; // finalBase is entity position, finalTip is tip transformed by entity's scale -> rotation -> position
 } GFC_Capsule;

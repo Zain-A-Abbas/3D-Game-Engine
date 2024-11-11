@@ -115,7 +115,7 @@ int main(int argc,char *argv[])
     // Create player
     Entity * player = createPlayer();
     assignCamera(player, gf3dGetCamera());
-    player->position.z = 8;
+    player->position.z = 0;
     
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -131,9 +131,9 @@ int main(int argc,char *argv[])
     
     // Create land
     Entity* testGround = terrainEntityNew();
-    testGround->model = gf3d_model_load("models/primitives/testground.model");
+    //testGround->model = gf3d_model_load("models/primitives/testground.model");
+    testGround->model = gf3d_model_load("models/structures/Ground1.model");
     //testGround->scale = gfc_vector3d(4, 4, 1);
-    //testGround->model = gf3d_model_load("models/structures/Ground1.model");
     testGround->position = gfc_vector3d(0, 0, -8);
 
     // Create house
@@ -144,10 +144,10 @@ int main(int argc,char *argv[])
 
     // Create Tree
     TerrainData*treeData;
-    int treeCount = 1;// 160 + gfc_random_int(40);
-    for (int i = 0; i < 0; i++) {
-        float treeX = -375*0.1 + gfc_random_int(750*0.1);
-        float treeY = -375*0.1 + gfc_random_int(750*0.1);
+    int treeCount = 160 + gfc_random_int(40);
+    for (int i = 0; i < treeCount; i++) {
+        float treeX = -375 + gfc_random_int(750);
+        float treeY = -375 + gfc_random_int(750);
         float treeZ = -8;// -16 + gfc_random_int(4);
         Entity* testTree = terrainEntityNew();
         testTree->model = gf3d_model_load("models/structures/Tree.model");
@@ -162,7 +162,7 @@ int main(int argc,char *argv[])
         GFC_ExtendedPrimitive* primitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
         memset(primitive, 0, sizeof(GFC_ExtendedPrimitive));
         primitive->type = E_Capsule;
-        GFC_Capsule treeCapsule = gfc_capsule(8, 1);
+        GFC_Capsule treeCapsule = gfc_capsule(8, 2);
         primitive->s.c = treeCapsule;
         treeCollision->collisionPrimitive = primitive;
 
@@ -253,7 +253,7 @@ int main(int argc,char *argv[])
     }    
     vkDeviceWaitIdle(gf3d_vgraphics_get_default_logical_device());    
     //cleanup
-    slog("gf3d program end");
+    slog("\ngf3d program end");
     exit(0);
     slog_sync();
     return 0;

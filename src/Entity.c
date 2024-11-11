@@ -141,6 +141,7 @@ void _entityThink(Entity * self, float delta) {
         if (self->entityCollision->collisionPrimitive->type == E_Capsule) {
             setCapsuleFinalBase(&self->entityCollision->collisionPrimitive->s.c, self);
             setCapsuleFinalTip(&self->entityCollision->collisionPrimitive->s.c, self);
+            setCapsuleFinalRadius(&self->entityCollision->collisionPrimitive->s.c, self);
         }
     }
 

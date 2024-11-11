@@ -7,6 +7,8 @@
 
 struct Entity_S;
 
+void setCapsuleFinalRadius(GFC_Capsule* c, struct Entity_S* ent);
+
 void setCapsuleFinalBase(GFC_Capsule* c, struct Entity_S* ent);
 
 void setCapsuleFinalTip(GFC_Capsule* c, struct Entity_S* ent);
