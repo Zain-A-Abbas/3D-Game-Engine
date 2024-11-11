@@ -133,9 +133,14 @@ void _entityThink(Entity * self, float delta) {
     if (!self) return;
     
     if (self->entityCollision) {
-        if (self->entityCollision->type == E_Capsule) {
-            setCapsuleFinalBase(&self->entityCollision->s.c, self);
-            setCapsuleFinalTip(&self->entityCollision->s.c, self);
+        GFC_Vector3D entityPosition = entityGlobalPosition(self);
+        self->entityCollision->AABB.x = entityPosition.x - self->entityCollision->AABB.w / 2;
+        self->entityCollision->AABB.y = entityPosition.y -self->entityCollision->AABB.d / 2;
+        self->entityCollision->AABB.z = entityPosition.z -self->entityCollision->AABB.h / 2;
+
+        if (self->entityCollision->collisionPrimitive->type == E_Capsule) {
+            setCapsuleFinalBase(&self->entityCollision->collisionPrimitive->s.c, self);
+            setCapsuleFinalTip(&self->entityCollision->collisionPrimitive->s.c, self);
         }
     }
 
@@ -240,8 +245,8 @@ Uint8 entityCapsuleTest(Entity* entity, GFC_Capsule c, GFC_Vector3D* intersectio
     }
 
     if (entity->entityCollision) {
-        if (entity->entityCollision->type == E_Capsule) {
-            if (capsuleToCapsuleTest(c, entity->entityCollision->s.c, intersectionPoint, penetrationNormal, penetrationDepth)) {
+        if (entity->entityCollision->collisionPrimitive->type == E_Capsule) {
+            if (capsuleToCapsuleTest(c, entity->entityCollision->collisionPrimitive->s.c, intersectionPoint, penetrationNormal, penetrationDepth)) {
                 return true;
             }
             return false;

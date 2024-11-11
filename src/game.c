@@ -115,7 +115,7 @@ int main(int argc,char *argv[])
     // Create player
     Entity * player = createPlayer();
     assignCamera(player, gf3dGetCamera());
-    player->position.z = 0;
+    player->position.z = 8 ;
     
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -131,9 +131,9 @@ int main(int argc,char *argv[])
     
     // Create land
     Entity* testGround = terrainEntityNew();
-    //testGround->model = gf3d_model_load("models/primitives/testground.model");
+    testGround->model = gf3d_model_load("models/primitives/testground.model");
     //testGround->scale = gfc_vector3d(4, 4, 1);
-    testGround->model = gf3d_model_load("models/structures/Ground1.model");
+    //testGround->model = gf3d_model_load("models/structures/Ground1.model");
     testGround->position = gfc_vector3d(0, 0, -8);
 
     // Create house
@@ -145,7 +145,7 @@ int main(int argc,char *argv[])
     // Create Tree
     TerrainData*treeData;
     int treeCount = 1;// 160 + gfc_random_int(40);
-    for (int i = 0; i < treeCount; i++) {
+    for (int i = 0; i < 0; i++) {
         float treeX = -375*0.1 + gfc_random_int(750*0.1);
         float treeY = -375*0.1 + gfc_random_int(750*0.1);
         float treeZ = -8;// -16 + gfc_random_int(4);
@@ -155,12 +155,23 @@ int main(int argc,char *argv[])
         testTree->rotation.z = gfc_random() * GFC_2PI;
         testTree->collisionLayer = 0b00000100;
         treeData = (TerrainData*)testTree->data;
-        GFC_ExtendedPrimitive* collision = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
-        memset(collision, 0, sizeof(GFC_ExtendedPrimitive));
-        collision->type = E_Capsule;
+        
+        EntityCollision* treeCollision = (EntityCollision*)malloc(sizeof(EntityCollision));
+        memset(treeCollision, 0, sizeof(EntityCollision));
+
+        GFC_ExtendedPrimitive* primitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
+        memset(primitive, 0, sizeof(GFC_ExtendedPrimitive));
+        primitive->type = E_Capsule;
         GFC_Capsule treeCapsule = gfc_capsule(8, 1);
-        collision->s.c = treeCapsule;
-        testTree->entityCollision = collision;
+        primitive->s.c = treeCapsule;
+        treeCollision->collisionPrimitive = primitive;
+
+        GFC_Box boundingBox = { 0 };
+        boundingBox.x = -2; boundingBox.y = -2; boundingBox.z = -2;
+        boundingBox.w = 4; boundingBox.d = 4; boundingBox.h = 4;
+        treeCollision->AABB = boundingBox;
+
+        testTree->entityCollision = treeCollision;
         //printf("\nTree location: %f, %f, %f", treeX, treeY, treeZ);
     }
 

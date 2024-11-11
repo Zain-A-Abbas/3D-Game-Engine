@@ -106,7 +106,7 @@ void chaseUpdate(struct Entity_S* self, float delta, struct State_S* state, Stat
 	float modelRotation = fMoveTowardsAngle(self->rotation.z, enemyData->character3dData->rotation.z, delta);
 	self->rotation.z = modelRotation;
 	moveAndSlide(self, enemyData->character3dData);
-	enemyHorizontalWallSlide(self, enemyData->character3dData, delta);
+	//enemyHorizontalWallSlide(self, enemyData->character3dData, delta);
 }
 
 void chaseThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {

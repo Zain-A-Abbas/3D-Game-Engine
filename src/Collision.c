@@ -34,8 +34,8 @@ void setCapsuleFinalTip(GFC_Capsule* c, Entity* ent) {
 	c->finalTip.y = finalTip.y;
 	c->finalTip.z = finalTip.z;
 }
-
-// The vast majority of the source code below has been retrieved and converted from https://wickedengine.net/2020/04/capsule-collision-detection
+//SOURCE: https://wickedengine.net/2020/04/capsule-collision-detection
+//ACCESSED: 11/10/2024
 
 short capsuleToCapsuleTest(GFC_Capsule a, GFC_Capsule b, GFC_Vector3D* intersectionPoint, GFC_Vector3D* penetrationNormal, float* penetrationDepth) {
 	GFC_Vector3D baseA = a.finalBase;
@@ -79,7 +79,6 @@ short capsuleToCapsuleTest(GFC_Capsule a, GFC_Capsule b, GFC_Vector3D* intersect
 	GFC_Vector3D bestB = closestPointOnLineSegment(bA, bB, bestA);
 	bestA = closestPointOnLineSegment(aA, aB, bestB);
 
-	printf("\nRadii: %f, %f", a.radius, b.radius);
 	//printf("\nBest A: %f, %f, %f", bestA.x, bestA.y, bestA.z);
 	//printf("\nBest B: %f, %f, %f", bestB.x, bestB.y, bestB.z);
 	GFC_Vector3D _penetrationNormal = gfc_vector3d_subbed(bestA, bestB);
@@ -90,8 +89,7 @@ short capsuleToCapsuleTest(GFC_Capsule a, GFC_Capsule b, GFC_Vector3D* intersect
 	*penetrationNormal = _penetrationNormal;
 	*penetrationDepth = a.radius + b.radius - len;
 
-	printf("\nLen: %f", len);
-	printf("\nPenetration depth: %f", *penetrationDepth);
+
 	return *penetrationDepth > 0;
 }
 
@@ -102,7 +100,7 @@ short capsuleToTriangleTest(GFC_Capsule c, GFC_Triangle3D t, GFC_Vector3D* inter
 	GFC_Vector3D lineEndOffset = gfc_vector3d_multiply(capsuleNormal, gfc_vector3d(c.radius, c.radius, c.radius));
 
 	GFC_Vector3D a = gfc_vector3d_added(c.finalBase, lineEndOffset);
-	GFC_Vector3D b = gfc_vector3d_added(c.finalBase, lineEndOffset);
+	GFC_Vector3D b = gfc_vector3d_subbed(c.finalTip, lineEndOffset);
 
 	// We then get the closest point on the triangle to this raycast
 	// If none exists (dot product = 0) then we just use an arbitrary point on the triangle
@@ -157,12 +155,17 @@ short capsuleToTriangleTest(GFC_Capsule c, GFC_Triangle3D t, GFC_Vector3D* inter
 		referencePoint = t.a;
 	}
 
+	GFC_Vector3D center = closestPointOnLineSegment(a, b, referencePoint);
+
 	GFC_Sphere collisionSphere = { 0 };
 	collisionSphere.r = c.radius;
-	collisionSphere.x = referencePoint.x;
-	collisionSphere.y = referencePoint.y;
-	collisionSphere.z = referencePoint.z;
-	Bool intersected = sphereTriangleTest(collisionSphere, t, intersectionPoint, penetrationNormal, penetrationDepth);
+	collisionSphere.x = center.x;
+	collisionSphere.y = center.y;
+	collisionSphere.z = center.z;
+	if (sphereTriangleTest(collisionSphere, t, intersectionPoint, penetrationNormal, penetrationDepth)) {
+		return true;
+	}
+	return false;
 
 }
 
@@ -175,10 +178,11 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 
 	normalized = gfc_trigfc_angle_get_normal(triangle);
 
-	float dist = gfc_vector3d_dot_product(sphereCenter, normalized);
+	float dist = gfc_vector3d_dot_product(gfc_vector3d_subbed(sphereCenter, triangle.a), normalized);
 	if (dist > sphere.r || dist < -sphere.r) {
 		return false;
 	}
+
 
 	GFC_Vector3D point0 = gfc_vector3d_subbed(sphereCenter, gfc_vector3d_multiply(normalized, gfc_vector3d(dist, dist, dist)));
 
@@ -200,15 +204,15 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 	float distsq1 = gfc_vector3d_dot_product(v1, v1);
 	Uint8 intersects = distsq1 < radiussq;
 
-	// Edge 1
-	GFC_Vector3D point2 = closestPointOnLineSegment(triangle.b, triangle.a, sphereCenter);
-	GFC_Vector3D v2 = gfc_vector3d_subbed(sphereCenter, point1);
+	// Edge 2
+	GFC_Vector3D point2 = closestPointOnLineSegment(triangle.b, triangle.c, sphereCenter);
+	GFC_Vector3D v2 = gfc_vector3d_subbed(sphereCenter, point2);
 	float distsq2 = gfc_vector3d_dot_product(v2, v2);
 	intersects |= distsq2 < radiussq;
 
-	// Edge 1
+	// Edge 3
 	GFC_Vector3D point3 = closestPointOnLineSegment(triangle.c, triangle.a, sphereCenter);
-	GFC_Vector3D v3 = gfc_vector3d_subbed(sphereCenter, point1);
+	GFC_Vector3D v3 = gfc_vector3d_subbed(sphereCenter, point3);
 	float distsq3 = gfc_vector3d_dot_product(v3, v3);
 	intersects |= distsq3 < radiussq;
 	
@@ -221,6 +225,7 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 		}
 		else {
 			GFC_Vector3D d = gfc_vector3d_subbed(sphereCenter, point1);
+
 			float bestDistSq = gfc_vector3d_dot_product(d, d);
 			bestPoint = point1;
 			intersectionVector = d;
@@ -243,11 +248,22 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 
 		}
 
-		float len = sqrt(gfc_vector3d_dot_product(intersectionVector, intersectionVector));
-		GFC_Vector3D length = { len, len, len };
-		*intersectionPoint = intersectionVector;
-		*penetrationNormal = gfc_vector3d_multiply(intersectionVector, gfc_vector3d(1 / length.x, 1 / length.y, 1 / length.z));
-		*penetrationDepth = sphere.r - len;
+		float lenSquare = gfc_vector3d_dot_product(intersectionVector, intersectionVector);
+		if (lenSquare == 0) {
+			*intersectionPoint = sphereCenter;
+			*penetrationNormal = normalized;
+			*penetrationDepth = 0;
+		}
+		else {
+			float len = sqrt(lenSquare);
+			GFC_Vector3D length = { len, len, len };
+			*intersectionPoint = intersectionVector;
+			*penetrationNormal = gfc_vector3d_multiply(intersectionVector, gfc_vector3d(1 / length.x, 1 / length.y, 1 / length.z));
+			if (intersectionVector.z == 0) {
+			}
+			*penetrationDepth = sphere.r - len;
+
+		}
 		return true;
 	}
 	return false;
