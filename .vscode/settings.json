@@ -4,6 +4,7 @@
         "gf3d_gltf_parse.h": "c",
         "limits": "c",
         "*.tcc": "c",
-        "enemy.h": "c"
+        "enemy.h": "c",
+        "extra_primitives.h": "c"
     }
 }

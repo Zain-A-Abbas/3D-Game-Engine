@@ -101,7 +101,7 @@ Entity * createPlayer() {
 
     // Create capsule
     GFC_ExtendedPrimitive* collisionPrimitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
-    memset(collision, 0, sizeof(GFC_ExtendedPrimitive));
+    memset(collisionPrimitive, 0, sizeof(GFC_ExtendedPrimitive));
     collisionPrimitive->type = E_Capsule;
     GFC_Capsule playerCapsule = gfc_capsule(8, 2);
     collisionPrimitive->s.c = playerCapsule;

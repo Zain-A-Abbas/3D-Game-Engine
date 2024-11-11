@@ -115,7 +115,7 @@ int main(int argc,char *argv[])
     // Create player
     Entity * player = createPlayer();
     assignCamera(player, gf3dGetCamera());
-    player->position.z = 8 ;
+    player->position.z = 8;
     
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -213,7 +213,7 @@ int main(int argc,char *argv[])
             draw_origin();
 
                 // Draw last player raycast
-              PlayerData* playerData = getPlayerData(player);
+              /*PlayerData* playerData = getPlayerData(player);
                 if (playerData != NULL) {
                     if (playerData->raycastTests) {
                         int i = 0;
@@ -239,7 +239,7 @@ int main(int argc,char *argv[])
                     //if (playerData->boundingBoxTest.x != 0) {
                       //  gf3d_draw_cube_solid(playerData->boundingBoxTest, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), gfc_color(0.5, 0.2, 0.2, 0.8));
                     //}
-                }
+                }*/
             //2D draws
                 //gf2d_mouse_draw();
                 drawUI();

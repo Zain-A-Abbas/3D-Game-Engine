@@ -304,7 +304,7 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
                 MeshPrimitive* primitive = (MeshPrimitive*)gfc_list_get_nth(mesh->primitives, k);
                 if (primitive) {
                     if (primitive->objData) {
-                        if (gf3d_entity_obj_line_test(primitive->objData, entity, raycast, contact, t, modelScale)) {
+                        if (gf3d_entity_obj_line_test(primitive->objData, entity, raycast, contact, t)) {
                             return true;
                         }
                     }
