@@ -23,4 +23,6 @@ GFC_Vector3D closestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vecto
 
 GFC_Box drawableBoxPrimitive(GFC_Box box);
 
+GFC_Vector3D cubeHalfDimensions(GFC_Box box);
+
 #endif

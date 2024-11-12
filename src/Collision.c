@@ -291,11 +291,20 @@ GFC_Vector3D closestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vecto
 GFC_Box drawableBoxPrimitive(GFC_Box box) {
 	GFC_Box drawable = { 0 };
 	drawable.x = box.x + box.w / 2;
-	drawable.y = box.z + box.d / 2;
-	drawable.z = box.y + box.h / 2;
+	drawable.z = box.z + box.h / 2;
+	drawable.y = box.y + box.d / 2;
 	drawable.w = box.w / 2;
 	drawable.h = box.d / 2;
 	drawable.d = box.h / 2;
 
 	return drawable;
+}
+
+GFC_Vector3D cubeHalfDimensions(GFC_Box box) {
+	GFC_Vector3D half = { 0 };
+	half.x = box.w / 2;
+	half.y = box.h / 2;
+	half.z = box.d / 2;
+
+	return half;
 }

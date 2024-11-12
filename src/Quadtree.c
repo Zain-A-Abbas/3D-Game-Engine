@@ -4,6 +4,7 @@
 #include "gfc_primitives.h"
 
 Quadtree* newQuadTree(Entity* entity, GFC_Box boundingBox, int splitCount) {
+	printf("\nStart");
 	if (splitCount < 1) {
 		slog("Split count must be minimum 1");
 		return NULL;
@@ -65,6 +66,7 @@ Quadtree* newQuadTree(Entity* entity, GFC_Box boundingBox, int splitCount) {
 	}
 	entity->entityCollision->AABB = boundingBox;
 	entity->entityCollision->quadTree = quadtree;
+	printf("\nFinish\n");
 }
 
 GFC_List* getTriangleIndexes(Quadtree* quadtree) {
@@ -116,9 +118,8 @@ void addTrianglesToQuadtree(Quadtree* quadtree, Entity* ent, ObjData* obj) {
 
 void recursiveCreateNodeTree(Quadtree* quadtree, QuadtreeNode* node, GFC_Box parentAABB, int currentLevel, int splitCount) {
 	if (currentLevel == splitCount) {
-		node->leaf = true;
-		printf("\nCurrent level: %d", currentLevel);
-		printf("\nQuadtree leaves: %d", gfc_list_get_count(quadtree->leaves));
+		//printf("\nCurrent level: %d", currentLevel);
+		//printf("\nQuadtree leaves: %d", gfc_list_get_count(quadtree->leaves));
 		gfc_list_append(quadtree->leaves, node);
 		node->triangleList = gfc_list_new_size(8);
 		return;
@@ -133,13 +134,13 @@ void recursiveCreateNodeTree(Quadtree* quadtree, QuadtreeNode* node, GFC_Box par
 		childAABB.y = parentAABB.y;
 		childAABB.z = parentAABB.z;
 		childAABB.w = parentAABB.w / 2;
-		childAABB.d = parentAABB.d / 2;
-		childAABB.h = parentAABB.h;
+		childAABB.d = parentAABB.d;
+		childAABB.h = parentAABB.h / 2;
 		if (i == 1 || i == 3) {
 			childAABB.x += parentAABB.w / 2;
 		}
 		if (i == 2 || i == 3) {
-			childAABB.z += parentAABB.d / 2;
+			childAABB.y += parentAABB.h / 2;
 		}
 
 		newNode->AABB = childAABB;

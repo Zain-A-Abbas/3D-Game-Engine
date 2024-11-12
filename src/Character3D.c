@@ -167,9 +167,6 @@ int isOnFloor(Entity* self, Character3DData* character3dData, GFC_Vector3D* floo
             gfc_vector3d_rotate_about_z(&gravityRaycastDir, j * GFC_HALF_PI);
             gravityRaycast = gfc_edge3d_from_vectors(gfc_vector3d_added(entityGlobalPosition(self), gravityRaycastDir), entityGlobalPosition(self));
             if (entityRaycastTest(&entityManager.entityList[i], gravityRaycast, contact, &t, NULL)) {
-                /*printf("%f, %f, %f", t.a.x, t.a.y, t.a.z);
-                printf("%f, %f, %f", t.b.x, t.b.y, t.b.z);
-                printf("%f, %f, %f", t.c.x, t.c.y, t.c.z);*/
                 *floorNormal = gfc_trigfc_angle_get_normal(t);
                 return true;
             }

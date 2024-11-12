@@ -9,7 +9,6 @@ struct Entity_S;
 
 typedef struct QuadtreeNode_S {
 	struct QuadtreeNode_S		*children[4];
-	Bool						leaf;	// Is leaf node
 	GFC_List					*triangleList; // Holds integer indexes of the triangles
 	GFC_Box						AABB; 
 } QuadtreeNode;

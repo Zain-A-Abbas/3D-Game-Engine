@@ -29,4 +29,6 @@ typedef struct
 
 GFC_Capsule gfc_capsule(float height, float radius);
 
+void drawBoundingBox(GFC_Box box, GFC_Color color, Uint8 insideOut);
+
 #endif

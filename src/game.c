@@ -138,7 +138,7 @@ int main(int argc,char *argv[])
     EntityCollision* groundCollision = (EntityCollision*)malloc(sizeof(EntityCollision));
     memset(groundCollision, 0, sizeof(EntityCollision));
     testGround->entityCollision = groundCollision;
-    GFC_Box testGroundbox = gfc_box(-375, -10, -375, 750, 20, 750);
+    GFC_Box testGroundbox = gfc_box(-375, -375, -20, 750, 750, 40);
     newQuadTree(testGround, testGroundbox, 4);
 
     // Create house
@@ -248,28 +248,15 @@ int main(int argc,char *argv[])
 
             for (int i = 0; i < gfc_list_get_count(testGround->entityCollision->quadTree->leaves); i++) {
                 QuadtreeNode* currentLeaf = (QuadtreeNode*)gfc_list_get_nth(testGround->entityCollision->quadTree->leaves, i);
-                gf3d_draw_cube_solid(
-                    drawableBoxPrimitive(currentLeaf->AABB),
-                    gfc_vector3d(0, 0, 0),
-                    gfc_vector3d(0, 0, 0),
-                    gfc_vector3d(-1, -1, -1),
-                    gfc_color(0.4, 0.4, 0.4, 0.5)
-                );
+                drawBoundingBox(currentLeaf->AABB, gfc_color(0.3, 0.3, 0.3, 0.4), 1);
             }
-            /*gf3d_draw_cube_solid(
-                drawableBoxPrimitive(testGroundbox),
-                gfc_vector3d(0, 0, 0),
-                gfc_vector3d(0, 0, 0),
-                gfc_vector3d(1, 1, 1),
-                gfc_color(0.4, 0.8, 0.4, 0.5)
-            );*/
-            gf3d_draw_cube_solid(
-                drawableBoxPrimitive(player->entityCollision->AABB),
-                gfc_vector3d(0, 0, 0),
-                gfc_vector3d(0, 0, 0),
-                gfc_vector3d(1, 1, 1),
-                gfc_color(0.4, 0.4, 0.4, 0.5)
-            );
+            //GFC_Box testBox = gfc_box(-10, -5, -10, 20, 10, 20);
+            //drawBoundingBox(testBox);
+            drawBoundingBox(player->entityCollision->AABB, gfc_color(0.3, 0.3, 0.3, 0.4), 0);
+
+            //if (gfc_box_overlap(testBox, player->entityCollision->AABB)) {
+            //    printf("klasjsd");
+            //}
             //2D draws
                 //gf2d_mouse_draw();
                 drawUI();

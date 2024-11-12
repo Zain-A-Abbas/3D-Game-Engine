@@ -665,6 +665,9 @@ Uint8 gf3d_entity_obj_capsule_test(ObjData* obj, Entity* ent, GFC_Capsule c, GFC
                 currentLeaf = (QuadtreeNode*) gfc_list_get_nth(ent->entityCollision->quadTree->leaves, i);
                 if (gfc_box_overlap(currentLeaf->AABB, *boundingBox)) {
                     gfc_list_append(intersectingNodes, currentLeaf);
+                    if (gfc_list_get_count(intersectingNodes) >= 4) {
+                        break;
+                    }
                 }
             }
 
@@ -678,7 +681,7 @@ Uint8 gf3d_entity_obj_capsule_test(ObjData* obj, Entity* ent, GFC_Capsule c, GFC
 
 
 
-            /*int* triangleIndex;
+            int* triangleIndex;
             for (i = 0; i < gfc_list_count(faceIndices); i++) {
                 triangleIndex = gfc_list_get_nth(faceIndices, i);
                 index = obj->outFace[*triangleIndex].verts[0];
@@ -703,7 +706,7 @@ Uint8 gf3d_entity_obj_capsule_test(ObjData* obj, Entity* ent, GFC_Capsule c, GFC
                     return true;
                 };
             }
-            return false;*/
+            return false;
         }
     }
 

@@ -135,8 +135,8 @@ void _entityThink(Entity * self, float delta) {
     if (self->entityCollision) {
         GFC_Vector3D entityPosition = entityGlobalPosition(self);
         self->entityCollision->AABB.x = entityPosition.x - self->entityCollision->AABB.w / 2;
-        self->entityCollision->AABB.z = entityPosition.y - self->entityCollision->AABB.d / 2;
-        self->entityCollision->AABB.y = entityPosition.z - self->entityCollision->AABB.h / 2;
+        self->entityCollision->AABB.y = entityPosition.y - self->entityCollision->AABB.h / 2;
+        self->entityCollision->AABB.z = entityPosition.z - self->entityCollision->AABB.d / 2;
         if (self->entityCollision->collisionPrimitive) {
             if (self->entityCollision->collisionPrimitive->type == E_Capsule) {
                 setCapsuleFinalBase(&self->entityCollision->collisionPrimitive->s.c, self);
