@@ -135,6 +135,11 @@ int main(int argc,char *argv[])
     testGround->model = gf3d_model_load("models/structures/Ground1.model");
     //testGround->scale = gfc_vector3d(4, 4, 1);
     testGround->position = gfc_vector3d(0, 0, -8);
+    EntityCollision* groundCollision = (EntityCollision*)malloc(sizeof(EntityCollision));
+    memset(groundCollision, 0, sizeof(EntityCollision));
+    testGround->entityCollision = groundCollision;
+    GFC_Box testGroundbox = gfc_box(-375, -10, -375, 750, 20, 750);
+    newQuadTree(testGround, testGroundbox, 4);
 
     // Create house
     //Entity* testHouse = structureNew(HOUSE);
@@ -240,6 +245,31 @@ int main(int argc,char *argv[])
                       //  gf3d_draw_cube_solid(playerData->boundingBoxTest, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), gfc_color(0.5, 0.2, 0.2, 0.8));
                     //}
                 }*/
+
+            for (int i = 0; i < gfc_list_get_count(testGround->entityCollision->quadTree->leaves); i++) {
+                QuadtreeNode* currentLeaf = (QuadtreeNode*)gfc_list_get_nth(testGround->entityCollision->quadTree->leaves, i);
+                gf3d_draw_cube_solid(
+                    drawableBoxPrimitive(currentLeaf->AABB),
+                    gfc_vector3d(0, 0, 0),
+                    gfc_vector3d(0, 0, 0),
+                    gfc_vector3d(-1, -1, -1),
+                    gfc_color(0.4, 0.4, 0.4, 0.5)
+                );
+            }
+            /*gf3d_draw_cube_solid(
+                drawableBoxPrimitive(testGroundbox),
+                gfc_vector3d(0, 0, 0),
+                gfc_vector3d(0, 0, 0),
+                gfc_vector3d(1, 1, 1),
+                gfc_color(0.4, 0.8, 0.4, 0.5)
+            );*/
+            gf3d_draw_cube_solid(
+                drawableBoxPrimitive(player->entityCollision->AABB),
+                gfc_vector3d(0, 0, 0),
+                gfc_vector3d(0, 0, 0),
+                gfc_vector3d(1, 1, 1),
+                gfc_color(0.4, 0.4, 0.4, 0.5)
+            );
             //2D draws
                 //gf2d_mouse_draw();
                 drawUI();

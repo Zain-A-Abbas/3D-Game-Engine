@@ -135,13 +135,14 @@ void _entityThink(Entity * self, float delta) {
     if (self->entityCollision) {
         GFC_Vector3D entityPosition = entityGlobalPosition(self);
         self->entityCollision->AABB.x = entityPosition.x - self->entityCollision->AABB.w / 2;
-        self->entityCollision->AABB.y = entityPosition.y -self->entityCollision->AABB.d / 2;
-        self->entityCollision->AABB.z = entityPosition.z -self->entityCollision->AABB.h / 2;
-
-        if (self->entityCollision->collisionPrimitive->type == E_Capsule) {
-            setCapsuleFinalBase(&self->entityCollision->collisionPrimitive->s.c, self);
-            setCapsuleFinalTip(&self->entityCollision->collisionPrimitive->s.c, self);
-            setCapsuleFinalRadius(&self->entityCollision->collisionPrimitive->s.c, self);
+        self->entityCollision->AABB.z = entityPosition.y - self->entityCollision->AABB.d / 2;
+        self->entityCollision->AABB.y = entityPosition.z - self->entityCollision->AABB.h / 2;
+        if (self->entityCollision->collisionPrimitive) {
+            if (self->entityCollision->collisionPrimitive->type == E_Capsule) {
+                setCapsuleFinalBase(&self->entityCollision->collisionPrimitive->s.c, self);
+                setCapsuleFinalTip(&self->entityCollision->collisionPrimitive->s.c, self);
+                setCapsuleFinalRadius(&self->entityCollision->collisionPrimitive->s.c, self);
+            }
         }
     }
 
@@ -238,33 +239,26 @@ GFC_Vector3D entityGlobalScale(Entity* self) {
 }
 
 Uint8 entityCapsuleTest(Entity* entity, GFC_Capsule c, GFC_Vector3D* intersectionPoint, GFC_Vector3D* penetrationNormal, float* penetrationDepth, GFC_Box *boundingBox) {
-    if (boundingBox) {
-        GFC_Box localBox = { boundingBox->x, boundingBox->y, boundingBox->z, boundingBox->w, boundingBox->d, boundingBox->h };
-        if (!gfc_point_in_box(entityGlobalPosition(entity), localBox)) {
-            return false;
-        }
-    }
-
     if (entity->entityCollision) {
-        if (entity->entityCollision->collisionPrimitive->type == E_Capsule) {
-            if (capsuleToCapsuleTest(c, entity->entityCollision->collisionPrimitive->s.c, intersectionPoint, penetrationNormal, penetrationDepth)) {
-                return true;
+        if (entity->entityCollision->collisionPrimitive) {
+            if (entity->entityCollision->collisionPrimitive->type == E_Capsule) {
+                if (capsuleToCapsuleTest(c, entity->entityCollision->collisionPrimitive->s.c, intersectionPoint, penetrationNormal, penetrationDepth)) {
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
     }
-    else {
-        for (int j = 0; j < gfc_list_get_count(entity->model->mesh_list); j++) {
-            Mesh* mesh = (Mesh*)gfc_list_get_nth(entity->model->mesh_list, j);
-            if (mesh) {
-                // Get primitives
-                for (int k = 0; k < gfc_list_get_count(mesh->primitives); k++) {
-                    MeshPrimitive* primitive = (MeshPrimitive*)gfc_list_get_nth(mesh->primitives, k);
-                    if (primitive) {
-                        if (primitive->objData) {
-                            if (gf3d_entity_obj_capsule_test(primitive->objData, entity, c, intersectionPoint, penetrationNormal, penetrationDepth)) {
-                                return true;
-                            }
+    for (int j = 0; j < gfc_list_get_count(entity->model->mesh_list); j++) {
+        Mesh* mesh = (Mesh*)gfc_list_get_nth(entity->model->mesh_list, j);
+        if (mesh) {
+            // Get primitives
+            for (int k = 0; k < gfc_list_get_count(mesh->primitives); k++) {
+                MeshPrimitive* primitive = (MeshPrimitive*)gfc_list_get_nth(mesh->primitives, k);
+                if (primitive) {
+                    if (primitive->objData) {
+                        if (gf3d_entity_obj_capsule_test(primitive->objData, entity, c, intersectionPoint, penetrationNormal, penetrationDepth, boundingBox)) {
+                            return true;
                         }
                     }
                 }

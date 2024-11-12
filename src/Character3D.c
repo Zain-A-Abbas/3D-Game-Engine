@@ -103,17 +103,27 @@ GFC_Vector3D verticalVectorMovement(Entity * self, Character3DData * character3d
         }
 
 
-        if (entityCapsuleTest(currEntity, self->entityCollision->collisionPrimitive->s.c, &intersectionPoint, &penetrationNormal, &penetrationDepth, NULL)) {
+        if (entityCapsuleTest(currEntity, self->entityCollision->collisionPrimitive->s.c, &intersectionPoint, &penetrationNormal, &penetrationDepth, &self->entityCollision->AABB)) {
             //printf("\nPenetraion Normal: %f, %f, %f", penetrationNormal.x, penetrationNormal.y, penetrationNormal.z);
             //printf("\nPenetration depth: %f", penetrationDepth);
-            velocity.z = 0;
             float velocityLength = gfc_vector3d_magnitude(velocity);
             GFC_Vector3D velocityNormalized = gfc_vector3d_multiply(velocity, gfc_vector3d(velocityLength / 1, velocityLength / 1, velocityLength / 1));
             float normalizedDot = gfc_vector3d_dot_product(velocityNormalized, penetrationNormal);
             GFC_Vector3D undesiredMotion = gfc_vector3d_multiply(penetrationNormal, gfc_vector3d(normalizedDot, normalizedDot, normalizedDot));
             GFC_Vector3D desiredMotion = gfc_vector3d_subbed(velocityNormalized, undesiredMotion);
 
-            if (gfc_vector3d_dot_product(gfc_vector3d(0, 0, 1), penetrationNormal) > 0.7) {
+
+            GFC_Vector3D horizontalDirection = gfc_vector3d(character3dData->velocity.x, character3dData->velocity.y, 0); 
+            gfc_vector3d_normalize(&horizontalDirection);
+            float dotProduct = gfc_vector3d_dot_product(penetrationNormal, horizontalDirection);
+            float horizontalMagnitude = sqrt(character3dData->velocity.x * character3dData->velocity.x + character3dData->velocity.y * character3dData->velocity.y);
+            if (dotProduct > 0) {
+                velocity.z = -tanf(dotProduct) * horizontalMagnitude;
+            }
+            else if (dotProduct < 0) {
+                velocity.z = 0;
+            } else
+            {
                 velocity.z = 0;
             }
             float epsilonDepth = penetrationDepth + GFC_EPSILON * 0.1;

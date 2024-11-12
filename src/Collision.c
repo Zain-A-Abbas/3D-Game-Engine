@@ -263,6 +263,8 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 		}
 
 		intersectionVector = gfc_vector3d_subbed(sphereCenter, bestPoint);
+
+
 		//printf("\nSphere center: %f, %f, %f", sphereCenter.x, sphereCenter.y, sphereCenter.z);
 		//printf("\nBest point: %f, %f, %f", bestPoint.x, bestPoint.y, bestPoint.z);
 		float lenSquare = gfc_vector3d_dot_product(intersectionVector, intersectionVector);
@@ -284,4 +286,16 @@ GFC_Vector3D closestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vecto
 	float t = gfc_vector3d_dot_product(gfc_vector3d_subbed(point, a), ab) / gfc_vector3d_dot_product(ab, ab);
 	float saturated = MIN(MAX(t, 0), 1);
 	return gfc_vector3d_added(a, gfc_vector3d_multiply(ab, gfc_vector3d(saturated, saturated, saturated)));
+}
+
+GFC_Box drawableBoxPrimitive(GFC_Box box) {
+	GFC_Box drawable = { 0 };
+	drawable.x = box.x + box.w / 2;
+	drawable.y = box.z + box.d / 2;
+	drawable.z = box.y + box.h / 2;
+	drawable.w = box.w / 2;
+	drawable.h = box.d / 2;
+	drawable.d = box.h / 2;
+
+	return drawable;
 }

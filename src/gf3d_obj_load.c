@@ -645,16 +645,69 @@ Uint8 gf3d_entity_obj_line_test(ObjData* obj, Entity* ent, GFC_Edge3D e, GFC_Vec
 
 }
 
-Uint8 gf3d_entity_obj_capsule_test(ObjData* obj, Entity* ent, GFC_Capsule c, GFC_Vector3D* intersectionPoint, GFC_Vector3D* penetrationNormal, float* penetrationDepth) {
+Uint8 gf3d_entity_obj_capsule_test(ObjData* obj, Entity* ent, GFC_Capsule c, GFC_Vector3D* intersectionPoint, GFC_Vector3D* penetrationNormal, float* penetrationDepth, GFC_Box* boundingBox) {
     int i;
     Uint32 index;
     GFC_Vector3D entityPosition = entityGlobalPosition(ent);
     GFC_Vector3D entityRotation = entityGlobalRotation(ent);
     GFC_Vector3D entityScale = entityGlobalScale(ent);
+    GFC_Triangle3D t = { 0 };
     // If the model scale was provided, pass that n to the local vector
     if (!obj) return 0;
     if (!obj->outFace || !obj->faceVertices) return 0;
-    GFC_Triangle3D t = { 0 };
+
+    if (ent->entityCollision) {
+        // If bounding box provided and entity has quadtree, then use entity quadtree triangles
+        if (ent->entityCollision->quadTree && boundingBox) {
+            GFC_List *intersectingNodes = gfc_list_new_size(4);
+            QuadtreeNode* currentLeaf;
+            for (i = 0; i < gfc_list_count(ent->entityCollision->quadTree->leaves); i++) {
+                currentLeaf = (QuadtreeNode*) gfc_list_get_nth(ent->entityCollision->quadTree->leaves, i);
+                if (gfc_box_overlap(currentLeaf->AABB, *boundingBox)) {
+                    gfc_list_append(intersectingNodes, currentLeaf);
+                }
+            }
+
+            GFC_List* faceIndices = gfc_list_new();
+            for (i = 0; i < gfc_list_count(intersectingNodes); i++) {
+                currentLeaf = (QuadtreeNode*) gfc_list_get_nth(intersectingNodes, i);
+                for (int j = 0; j < gfc_list_count(currentLeaf->triangleList); j++) {
+                    gfc_list_append(faceIndices, gfc_list_get_nth(currentLeaf->triangleList, j));
+                }
+            }
+
+
+
+            /*int* triangleIndex;
+            for (i = 0; i < gfc_list_count(faceIndices); i++) {
+                triangleIndex = gfc_list_get_nth(faceIndices, i);
+                index = obj->outFace[*triangleIndex].verts[0];
+                t.a = obj->faceVertices[index].vertex;
+                index = obj->outFace[*triangleIndex].verts[1];
+                t.b = obj->faceVertices[index].vertex;
+                index = obj->outFace[*triangleIndex].verts[2];
+                t.c = obj->faceVertices[index].vertex;
+
+                t.a = gfc_vector3d_multiply(t.a, entityScale);
+                t.b = gfc_vector3d_multiply(t.b, entityScale);
+                t.c = gfc_vector3d_multiply(t.c, entityScale);
+
+                gfc_vector3d_rotate_about_z(&t.a, entityRotation.z);
+                gfc_vector3d_rotate_about_z(&t.b, entityRotation.z);
+                gfc_vector3d_rotate_about_z(&t.c, entityRotation.z);
+
+                t.a = gfc_vector3d_added(t.a, entityPosition);
+                t.b = gfc_vector3d_added(t.b, entityPosition);
+                t.c = gfc_vector3d_added(t.c, entityPosition);
+                if (capsuleToTriangleTest(c, t, intersectionPoint, penetrationNormal, penetrationDepth)) {
+                    return true;
+                };
+            }
+            return false;*/
+        }
+    }
+
+    
     for (i = 0; i < obj->face_count; i++) {
         index = obj->outFace[i].verts[0];
         t.a = obj->faceVertices[index].vertex;

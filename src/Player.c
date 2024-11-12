@@ -108,12 +108,9 @@ Entity * createPlayer() {
     collision->collisionPrimitive = collisionPrimitive;
     
     GFC_Box boundingBox = {0};
-    boundingBox.x = -4;
-    boundingBox.y = -4;
-    boundingBox.z = -4;
     boundingBox.w = 8;
     boundingBox.d = 8;
-    boundingBox.h = 8;
+    boundingBox.h = 24;
 
     collision->AABB = boundingBox;
 

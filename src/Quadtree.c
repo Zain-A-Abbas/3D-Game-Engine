@@ -38,6 +38,8 @@ Quadtree* newQuadTree(Entity* entity, GFC_Box boundingBox, int splitCount) {
 		return NULL;
 	}
 
+	quadtree->leaves = leaves;
+
 	entity->entityCollision->AABB = boundingBox;
 
 	QuadtreeNode* root = (QuadtreeNode*)malloc(sizeof(QuadtreeNode));
@@ -61,6 +63,8 @@ Quadtree* newQuadTree(Entity* entity, GFC_Box boundingBox, int splitCount) {
 			}
 		}
 	}
+	entity->entityCollision->AABB = boundingBox;
+	entity->entityCollision->quadTree = quadtree;
 }
 
 GFC_List* getTriangleIndexes(Quadtree* quadtree) {
@@ -95,6 +99,9 @@ void addTrianglesToQuadtree(Quadtree* quadtree, Entity* ent, ObjData* obj) {
 		t.a = gfc_vector3d_added(t.a, entityPosition);
 		t.b = gfc_vector3d_added(t.b, entityPosition);
 		t.c = gfc_vector3d_added(t.c, entityPosition);
+
+		GFC_Vector3D currentPoint = t.a;
+
 		GFC_Box triangleBox = triangleToBox(t);
 		for (int j = 0; j < gfc_list_get_count(quadtree->leaves); j++) {
 			QuadtreeNode *node = (QuadtreeNode*)gfc_list_get_nth(quadtree->leaves, j);
@@ -110,8 +117,10 @@ void addTrianglesToQuadtree(Quadtree* quadtree, Entity* ent, ObjData* obj) {
 void recursiveCreateNodeTree(Quadtree* quadtree, QuadtreeNode* node, GFC_Box parentAABB, int currentLevel, int splitCount) {
 	if (currentLevel == splitCount) {
 		node->leaf = true;
+		printf("\nCurrent level: %d", currentLevel);
+		printf("\nQuadtree leaves: %d", gfc_list_get_count(quadtree->leaves));
 		gfc_list_append(quadtree->leaves, node);
-		node->triangleList = gfc_list_new_size(64);
+		node->triangleList = gfc_list_new_size(8);
 		return;
 	}
 	//node->children = (QuadtreeNode*) malloc(4 * sizeof(QuadtreeNode));
@@ -130,7 +139,7 @@ void recursiveCreateNodeTree(Quadtree* quadtree, QuadtreeNode* node, GFC_Box par
 			childAABB.x += parentAABB.w / 2;
 		}
 		if (i == 2 || i == 3) {
-			childAABB.y += parentAABB.d / 2;
+			childAABB.z += parentAABB.d / 2;
 		}
 
 		newNode->AABB = childAABB;

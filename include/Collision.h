@@ -21,5 +21,6 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 
 GFC_Vector3D closestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vector3D point);
 
+GFC_Box drawableBoxPrimitive(GFC_Box box);
 
 #endif
