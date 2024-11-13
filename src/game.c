@@ -142,9 +142,9 @@ int main(int argc,char *argv[])
     newQuadTree(testGround, testGroundbox, 4);
 
     // Create house
-    //Entity* testHouse = structureNew(HOUSE);
-    //testHouse->position = gfc_vector3d(0, 64, 2);
-    //testHouse->scale = gfc_vector3d(1, 1, 1);
+    Entity* testHouse = structureNew(HOUSE);
+    testHouse->position = gfc_vector3d(0, 64, 2);
+    testHouse->scale = gfc_vector3d(1, 1, 1);
 
 
     // Create Tree
@@ -153,7 +153,7 @@ int main(int argc,char *argv[])
     for (int i = 0; i < treeCount; i++) {
         float treeX = -375 + gfc_random_int(750);
         float treeY = -375 + gfc_random_int(750);
-        float treeZ = -8;// -16 + gfc_random_int(4);
+        float treeZ = -16 + gfc_random_int(4);
         Entity* testTree = terrainEntityNew();
         testTree->model = gf3d_model_load("models/structures/Tree.model");
         testTree->position = gfc_vector3d(treeX, treeY, treeZ);
@@ -252,7 +252,7 @@ int main(int argc,char *argv[])
             }
             //GFC_Box testBox = gfc_box(-10, -5, -10, 20, 10, 20);
             //drawBoundingBox(testBox);
-            drawBoundingBox(player->entityCollision->AABB, gfc_color(0.3, 0.3, 0.3, 0.4), 0);
+            drawBoundingBox(player->entityCollision->AABB, gfc_color(0.1, 0.3, 0.3, 0.5), 0);
 
             //if (gfc_box_overlap(testBox, player->entityCollision->AABB)) {
             //    printf("klasjsd");
