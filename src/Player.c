@@ -15,7 +15,7 @@ const int LOWEST_X_DEGREES = -30;
 
 const float INTERACT_DISTANCE = 8;
 
-const GFC_Vector3D BASE_CAMERA_OFFSET = { -2, 32, 12 };
+const GFC_Vector3D BASE_CAMERA_OFFSET = { -2, 12, 12 };
 const GFC_Vector3D ZOOM_CAMERA_OFFSET = { -1.75, 8, 11.75 };
 GFC_Vector3D actualCameraOffset;
 GFC_Vector3D zoomCameraOffset;

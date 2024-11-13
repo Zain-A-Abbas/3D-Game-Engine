@@ -39,14 +39,6 @@ Entity* createZombie(Entity *player) {
 	enemyData->hp = HP;
 	enemyData->enemyStateMachine = stateMachine;
 
-	//Assign collision
-	GFC_ExtendedPrimitive* collision = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
-	memset(collision, 0, sizeof(GFC_ExtendedPrimitive));
-	collision->type = E_Capsule;
-	GFC_Capsule zombieCapsule = gfc_capsule(8, 2);
-	collision->s.c = zombieCapsule;
-	newZombie->entityCollision = collision;
-
 	animationSetup(
         newZombie,
         "models/enemies/zombie/", 
@@ -56,6 +48,28 @@ Entity* createZombie(Entity *player) {
         1
     );
     animationPlay(newZombie, "models/enemies/zombie/ZombieA.model");
+
+	    // Collision
+    EntityCollision* collision = (EntityCollision*) malloc(sizeof(EntityCollision));
+    memset(collision, 0, sizeof(EntityCollision));
+
+    // Create capsule
+    GFC_ExtendedPrimitive* collisionPrimitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
+    memset(collisionPrimitive, 0, sizeof(GFC_ExtendedPrimitive));
+    collisionPrimitive->type = E_Capsule;
+    GFC_Capsule playerCapsule = gfc_capsule(8, 2);
+    collisionPrimitive->s.c = playerCapsule;
+    collision->collisionPrimitive = collisionPrimitive;
+    
+    GFC_Box boundingBox = {0};
+    boundingBox.w = 8;
+    boundingBox.d = 24;
+    boundingBox.h = 8;
+
+    collision->AABB = boundingBox;
+
+    newZombie->entityCollision = collision;
+
 
 	return newZombie;
 }

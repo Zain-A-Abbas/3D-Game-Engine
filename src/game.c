@@ -123,8 +123,8 @@ int main(int argc,char *argv[])
     initializeUI();
 
     // Create dummy enemies
-    //Entity* enemy1 = createZombie(player);
-    //enemy1->position = gfc_vector3d(0, -40, -8);
+    Entity* enemy1 = createZombie(player);
+    enemy1->position = gfc_vector3d(0, -40, -8);
     //entityScalePreserveModel(enemy1, gfc_vector3d(0.08, 0.08, 0.08));
     /*Entity* enemy2 = enemyEntityNew();
     enemy2->position = gfc_vector3d(-4, 4, 0);*/
@@ -167,8 +167,8 @@ int main(int argc,char *argv[])
         GFC_ExtendedPrimitive* primitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
         memset(primitive, 0, sizeof(GFC_ExtendedPrimitive));
         primitive->type = E_Capsule;
-        GFC_Capsule treeCapsule = gfc_capsule(8, 2);
-        primitive->s.c = treeCapsule;
+        GFC_Capsule treeCapsule = gfc_capsule(16, 2);
+                primitive->s.c = treeCapsule;
         treeCollision->collisionPrimitive = primitive;
 
         GFC_Box boundingBox = { 0 };
