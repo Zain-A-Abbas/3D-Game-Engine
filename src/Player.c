@@ -268,9 +268,7 @@ void _playerUpdate(Entity * self, float delta) {
     character3dData->velocity.x *= speedMod;
     character3dData->velocity.y *= speedMod;
 
-    horizontalWallSlide(self, character3dData, delta);
-    moveAndSlide(self, character3dData);
-    verticalVectorMovement(self, character3dData, delta);
+    moveAndSlide(self, character3dData, delta);
 
 
     playerData->attackCooldown = fMoveTowards(playerData->attackCooldown, 0, delta);

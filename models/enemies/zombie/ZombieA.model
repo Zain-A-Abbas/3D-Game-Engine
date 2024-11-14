@@ -27,7 +27,7 @@
             "models/enemies/zombie/Zombie0023.obj",
             "models/enemies/zombie/Zombie0024.obj",
             ]
-        "texture":"models/player/PlayerTexture.png",
+        "texture":"models/enemies/zombie/Zombie_Atlas.png",
         "loop":1
     }
 }

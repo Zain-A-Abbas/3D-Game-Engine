@@ -25,7 +25,7 @@ Character3DData* newCharacter3dData();
 /**
 * @Brief moves the character while sliding them across walls.
 */
-void moveAndSlide(Entity* self, Character3DData* character3dData);
+void moveAndSlide(Entity* self, Character3DData* character3dData, float delta);
 
 /**
 * @brief Adjusts the speed and direction of the character if pushing against a wall

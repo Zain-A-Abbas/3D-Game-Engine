@@ -39,6 +39,8 @@ Entity* createZombie(Entity *player) {
 	enemyData->hp = HP;
 	enemyData->enemyStateMachine = stateMachine;
 
+	// Animation/Models
+
 	animationSetup(
         newZombie,
         "models/enemies/zombie/", 
@@ -49,7 +51,13 @@ Entity* createZombie(Entity *player) {
     );
     animationPlay(newZombie, "models/enemies/zombie/ZombieA.model");
 
-	    // Collision
+	// Material
+
+	//gf3d_material_load_mtl_file("models/enemies/zombie/Zombie.mtl");
+	//newZombie->model->material = gf3d_material_get_by_name("Zombie0001");
+
+
+	// Collision
     EntityCollision* collision = (EntityCollision*) malloc(sizeof(EntityCollision));
     memset(collision, 0, sizeof(EntityCollision));
 
@@ -87,7 +95,8 @@ void wanderUpdate(struct Entity_S* self, float delta, struct State_S* state, Sta
 
 	float modelRotation = fMoveTowardsAngle(self->rotation.z, enemyData->character3dData->rotation.z, delta);
 	self->rotation.z = modelRotation;
-	moveAndSlide(self, enemyData->character3dData);
+	moveAndSlide(self, enemyData->character3dData, delta);
+	printf("\nPosition: %f, %f, %f", self->position.x, self->position.y, self->position.z);
 }
 
 void wanderThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
@@ -119,7 +128,7 @@ void chaseUpdate(struct Entity_S* self, float delta, struct State_S* state, Stat
 
 	float modelRotation = fMoveTowardsAngle(self->rotation.z, enemyData->character3dData->rotation.z, delta);
 	self->rotation.z = modelRotation;
-	moveAndSlide(self, enemyData->character3dData);
+	moveAndSlide(self, enemyData->character3dData, delta);
 	//enemyHorizontalWallSlide(self, enemyData->character3dData, delta);
 }
 

@@ -5,6 +5,17 @@
 const float BASE_GRAVITY = -1;
 const float BASE_HORIZONTAL_COLLISION_RADIUS = 2;
 
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  ((byte) & 0x80 ? '1' : '0'), \
+  ((byte) & 0x40 ? '1' : '0'), \
+  ((byte) & 0x20 ? '1' : '0'), \
+  ((byte) & 0x10 ? '1' : '0'), \
+  ((byte) & 0x08 ? '1' : '0'), \
+  ((byte) & 0x04 ? '1' : '0'), \
+  ((byte) & 0x02 ? '1' : '0'), \
+  ((byte) & 0x01 ? '1' : '0') 
+
 Character3DData* newCharacter3dData() {
     Character3DData* newData = (Character3DData*) malloc (sizeof(Character3DData));
     if (!newData) {
@@ -24,7 +35,7 @@ Character3DData* newCharacter3dData() {
     return newData;
 }
 
-void moveAndSlide(Entity* self, Character3DData* character3dData) {
+void moveAndSlide(Entity* self, Character3DData* character3dData, float delta) {
     self->position.x += character3dData->velocity.x;
     self->position.y += character3dData->velocity.y;
     self->position.z += character3dData->velocity.z;
@@ -34,6 +45,8 @@ void moveAndSlide(Entity* self, Character3DData* character3dData) {
         self->position.z = character3dData->zSnapTarget;
         character3dData->zSnap = false;
     }
+    horizontalWallSlide(self, character3dData, delta);
+    verticalVectorMovement(self, character3dData, delta);
 
 }
 
@@ -57,6 +70,9 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
             continue;
         }
         if (!isOnLayer(currEntity, 3) && !isOnLayer(currEntity, 2)) {
+            continue;
+        }
+        if (currEntity == self) {
             continue;
         }
         if (!gfc_vector3d_distance_between_less_than(entityGlobalPosition(self), entityGlobalPosition(currEntity), character3dData->horizontalCollisionRadius * 24)) {
