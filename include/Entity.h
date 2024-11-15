@@ -20,7 +20,7 @@ typedef enum {
     PROJECTILE
 } EntityType;
 
-typedef struct EntityCollisions_S {
+typedef struct EntityCollision_S {
     GFC_ExtendedPrimitive       *collisionPrimitive;
     GFC_Box                     AABB;
     Quadtree                    *quadTree;

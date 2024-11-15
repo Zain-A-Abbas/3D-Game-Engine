@@ -1,0 +1,39 @@
+{
+    "model":
+    {
+        "obj_list": [
+            "models/enemies/zombie/ZombieWalk0001.obj",
+            "models/enemies/zombie/ZombieWalk0002.obj",
+            "models/enemies/zombie/ZombieWalk0003.obj",
+            "models/enemies/zombie/ZombieWalk0004.obj",
+            "models/enemies/zombie/ZombieWalk0005.obj",
+            "models/enemies/zombie/ZombieWalk0006.obj",
+            "models/enemies/zombie/ZombieWalk0007.obj",
+            "models/enemies/zombie/ZombieWalk0008.obj",
+            "models/enemies/zombie/ZombieWalk0009.obj",
+            "models/enemies/zombie/ZombieWalk0010.obj",
+            "models/enemies/zombie/ZombieWalk0011.obj",
+            "models/enemies/zombie/ZombieWalk0012.obj",
+            "models/enemies/zombie/ZombieWalk0013.obj",
+            "models/enemies/zombie/ZombieWalk0014.obj",
+            "models/enemies/zombie/ZombieWalk0015.obj",
+            "models/enemies/zombie/ZombieWalk0016.obj",
+            "models/enemies/zombie/ZombieWalk0017.obj",
+            "models/enemies/zombie/ZombieWalk0018.obj",
+            "models/enemies/zombie/ZombieWalk0019.obj",
+            "models/enemies/zombie/ZombieWalk0020.obj",
+            "models/enemies/zombie/ZombieWalk0021.obj",
+            "models/enemies/zombie/ZombieWalk0022.obj",
+            "models/enemies/zombie/ZombieWalk0023.obj",
+            "models/enemies/zombie/ZombieWalk0024.obj",
+            "models/enemies/zombie/ZombieWalk0025.obj",
+            "models/enemies/zombie/ZombieWalk0026.obj",
+            "models/enemies/zombie/ZombieWalk0027.obj",
+            "models/enemies/zombie/ZombieWalk0028.obj",
+            "models/enemies/zombie/ZombieWalk0029.obj",
+            "models/enemies/zombie/ZombieWalk0030.obj",
+            ]
+        "texture":"models/enemies/zombie/Zombie_Atlas.png",
+        "loop":1
+    }
+}

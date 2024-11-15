@@ -19,6 +19,7 @@ void wanderThink(struct Entity_S* self, float delta, struct State_S* state, Stat
 void wanderUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine);
 void wanderOnHit(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine);
 
+void chaseEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine);
 void chaseThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine);
 void chaseUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine);
 

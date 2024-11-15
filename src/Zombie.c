@@ -2,7 +2,7 @@
 #include "simple_logger.h"
 #include "TypesExtra.h"
 
-const int HP = 200;
+const int HP = 20;
 const float AGGRO_RANGE = 32;
 
 const float WANDER_SPEED = 2;
@@ -25,8 +25,10 @@ Entity* createZombie(Entity *player) {
 	}
 	memset(stateMachine, 0, sizeof(StateMachine));
 
+	enemySetCollision(newZombie, 8, 2);
+		
 	State* wanderState = createState("Wander", stateMachine, wanderEnter, NULL, wanderThink, wanderUpdate, wanderOnHit, calloc(1, sizeof(WanderData)));
-	State* chaseState = createState("Chase", stateMachine, NULL, NULL, chaseThink, chaseUpdate, NULL, calloc(1, sizeof(ChaseData)));
+	State* chaseState = createState("Chase", stateMachine, chaseEnter, NULL, chaseThink, chaseUpdate, NULL, calloc(1, sizeof(ChaseData)));
 	ChaseData* chaseData = (ChaseData*)chaseState->stateData;
 	chaseData->player = player;
 	WanderData* wanderData = (WanderData*)wanderState->stateData;
@@ -45,38 +47,13 @@ Entity* createZombie(Entity *player) {
         newZombie,
         "models/enemies/zombie/", 
         (char *[]){
-            "ZombieA"
+			"ZombieA",
+			"ZombieWalk",
         },
-        1
+        2
     );
-    animationPlay(newZombie, "models/enemies/zombie/ZombieA.model");
+	animationPlay(newZombie, "models/enemies/zombie/ZombieA.model");
 
-	// Material
-
-	//gf3d_material_load_mtl_file("models/enemies/zombie/Zombie.mtl");
-	//newZombie->model->material = gf3d_material_get_by_name("Zombie0001");
-
-
-	// Collision
-    EntityCollision* collision = (EntityCollision*) malloc(sizeof(EntityCollision));
-    memset(collision, 0, sizeof(EntityCollision));
-
-    // Create capsule
-    GFC_ExtendedPrimitive* collisionPrimitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
-    memset(collisionPrimitive, 0, sizeof(GFC_ExtendedPrimitive));
-    collisionPrimitive->type = E_Capsule;
-    GFC_Capsule playerCapsule = gfc_capsule(8, 2);
-    collisionPrimitive->s.c = playerCapsule;
-    collision->collisionPrimitive = collisionPrimitive;
-    
-    GFC_Box boundingBox = {0};
-    boundingBox.w = 8;
-    boundingBox.d = 24;
-    boundingBox.h = 8;
-
-    collision->AABB = boundingBox;
-
-    newZombie->entityCollision = collision;
 
 
 	return newZombie;
@@ -86,6 +63,7 @@ Entity* createZombie(Entity *player) {
 // WANDER
 
 void wanderEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
+	printf("\nHELLO MOTHERFUCKERS!");
 	EnemyData* enemyData = (EnemyData*)self->data;
 	enemyData->aiTime = WANDER_AI_INTERVAL;
 }
@@ -96,7 +74,6 @@ void wanderUpdate(struct Entity_S* self, float delta, struct State_S* state, Sta
 	float modelRotation = fMoveTowardsAngle(self->rotation.z, enemyData->character3dData->rotation.z, delta);
 	self->rotation.z = modelRotation;
 	moveAndSlide(self, enemyData->character3dData, delta);
-	printf("\nPosition: %f, %f, %f", self->position.x, self->position.y, self->position.z);
 }
 
 void wanderThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
@@ -123,13 +100,18 @@ void wanderOnHit(struct Entity_S* self, struct State_S* state, StateMachine* sta
 
 // CHASE
 
+void chaseEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
+	animationPlay(self, "models/enemies/zombie/ZombieWalk.model");
+	EnemyData* enemyData = (EnemyData*)self->data;
+	enemyData->aiTime = CHASE_AI_INTERVAL;
+}
+
 void chaseUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
 	EnemyData* enemyData = (EnemyData*)self->data;
 
 	float modelRotation = fMoveTowardsAngle(self->rotation.z, enemyData->character3dData->rotation.z, delta);
 	self->rotation.z = modelRotation;
 	moveAndSlide(self, enemyData->character3dData, delta);
-	//enemyHorizontalWallSlide(self, enemyData->character3dData, delta);
 }
 
 void chaseThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {

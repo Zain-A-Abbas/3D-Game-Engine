@@ -4,7 +4,7 @@
 #include "gfc_primitives.h"
 
 Quadtree* newQuadTree(Entity* entity, GFC_Box boundingBox, int splitCount) {
-	printf("\nStart");
+	//printf("\nStart");
 	if (splitCount < 1) {
 		slog("Split count must be minimum 1");
 		return NULL;
@@ -66,7 +66,7 @@ Quadtree* newQuadTree(Entity* entity, GFC_Box boundingBox, int splitCount) {
 	}
 	entity->entityCollision->AABB = boundingBox;
 	entity->entityCollision->quadTree = quadtree;
-	printf("\nFinish\n");
+	//printf("\nFinish\n");
 }
 
 GFC_List* getTriangleIndexes(Quadtree* quadtree) {
@@ -159,3 +159,21 @@ GFC_Box triangleToBox(GFC_Triangle3D t) {
 	return b;
 }
 
+
+void quadtreeFree(Quadtree* quadtree) {
+	quadtreeRecursiveFree(quadtree->root);
+	gfc_list_delete(quadtree->leaves);
+	free(quadtree);
+}
+
+void quadtreeRecursiveFree(QuadtreeNode* node) {
+	for (int i = 0; i < 4; i++) {
+		if (node->children[i]) {
+			quadtreeRecursiveFree(node->children[i]);
+		}
+	}
+	if (node->triangleList) {
+		gfc_list_delete(node->triangleList);
+	}
+	free(node);
+}

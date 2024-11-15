@@ -5,16 +5,6 @@
 const float BASE_GRAVITY = -1;
 const float BASE_HORIZONTAL_COLLISION_RADIUS = 2;
 
-#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
-  ((byte) & 0x80 ? '1' : '0'), \
-  ((byte) & 0x40 ? '1' : '0'), \
-  ((byte) & 0x20 ? '1' : '0'), \
-  ((byte) & 0x10 ? '1' : '0'), \
-  ((byte) & 0x08 ? '1' : '0'), \
-  ((byte) & 0x04 ? '1' : '0'), \
-  ((byte) & 0x02 ? '1' : '0'), \
-  ((byte) & 0x01 ? '1' : '0') 
 
 Character3DData* newCharacter3dData() {
     Character3DData* newData = (Character3DData*) malloc (sizeof(Character3DData));
@@ -45,8 +35,8 @@ void moveAndSlide(Entity* self, Character3DData* character3dData, float delta) {
         self->position.z = character3dData->zSnapTarget;
         character3dData->zSnap = false;
     }
-    horizontalWallSlide(self, character3dData, delta);
     verticalVectorMovement(self, character3dData, delta);
+    horizontalWallSlide(self, character3dData, delta);
 
 }
 
@@ -69,6 +59,11 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
         if (!currEntity->_in_use) {
             continue;
         }
+        if (currEntity->entityCollision) {
+            if (!gfc_box_overlap(self->entityCollision->AABB, currEntity->entityCollision->AABB)) {
+                continue;
+            }
+        }
         if (!isOnLayer(currEntity, 3) && !isOnLayer(currEntity, 2)) {
             continue;
         }
@@ -78,8 +73,11 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
         if (!gfc_vector3d_distance_between_less_than(entityGlobalPosition(self), entityGlobalPosition(currEntity), character3dData->horizontalCollisionRadius * 24)) {
             continue;
         }
+
         
         if (entityCapsuleTest(currEntity, self->entityCollision->collisionPrimitive->s.c, &intersectionPoint, &penetrationNormal, &penetrationDepth, NULL)) {
+            printf("\nDepth: %f", penetrationDepth);
+            printf("\nNormal: %f, %f, %f", penetrationNormal.x, penetrationNormal.y, penetrationNormal.z);
             GFC_Vector3D pushBack = penetrationNormal;
 
             pushBack.x *= penetrationDepth;// *0.01;

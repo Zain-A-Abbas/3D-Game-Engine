@@ -25,4 +25,8 @@ void addTrianglesToQuadtree(Quadtree* quadtree, struct Entity_S *ent, ObjData* o
 void recursiveCreateNodeTree(Quadtree* quadtree, QuadtreeNode* node, GFC_Box parentAABB, int currentLevel, int splitCount);
 
 GFC_Box triangleToBox(GFC_Triangle3D t);
+
+void quadtreeFree(Quadtree *quadtree);
+void quadtreeRecursiveFree(QuadtreeNode* node);
+
 #endif

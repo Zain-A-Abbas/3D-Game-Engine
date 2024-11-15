@@ -24,6 +24,6 @@ void enemyUpdate(Entity* self, float delta);
 void enemyAttacked(Entity* self, int damage);
 void enemyDelete(Entity* self);
 
-
+void enemySetCollision(Entity* self, float height, float radius);
 
 #endif

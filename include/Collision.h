@@ -6,6 +6,7 @@
 #include "Extra_Primitives.h"
 
 struct Entity_S;
+struct EntityCollision_S;
 
 void setCapsuleFinalRadius(GFC_Capsule* c, struct Entity_S* ent);
 
@@ -21,8 +22,13 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 
 GFC_Vector3D closestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vector3D point);
 
+Uint8 edgeCapsuleTest(GFC_Edge3D e, GFC_Capsule c, GFC_Vector3D* poc, GFC_Vector3D* normal);
+GFC_Box capsuleToBox(GFC_Capsule c);
+
 GFC_Box drawableBoxPrimitive(GFC_Box box);
 
 GFC_Vector3D cubeHalfDimensions(GFC_Box box);
+
+void entityCollisionFree(struct Entity_S* self, struct EntityCollision_S* collision);
 
 #endif

@@ -79,3 +79,27 @@ void enemyDelete(Entity* self) {
 	_entityFree(self);
 }
 
+void enemySetCollision(Entity* self, float height, float radius) {
+	// Collision
+	EntityCollision* collision = (EntityCollision*)malloc(sizeof(EntityCollision));
+	memset(collision, 0, sizeof(EntityCollision));
+
+	// Create capsule
+	GFC_ExtendedPrimitive* collisionPrimitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
+	memset(collisionPrimitive, 0, sizeof(GFC_ExtendedPrimitive));
+	collisionPrimitive->type = E_Capsule;
+
+
+	GFC_Capsule enemyCapsule = gfc_capsule(height, radius);
+	collisionPrimitive->s.c = enemyCapsule;
+	collision->collisionPrimitive = collisionPrimitive;
+
+	GFC_Box boundingBox = { 0 };
+	boundingBox.w = enemyCapsule.radius * 4;
+	boundingBox.d = enemyCapsule.height * 4;
+	boundingBox.h = enemyCapsule.radius * 4;
+
+	collision->AABB = boundingBox;
+
+	self->entityCollision = collision;
+}

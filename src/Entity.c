@@ -204,7 +204,7 @@ void _entityFree(Entity *self) {
     gf3d_model_free(self->model);
     free(self->entityAnimation);
     if (self->entityCollision) {
-        free(self->entityCollision);
+        entityCollisionFree(self, self->entityCollision);
     }
     memset(self, 0, sizeof(Entity));
 }
@@ -289,6 +289,12 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
         modelScale->z = entityModel->matrix[2][2];
     }*/
 
+    if (entity->type == ENEMY) {
+        if (edgeCapsuleTest(raycast, entity->entityCollision->collisionPrimitive->s.c, NULL, NULL)) {
+            return true;
+        }
+        return false;
+    }
 
     // Get meshes
     for (int j = 0; j < gfc_list_get_count(entityModel->mesh_list); j++) {
@@ -341,6 +347,7 @@ void animationSetup(Entity* self, const char* animFolder, char *animations[], in
 
         gfc_list_append(newEntityAnim->animationList, newModel);
     }
+    printf("\nHoho");
     self->entityAnimation = newEntityAnim;
 }
 

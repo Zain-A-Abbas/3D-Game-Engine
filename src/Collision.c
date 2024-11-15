@@ -2,9 +2,7 @@
 #include "gfc_types.h"
 #include "Entity.h"
 #include "simple_logger.h"
-
-
-
+#include "Quadtree.h"
 
 void setCapsuleFinalRadius(GFC_Capsule* c, Entity* ent) {
 	if (!ent) {
@@ -288,6 +286,26 @@ GFC_Vector3D closestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vecto
 	return gfc_vector3d_added(a, gfc_vector3d_multiply(ab, gfc_vector3d(saturated, saturated, saturated)));
 }
 
+// END OF CITATION
+
+Uint8 edgeCapsuleTest(GFC_Edge3D e, GFC_Capsule c, GFC_Vector3D* poc, GFC_Vector3D* normal) {
+	GFC_Box box = capsuleToBox(c);
+	return gfc_edge_box_test(e, box, poc, normal);
+}
+
+GFC_Box capsuleToBox(GFC_Capsule c) {
+	GFC_Box box = { 0 };
+	box.x = c.finalBase.x - c.radius;
+	box.w = c.finalTip.x + c.radius;
+
+	box.y = c.finalBase.y - c.radius;
+	box.h = c.finalTip.y + c.radius;
+
+	box.z = c.finalBase.z;
+	box.d = c.finalTip.z;
+	return box;
+}
+
 GFC_Box drawableBoxPrimitive(GFC_Box box) {
 	GFC_Box drawable = { 0 };
 	drawable.x = box.x + box.w / 2;
@@ -307,4 +325,14 @@ GFC_Vector3D cubeHalfDimensions(GFC_Box box) {
 	half.z = box.d / 2;
 
 	return half;
+}
+
+void entityCollisionFree(Entity* self, EntityCollision* collision) {
+	if (collision->collisionPrimitive) {
+		free(collision->collisionPrimitive);
+	}
+	if (collision->quadTree) {
+		quadtreeFree(collision->quadTree);
+	}
+	free(collision);
 }

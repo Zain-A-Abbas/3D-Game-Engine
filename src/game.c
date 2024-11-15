@@ -167,7 +167,7 @@ int main(int argc,char *argv[])
         GFC_ExtendedPrimitive* primitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
         memset(primitive, 0, sizeof(GFC_ExtendedPrimitive));
         primitive->type = E_Capsule;
-        GFC_Capsule treeCapsule = gfc_capsule(16, 2);
+        GFC_Capsule treeCapsule = gfc_capsule(16, 4);
                 primitive->s.c = treeCapsule;
         treeCollision->collisionPrimitive = primitive;
 
