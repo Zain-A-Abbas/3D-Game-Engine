@@ -3,19 +3,45 @@
 #include "TypesExtra.h"
 
 const int HP = 20;
-const float AGGRO_RANGE = 32;
+const float AGGRO_RANGE = 8;
 
-const float WANDER_SPEED = 2;
+const float WANDER_SPEED = 4;
 const float WANDER_AI_INTERVAL = 4.0;
 
-const float CHASE_SPEED = 5;
+const float CHASE_SPEED = 7;
 const float CHASE_TURN_SPEED = 8;
 const float CHASE_AI_INTERVAL = 0.12;
 
-Entity* createZombie(Entity *player) {
+Entity* createZombie(Entity* player) {
 	Entity* newZombie = enemyEntityNew();
+	if (!newZombie) {
+		return;
+	}
 
-	// Make and assign states
+	newZombie->scale = gfc_vector3d(2, 2, 2);
+
+	enemySetCollision(newZombie, 8, 2);
+
+	EnemyData* enemyData = (EnemyData*)newZombie->data;
+	enemyData->hp = HP;
+
+	// Animation/Models
+
+	animationSetup(
+        newZombie,
+        "models/enemies/zombie/", 
+        (char *[]){
+			"ZombieIdle",
+			"ZombieWalk",
+			"ZombieAttack",
+			"ZombieDeath",
+			NULL
+        }
+    );
+	animationPlay(newZombie, "ZombieWalk");
+
+	// AI
+		// Make and assign states
 	StateMachine* stateMachine = (StateMachine*)malloc(sizeof(StateMachine));
 	if (!stateMachine) {
 		slog("Could not allocate enemy state machine");
@@ -24,9 +50,8 @@ Entity* createZombie(Entity *player) {
 
 	}
 	memset(stateMachine, 0, sizeof(StateMachine));
+	enemyData->enemyStateMachine = stateMachine;
 
-	enemySetCollision(newZombie, 8, 2);
-		
 	State* wanderState = createState("Wander", stateMachine, wanderEnter, NULL, wanderThink, wanderUpdate, wanderOnHit, calloc(1, sizeof(WanderData)));
 	State* chaseState = createState("Chase", stateMachine, chaseEnter, NULL, chaseThink, chaseUpdate, NULL, calloc(1, sizeof(ChaseData)));
 	ChaseData* chaseData = (ChaseData*)chaseState->stateData;
@@ -37,25 +62,6 @@ Entity* createZombie(Entity *player) {
 	changeState(newZombie, stateMachine, "Wander");
 
 
-	EnemyData* enemyData = (EnemyData*)newZombie->data;
-	enemyData->hp = HP;
-	enemyData->enemyStateMachine = stateMachine;
-
-	// Animation/Models
-
-	animationSetup(
-        newZombie,
-        "models/enemies/zombie/", 
-        (char *[]){
-			"ZombieA",
-			"ZombieWalk",
-        },
-        2
-    );
-	animationPlay(newZombie, "models/enemies/zombie/ZombieA.model");
-
-
-
 	return newZombie;
 }
 
@@ -63,7 +69,8 @@ Entity* createZombie(Entity *player) {
 // WANDER
 
 void wanderEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
-	printf("\nHELLO MOTHERFUCKERS!");
+	//printf("\nHELLO MOTHERFUCKERS!");
+	animationPlay(self, "ZombieWalk");
 	EnemyData* enemyData = (EnemyData*)self->data;
 	enemyData->aiTime = WANDER_AI_INTERVAL;
 }
@@ -87,8 +94,8 @@ void wanderThink(struct Entity_S* self, float delta, struct State_S* state, Stat
 			return;
 		}
 		enemyData->aiTime = 0;
-		enemyData->character3dData->rotation.z = gfc_random() * 4 - 8;
-		enemyData->character3dData->velocity = gfc_vector3d(0, -WANDER_SPEED * delta, 0);
+		enemyData->character3dData->rotation.z = gfc_random() * GFC_HALF_PI * 2 - GFC_HALF_PI; // Rotate by up to 90 degrees in either direction randomly
+		enemyData->character3dData->velocity = gfc_vector3d(0, -WANDER_SPEED, 0);
 		gfc_vector3d_rotate_about_z(&enemyData->character3dData->velocity, enemyData->character3dData->rotation.z);
 	}
 }
@@ -101,7 +108,7 @@ void wanderOnHit(struct Entity_S* self, struct State_S* state, StateMachine* sta
 // CHASE
 
 void chaseEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
-	animationPlay(self, "models/enemies/zombie/ZombieWalk.model");
+	animationPlay(self, "ZombieWalk");
 	EnemyData* enemyData = (EnemyData*)self->data;
 	enemyData->aiTime = CHASE_AI_INTERVAL;
 }
@@ -133,16 +140,16 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 			angleDifference -= GFC_2PI;
 		}
 
-		float rotationAmount = CHASE_TURN_SPEED * delta;
+		float rotationAmount = CHASE_TURN_SPEED;
 
 		if (fabsf(angleDifference) <= rotationAmount) {
 			enemyData->character3dData->rotation.z = angleTarget + GFC_HALF_PI;
 		} else if (angleDifference > 0) {
-			enemyData->character3dData->rotation.z += rotationAmount;
+			enemyData->character3dData->rotation.z += rotationAmount * delta;
 
 		}
 		else if (angleDifference < 0) {
-			enemyData->character3dData->rotation.z -= rotationAmount;
+			enemyData->character3dData->rotation.z -= rotationAmount * delta;
 		}
 
 		if (fabsf(enemyData->character3dData->rotation.z) > GFC_2PI) {
@@ -150,11 +157,17 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 		}
 		
 
-		if (fabsf(angleDifference) < GFC_PI/32.0) {
-			enemyData->character3dData->velocity = gfc_vector3d(0, -CHASE_SPEED * delta, 0);
+		if (fabsf(angleDifference) < GFC_PI/16.0) {
+			if (enemyData->character3dData->velocity.x + enemyData->character3dData->velocity.y == 0) {
+				animationPlay(self, "ZombieWalk");
+			}
+			enemyData->character3dData->velocity = gfc_vector3d(0, -CHASE_SPEED, 0);
 			gfc_vector3d_rotate_about_z(&enemyData->character3dData->velocity, enemyData->character3dData->rotation.z);
 		}
 		else {
+			if (enemyData->character3dData->velocity.x + enemyData->character3dData->velocity.y != 0) {
+				animationPlay(self, "ZombieIdle");
+			}
 			enemyData->character3dData->velocity = gfc_vector3d(0, 0, 0);
 		}
 	}

@@ -129,7 +129,7 @@ GFC_Vector3D entityGlobalScale(Entity* self);
 /**
 * @brief Assigns the entityanimation the folder to pull assets from
 */
-void animationSetup(Entity* self, const char* animFolder, char* animations[], int animationCount);
+void animationSetup(Entity* self, const char* animFolder, char* animations[]);
 
 /**
 * @brief Frees the animation handler

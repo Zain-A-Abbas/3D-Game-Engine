@@ -296,13 +296,14 @@ Uint8 edgeCapsuleTest(GFC_Edge3D e, GFC_Capsule c, GFC_Vector3D* poc, GFC_Vector
 GFC_Box capsuleToBox(GFC_Capsule c) {
 	GFC_Box box = { 0 };
 	box.x = c.finalBase.x - c.radius;
-	box.w = c.finalTip.x + c.radius;
+	box.w = (c.finalTip.x + c.radius) - box.x;
 
 	box.y = c.finalBase.y - c.radius;
-	box.h = c.finalTip.y + c.radius;
+	box.h = (c.finalTip.y + c.radius) - box.y;
 
 	box.z = c.finalBase.z;
-	box.d = c.finalTip.z;
+	box.d = (c.finalTip.z) - box.z;
+
 	return box;
 }
 

@@ -167,7 +167,7 @@ int main(int argc,char *argv[])
         GFC_ExtendedPrimitive* primitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
         memset(primitive, 0, sizeof(GFC_ExtendedPrimitive));
         primitive->type = E_Capsule;
-        GFC_Capsule treeCapsule = gfc_capsule(16, 4);
+        GFC_Capsule treeCapsule = gfc_capsule(16, 2);
                 primitive->s.c = treeCapsule;
         treeCollision->collisionPrimitive = primitive;
 
@@ -246,13 +246,12 @@ int main(int argc,char *argv[])
                     //}
                 }*/
 
-            for (int i = 0; i < gfc_list_get_count(testGround->entityCollision->quadTree->leaves); i++) {
+            /*for (int i = 0; i < gfc_list_get_count(testGround->entityCollision->quadTree->leaves); i++) {
                 QuadtreeNode* currentLeaf = (QuadtreeNode*)gfc_list_get_nth(testGround->entityCollision->quadTree->leaves, i);
                 drawBoundingBox(currentLeaf->AABB, gfc_color(0.3, 0.3, 0.3, 0.4), 1);
-            }
-            //GFC_Box testBox = gfc_box(-10, -5, -10, 20, 10, 20);
-            //drawBoundingBox(testBox);
-            drawBoundingBox(player->entityCollision->AABB, gfc_color(0.1, 0.3, 0.3, 0.5), 0);
+            }*/
+
+            //drawBoundingBox(capsuleToBox(enemy1->entityCollision->collisionPrimitive->s.c), gfc_color(0.1, 0.3, 0.3, 0.5), 0);
 
             //if (gfc_box_overlap(testBox, player->entityCollision->AABB)) {
             //    printf("klasjsd");

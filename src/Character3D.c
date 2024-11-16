@@ -26,17 +26,23 @@ Character3DData* newCharacter3dData() {
 }
 
 void moveAndSlide(Entity* self, Character3DData* character3dData, float delta) {
-    self->position.x += character3dData->velocity.x;
-    self->position.y += character3dData->velocity.y;
-    self->position.z += character3dData->velocity.z;
+    if (self->type == PLAYER) {
+        printf("\nVelocity before: %f, %f", character3dData->velocity.x, character3dData->velocity.y);
+    }
+    verticalVectorMovement(self, character3dData, delta);
+    horizontalWallSlide(self, character3dData, delta);
+    if (self->type == PLAYER) {
+        printf("\nVelocity after: %f, %f", character3dData->velocity.x, character3dData->velocity.y);
+    }
+    self->position.x += character3dData->velocity.x * delta;
+    self->position.y += character3dData->velocity.y * delta;
+    self->position.z += character3dData->velocity.z * delta;
     if (character3dData->zSnap) {
         //slog("Pos z: %f", self->position.z);
         //slog("Snap z: %f", snapZ);
         self->position.z = character3dData->zSnapTarget;
         character3dData->zSnap = false;
     }
-    verticalVectorMovement(self, character3dData, delta);
-    horizontalWallSlide(self, character3dData, delta);
 
 }
 
@@ -76,13 +82,11 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
 
         
         if (entityCapsuleTest(currEntity, self->entityCollision->collisionPrimitive->s.c, &intersectionPoint, &penetrationNormal, &penetrationDepth, NULL)) {
-            printf("\nDepth: %f", penetrationDepth);
-            printf("\nNormal: %f, %f, %f", penetrationNormal.x, penetrationNormal.y, penetrationNormal.z);
             GFC_Vector3D pushBack = penetrationNormal;
 
-            pushBack.x *= penetrationDepth;// *0.01;
-            pushBack.y *= penetrationDepth;// *0.01;
-            pushBack.z *= penetrationDepth;// *0.01;
+            pushBack.x *= penetrationDepth / delta;// *0.01;
+            pushBack.y *= penetrationDepth / delta;// *0.01;
+            pushBack.z *= penetrationDepth / delta;// *0.01;
             velocity = gfc_vector3d_added(velocity, pushBack);
         }
 
@@ -154,7 +158,7 @@ GFC_Vector3D verticalVectorMovement(Entity * self, Character3DData * character3d
 
     if (!isOnFloor) {
         character3dData->zSnap = 0;
-        velocity.z += character3dData->gravity * delta;
+        velocity.z += character3dData->gravity;
     }
 
     character3dData->velocity = velocity;

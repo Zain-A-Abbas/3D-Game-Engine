@@ -1,0 +1,25 @@
+{
+    "model":
+    {
+        "obj_list": [
+            "models/enemies/zombie/ZombieRun0001.obj",
+            "models/enemies/zombie/ZombieRun0002.obj",
+            "models/enemies/zombie/ZombieRun0003.obj",
+            "models/enemies/zombie/ZombieRun0004.obj",
+            "models/enemies/zombie/ZombieRun0005.obj",
+            "models/enemies/zombie/ZombieRun0006.obj",
+            "models/enemies/zombie/ZombieRun0007.obj",
+            "models/enemies/zombie/ZombieRun0008.obj",
+            "models/enemies/zombie/ZombieRun0009.obj",
+            "models/enemies/zombie/ZombieRun0010.obj",
+            "models/enemies/zombie/ZombieRun0011.obj",
+            "models/enemies/zombie/ZombieRun0012.obj",
+            "models/enemies/zombie/ZombieRun0013.obj",
+            "models/enemies/zombie/ZombieRun0014.obj",
+            "models/enemies/zombie/ZombieRun0015.obj",
+            "models/enemies/zombie/ZombieRun0016.obj",
+            ]
+        "texture":"models/enemies/zombie/Zombie_Atlas.png",
+        "loop":1
+    }
+}

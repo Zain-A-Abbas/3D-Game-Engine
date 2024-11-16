@@ -88,11 +88,11 @@ Entity * createPlayer() {
         "models/player/", 
         (char *[]){
             "PlayerIdle",
-            "PlayerWalkForward"
-        },
-        2
+            "PlayerWalkForward",
+            NULL
+        }
     );
-    animationPlay(playerEntity, "models/player/PlayerIdle.model");
+    animationPlay(playerEntity, "PlayerIdle");
     playerEntity->scale = gfc_vector3d(0.075, 0.075, 0.075);
 
     // Collision
@@ -185,8 +185,8 @@ void _playerControls(Entity * self, float delta) {
 
     GFC_Vector3D movementVelocity = gfc_vector3d(inputVector.x, inputVector.y, 0);
 
-    movementVelocity.x *= PLAYER_SPEED * delta;
-    movementVelocity.y *= PLAYER_SPEED * delta;
+    movementVelocity.x *= PLAYER_SPEED;
+    movementVelocity.y *= PLAYER_SPEED;
     movementVelocity.x *= -1;
     movementVelocity.y *= -1;
 

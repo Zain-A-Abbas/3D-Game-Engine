@@ -290,6 +290,7 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
     }*/
 
     if (entity->type == ENEMY) {
+        printf("Wahahaha");
         if (edgeCapsuleTest(raycast, entity->entityCollision->collisionPrimitive->s.c, NULL, NULL)) {
             return true;
         }
@@ -317,7 +318,7 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
 }
 
 
-void animationSetup(Entity* self, const char* animFolder, char *animations[], int animationCount) {
+void animationSetup(Entity* self, const char* animFolder, char *animations[]) {
     animationFree(self);
     EntityAnimation* newEntityAnim = (EntityAnimation*)malloc(sizeof(EntityAnimation));
     if (!newEntityAnim) {
@@ -333,8 +334,8 @@ void animationSetup(Entity* self, const char* animFolder, char *animations[], in
     strcpy(newEntityAnim->currentAnimName, "");
     char* animation;
 
-    for (int i = 0; i < animationCount; i++) {
-        animation = malloc(strlen(newEntityAnim->animFolder) + strlen(animations[i]) + strlen(".model"));
+    for (int i = 0; animations[i] != NULL; i++) {
+        animation = malloc(strlen(newEntityAnim->animFolder) + strlen(animations[i]) + strlen(".model") + 1);
         strcpy(animation, newEntityAnim->animFolder);
         strcat(animation, animations[i]);
         strcat(animation, ".model");
@@ -347,7 +348,6 @@ void animationSetup(Entity* self, const char* animFolder, char *animations[], in
 
         gfc_list_append(newEntityAnim->animationList, newModel);
     }
-    printf("\nHoho");
     self->entityAnimation = newEntityAnim;
 }
 
@@ -373,6 +373,7 @@ void animationFree(Entity* self) {
 
 void animationPlay(Entity* self, const char* animName) {
     if (!self->entityAnimation) {
+        printf("\nEntity type: %d", self->type);
         slog("Entity animation handler does not exist");
         return;
     }
@@ -384,12 +385,17 @@ void animationPlay(Entity* self, const char* animName) {
     Model* modelCheck;
     int modelIndex = -1;
 
+    char* animLocation = malloc(strlen(self->entityAnimation->animFolder) + strlen(animName) + strlen(".model") + 1);
+    strcpy(animLocation, self->entityAnimation->animFolder);
+    strcat(animLocation, animName);
+    strcat(animLocation, ".model");
+
     //printf("\nList size: %d", gfc_list_get_count(self->entityAnimation->animationList));
     for (int i = 0; i < gfc_list_get_count(self->entityAnimation->animationList); i++) {
         modelCheck = (Model*)gfc_list_get_nth(self->entityAnimation->animationList, i);
         //printf("\nAnimation in list is: %s", modelCheck->filename);
-        //printf("\nAnimation given is: %s", animName);
-        if (strcmp(modelCheck->filename, animName) == 0) {
+        //printf("\nAnimation given is: %s", animLocation);
+        if (strcmp(modelCheck->filename, animLocation) == 0) {
             modelIndex = i;
             break;
         }

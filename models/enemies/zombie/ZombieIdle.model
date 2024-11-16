@@ -1,7 +1,33 @@
 {
     "model":
     {
-        "gltf": "models/enemies/zombie/ZombieIdle.gltf",
-        "texture":"models/enemies/zombie/wanderererTexture.png",
+        "obj_list": [
+            "models/enemies/zombie/Zombie0001.obj",
+            "models/enemies/zombie/Zombie0002.obj",
+            "models/enemies/zombie/Zombie0003.obj",
+            "models/enemies/zombie/Zombie0004.obj",
+            "models/enemies/zombie/Zombie0005.obj",
+            "models/enemies/zombie/Zombie0006.obj",
+            "models/enemies/zombie/Zombie0007.obj",
+            "models/enemies/zombie/Zombie0008.obj",
+            "models/enemies/zombie/Zombie0009.obj",
+            "models/enemies/zombie/Zombie0010.obj",
+            "models/enemies/zombie/Zombie0011.obj",
+            "models/enemies/zombie/Zombie0012.obj",
+            "models/enemies/zombie/Zombie0013.obj",
+            "models/enemies/zombie/Zombie0014.obj",
+            "models/enemies/zombie/Zombie0015.obj",
+            "models/enemies/zombie/Zombie0016.obj",
+            "models/enemies/zombie/Zombie0017.obj",
+            "models/enemies/zombie/Zombie0018.obj",
+            "models/enemies/zombie/Zombie0019.obj",
+            "models/enemies/zombie/Zombie0020.obj",
+            "models/enemies/zombie/Zombie0021.obj",
+            "models/enemies/zombie/Zombie0022.obj",
+            "models/enemies/zombie/Zombie0023.obj",
+            "models/enemies/zombie/Zombie0024.obj",
+            ]
+        "texture":"models/enemies/zombie/Zombie_Atlas.png",
+        "loop":1
     }
 }
