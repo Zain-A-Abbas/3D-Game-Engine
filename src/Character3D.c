@@ -26,14 +26,8 @@ Character3DData* newCharacter3dData() {
 }
 
 void moveAndSlide(Entity* self, Character3DData* character3dData, float delta) {
-    if (self->type == PLAYER) {
-        printf("\nVelocity before: %f, %f", character3dData->velocity.x, character3dData->velocity.y);
-    }
     verticalVectorMovement(self, character3dData, delta);
     horizontalWallSlide(self, character3dData, delta);
-    if (self->type == PLAYER) {
-        printf("\nVelocity after: %f, %f", character3dData->velocity.x, character3dData->velocity.y);
-    }
     self->position.x += character3dData->velocity.x * delta;
     self->position.y += character3dData->velocity.y * delta;
     self->position.z += character3dData->velocity.z * delta;

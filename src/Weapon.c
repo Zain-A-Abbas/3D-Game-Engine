@@ -122,6 +122,9 @@ Entity * shotCollided(GFC_Edge3D raycast, GFC_Box *boundingBox) {
         if (currEntity->type != ENEMY) {
             continue;
         };
+        if (!isOnLayer(currEntity, 2)) {
+            continue;
+        }
         //slog("Entity position: %f, %f, %f", entityManager.entityList[i].position.x, entityManager.entityList[i].position.y, entityManager.entityList[i].position.z);
         if (entityRaycastTest(currEntity, raycast, NULL, &t, boundingBox)) {
             // If an entity has already been hit, then assign the new one only if it's closer

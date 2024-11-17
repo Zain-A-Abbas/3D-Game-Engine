@@ -45,7 +45,9 @@ void enemyThink(Entity* self, float delta) {
 void enemyUpdate(Entity* self, float delta) {
 	EnemyData* enemyData = (EnemyData*)self->data;
 	if (enemyData->enemyStateMachine) {
-		enemyData->enemyStateMachine->currentState->update(self, delta, enemyData->enemyStateMachine->currentState, enemyData->enemyStateMachine);
+		if (enemyData->enemyStateMachine->currentState) {
+			enemyData->enemyStateMachine->currentState->update(self, delta, enemyData->enemyStateMachine->currentState, enemyData->enemyStateMachine);
+		}
 	}
 	return;
 }
@@ -55,7 +57,7 @@ void enemyAttacked(Entity* self, int damage) {
 	EnemyData* enemyData = (EnemyData*)self->data;
 	enemyData->hp -= damage;
 	if (enemyData->hp <= 0) {
-		enemyDelete(self);
+		changeState(self, enemyData->enemyStateMachine, "Dying");
 		return;
 	}
 	if (enemyData->enemyStateMachine) {
@@ -65,6 +67,25 @@ void enemyAttacked(Entity* self, int damage) {
 			}
 		}
 	}
+}
+
+
+void dyingEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
+	self->entityCollision = 0;
+	DyingData* dyingData = (DyingData*)state->stateData;
+	animationPlay(self, dyingData->dyingAnimName, false);
+}
+
+void dyingThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
+	if (self->entityAnimation) {
+		if (self->entityAnimation->animationFinished) {
+			enemyDelete(self);
+		}
+	}
+}
+
+void dyingUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
+
 }
 
 void enemyDelete(Entity* self) {

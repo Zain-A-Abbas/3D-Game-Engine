@@ -38,7 +38,7 @@ Entity* createZombie(Entity* player) {
 			NULL
         }
     );
-	animationPlay(newZombie, "ZombieWalk");
+	animationPlay(newZombie, "ZombieWalk", true);
 
 	// AI
 		// Make and assign states
@@ -54,10 +54,13 @@ Entity* createZombie(Entity* player) {
 
 	State* wanderState = createState("Wander", stateMachine, wanderEnter, NULL, wanderThink, wanderUpdate, wanderOnHit, calloc(1, sizeof(WanderData)));
 	State* chaseState = createState("Chase", stateMachine, chaseEnter, NULL, chaseThink, chaseUpdate, NULL, calloc(1, sizeof(ChaseData)));
+	State* deathState = createState("Dying", stateMachine, dyingEnter, NULL, dyingThink, dyingUpdate, NULL, calloc(1, sizeof(DyingData)));
 	ChaseData* chaseData = (ChaseData*)chaseState->stateData;
 	chaseData->player = player;
 	WanderData* wanderData = (WanderData*)wanderState->stateData;
 	wanderData->player = player;
+	DyingData* dyingData = (DyingData*)deathState->stateData;
+	strcpy(dyingData->dyingAnimName, "ZombieDeath");
 
 	changeState(newZombie, stateMachine, "Wander");
 
@@ -70,7 +73,7 @@ Entity* createZombie(Entity* player) {
 
 void wanderEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
 	//printf("\nHELLO MOTHERFUCKERS!");
-	animationPlay(self, "ZombieWalk");
+	animationPlay(self, "ZombieWalk", true);
 	EnemyData* enemyData = (EnemyData*)self->data;
 	enemyData->aiTime = WANDER_AI_INTERVAL;
 }
@@ -108,7 +111,7 @@ void wanderOnHit(struct Entity_S* self, struct State_S* state, StateMachine* sta
 // CHASE
 
 void chaseEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
-	animationPlay(self, "ZombieWalk");
+	animationPlay(self, "ZombieWalk", true);
 	EnemyData* enemyData = (EnemyData*)self->data;
 	enemyData->aiTime = CHASE_AI_INTERVAL;
 }
@@ -159,14 +162,14 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 
 		if (fabsf(angleDifference) < GFC_PI/16.0) {
 			if (enemyData->character3dData->velocity.x + enemyData->character3dData->velocity.y == 0) {
-				animationPlay(self, "ZombieWalk");
+				animationPlay(self, "ZombieWalk", true);
 			}
 			enemyData->character3dData->velocity = gfc_vector3d(0, -CHASE_SPEED, 0);
 			gfc_vector3d_rotate_about_z(&enemyData->character3dData->velocity, enemyData->character3dData->rotation.z);
 		}
 		else {
 			if (enemyData->character3dData->velocity.x + enemyData->character3dData->velocity.y != 0) {
-				animationPlay(self, "ZombieIdle");
+				animationPlay(self, "ZombieIdle", true);
 			}
 			enemyData->character3dData->velocity = gfc_vector3d(0, 0, 0);
 		}

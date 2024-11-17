@@ -158,7 +158,12 @@ void _entityUpdate(Entity * self, float delta) {
 
     if (self->entityAnimation) {
         if (self->entityAnimation->animationFrame+1 >= self->entityAnimation->animationFrameCount) {
-            self->entityAnimation->animationFrame = 0;
+            if (self->entityAnimation->loopAnimation) {
+                self->entityAnimation->animationFrame = 0;
+            }
+            else if (!self->entityAnimation->animationFinished) {
+                self->entityAnimation->animationFinished = true;
+            }
         }
         else {
             self->entityAnimation->animationFrame += 1;
@@ -290,7 +295,6 @@ int entityRaycastTest(Entity * entity, GFC_Edge3D raycast, GFC_Vector3D *contact
     }*/
 
     if (entity->type == ENEMY) {
-        printf("Wahahaha");
         if (edgeCapsuleTest(raycast, entity->entityCollision->collisionPrimitive->s.c, NULL, NULL)) {
             return true;
         }
@@ -371,7 +375,7 @@ void animationFree(Entity* self) {
     }
 }
 
-void animationPlay(Entity* self, const char* animName) {
+void animationPlay(Entity* self, const char* animName, Bool loop) {
     if (!self->entityAnimation) {
         printf("\nEntity type: %d", self->type);
         slog("Entity animation handler does not exist");
@@ -382,6 +386,8 @@ void animationPlay(Entity* self, const char* animName) {
         return;
     }
 
+    self->entityAnimation->animationFinished = false;
+    
     Model* modelCheck;
     int modelIndex = -1;
 
@@ -419,7 +425,7 @@ void animationPlay(Entity* self, const char* animName) {
         self->entityAnimation->animationFrameCount = MAX(0, self->model->armature->maxFrames);
     }
     self->entityAnimation->animationFrame = 0;
-
+    self->entityAnimation->loopAnimation = loop;
 }
 
 void entityAttacked(Entity* self, int damage) {

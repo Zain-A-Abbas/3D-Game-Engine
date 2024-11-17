@@ -29,9 +29,10 @@ typedef struct EntityCollision_S {
 typedef struct EntityAnimation_S {
     char                *animFolder;
     char                currentAnimName[32];
-    int                 loopAnimation;
+    Bool                loopAnimation;
     int                 animationFrame;
     int                 animationFrameCount;
+    Bool                animationFinished;
     GFC_List            *animationList;
 } EntityAnimation;
 
@@ -139,7 +140,7 @@ void animationFree(Entity* self);
 /**
 * @brief Sets the entity's model to the .model file in the folder that matches the name given
 */
-void animationPlay(Entity* self, const char* animName);
+void animationPlay(Entity* self, const char* animName, Bool loop);
 
 
 /**

@@ -11,7 +11,7 @@ typedef struct State_S {
     char                    stateName[32];
     void (*enter)           (struct Entity_S *self, struct State_S *state, StateMachine *stateMachine);
     void (*exit)            (struct Entity_S* self, struct State_S* state, StateMachine* stateMachine);
-    void (*onHit)             (struct Entity_S* self, struct State_S* state, StateMachine* stateMachine);
+    void (*onHit)           (struct Entity_S* self, struct State_S* state, StateMachine* stateMachine);
     void (*think)           (struct Entity_S *self, float delta, struct State_S* state, StateMachine* stateMachine);
     void (*update)          (struct Entity_S *self, float delta, struct State_S* state, StateMachine* stateMachine);
     void                    *stateData;
@@ -34,6 +34,8 @@ void changeState(Entity * self, StateMachine *stateMachine, char newState[32]);
 */
 State* createState(const char* name, StateMachine *stateMachine, void* enterFunction, void* exitFunction, void* thinkFunction, void* updateFunction,  void* onHitFunction, void* stateData);
 
+
 void stateMachineFree(StateMachine* stateMachine);
+
 
 #endif

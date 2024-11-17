@@ -53,6 +53,7 @@ void changeState(Entity* self, StateMachine *stateMachine, char newStateName[32]
 	
 }
 
+
 void stateMachineFree(StateMachine* stateMachine) {
 	int i;
 	State* currentState;
@@ -65,3 +66,4 @@ void stateMachineFree(StateMachine* stateMachine) {
 	}
 	free(stateMachine);
 }
+

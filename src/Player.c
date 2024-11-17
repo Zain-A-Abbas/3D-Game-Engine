@@ -92,7 +92,7 @@ Entity * createPlayer() {
             NULL
         }
     );
-    animationPlay(playerEntity, "PlayerIdle");
+    animationPlay(playerEntity, "PlayerIdle", true);
     playerEntity->scale = gfc_vector3d(0.075, 0.075, 0.075);
 
     // Collision
