@@ -1,6 +1,17 @@
 #include "StateMachine.h"
 #include "simple_logger.h"
 
+StateMachine* createStateMachine() {
+	StateMachine* stateMachine = (StateMachine*)malloc(sizeof(StateMachine));
+	if (!stateMachine) {
+		slog("Could not allocate enemy state machine");
+		return NULL;
+
+	}
+	memset(stateMachine, 0, sizeof(StateMachine));
+	return stateMachine;
+}
+
 State* createState(const char* name, StateMachine *stateMachine, void* enterFunction, void* exitFunction, void* thinkFunction, void* updateFunction, void* onHitFunction, void *stateData) {
 	State* newState = (State*)malloc(sizeof(State));
 	if (!newState) {

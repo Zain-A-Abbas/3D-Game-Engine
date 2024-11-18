@@ -2,7 +2,7 @@
 #include "simple_logger.h"
 #include "TypesExtra.h"
 
-const int HP = 20;
+const int HP = 30;
 const float AGGRO_RANGE = 8;
 
 const float WANDER_SPEED = 4;
@@ -42,14 +42,7 @@ Entity* createZombie(Entity* player) {
 
 	// AI
 		// Make and assign states
-	StateMachine* stateMachine = (StateMachine*)malloc(sizeof(StateMachine));
-	if (!stateMachine) {
-		slog("Could not allocate enemy state machine");
-		free(newZombie);
-		return NULL;
-
-	}
-	memset(stateMachine, 0, sizeof(StateMachine));
+	StateMachine* stateMachine = createStateMachine();
 	enemyData->enemyStateMachine = stateMachine;
 
 	State* wanderState = createState("Wander", stateMachine, wanderEnter, NULL, wanderThink, wanderUpdate, wanderOnHit, calloc(1, sizeof(WanderData)));

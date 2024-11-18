@@ -24,6 +24,8 @@ typedef struct StateMachine_S
     State       *currentState;
 } StateMachine;
 
+StateMachine* createStateMachine();
+
 /**
  * @brief Go to a state by name. If the resulting state is not found, the entity will be stateless after exiting the current one.
  */

@@ -69,19 +69,20 @@ void enemyAttacked(Entity* self, int damage) {
 	}
 }
 
+void giveDeathState(StateMachine* stateMachine, char dyingAnimation[32]) {
+	State* deathState = createState("Dying", stateMachine, dyingEnter, NULL, dyingThink, dyingUpdate, NULL, calloc(1, sizeof(DyingData)));
+	DyingData* dyingData = (DyingData*)deathState->stateData;
+	strcpy(dyingData->dyingAnimName, dyingAnimation);
+}
 
 void dyingEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
-	self->entityCollision = 0;
+	self->collisionLayer = 0b00000000;
 	DyingData* dyingData = (DyingData*)state->stateData;
 	animationPlay(self, dyingData->dyingAnimName, false);
 }
 
 void dyingThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
-	if (self->entityAnimation) {
-		if (self->entityAnimation->animationFinished) {
-			enemyDelete(self);
-		}
-	}
+
 }
 
 void dyingUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {

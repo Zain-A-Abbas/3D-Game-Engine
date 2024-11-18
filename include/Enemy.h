@@ -15,8 +15,6 @@ typedef struct EnemyData_S {
     Character3DData     *character3dData;
     float               aiTime; // The time used to gauge gaps between AI decisions
     int                 hp;
-
-    void (*death)       (Entity *entity, struct EnemyData_S *enemy);
 } EnemyData;
 
 
@@ -30,6 +28,7 @@ void enemyUpdate(Entity* self, float delta);
 
 void enemyAttacked(Entity* self, int damage);
 
+void giveDeathState(StateMachine* stateMachine, char dyingAnimation[32]);
 void dyingEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine);
 void dyingThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine);
 void dyingUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine);
