@@ -148,5 +148,9 @@ void animationPlay(Entity* self, const char* animName, Bool loop);
 */
 void entityAttacked(Entity *self, int damage);
 
+/**
+* @brief Gets the normalized distance between two entities, and then returns the dot product between that and first entity's rotation.
+*/
+float entityDirectionTo(Entity* a, Entity* b);
 
 #endif

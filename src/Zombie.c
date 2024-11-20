@@ -3,7 +3,7 @@
 #include "TypesExtra.h"
 
 const int HP = 30;
-const float AGGRO_RANGE = 8;
+const float AGGRO_RANGE = 16;
 
 const float WANDER_SPEED = 4;
 const float WANDER_AI_INTERVAL = 4.0;
@@ -165,6 +165,11 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 				animationPlay(self, "ZombieIdle", true);
 			}
 			enemyData->character3dData->velocity = gfc_vector3d(0, 0, 0);
+		}
+
+		// Attack
+		if (fabsf(entityDirectionTo(self, chaseData->player)) < 0.4 && gfc_vector3d_magnitude_between( entityGlobalPosition(self), entityGlobalPosition(chaseData->player) ) < 15) {
+			printf("\nAttack!");
 		}
 	}
 }

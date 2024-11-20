@@ -433,3 +433,24 @@ void entityAttacked(Entity* self, int damage) {
         enemyAttacked(self, damage);
     }
 }
+
+float entityDirectionTo(Entity* a, Entity* b) {
+    GFC_Vector3D posA = entityGlobalPosition(a);
+    GFC_Vector3D posB = entityGlobalPosition(b);
+
+    GFC_Vector2D direction = { 0 };
+    direction.x = posB.x - posA.x;
+    direction.y = posB.y - posA.y;
+    gfc_vector2d_normalize(&direction);  // Normalize the direction vector
+
+    // Get the yaw (rotation around the Z-axis) of entity a
+    float yaw = entityGlobalRotation(a).z;
+
+    // Calculate the 2D forward unit vector based on the yaw (Z rotation)
+    GFC_Vector2D forward = { 0 };
+    forward.x = cosf(yaw);
+    forward.y = sinf(yaw);
+
+    // Return the dot product between the 2D direction to the target and the forward direction
+    return gfc_vector2d_dot_product(direction, forward);
+}

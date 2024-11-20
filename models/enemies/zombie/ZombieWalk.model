@@ -31,7 +31,7 @@
             "models/enemies/zombie/ZombieWalk0027.obj",
             "models/enemies/zombie/ZombieWalk0028.obj",
             "models/enemies/zombie/ZombieWalk0029.obj",
-            "models/enemies/zombie/ZombieWalk0030.obj",
+            "models/enemies/zombie/ZombieWalk0030.obj"
             ]
         "texture":"models/enemies/zombie/Zombie_Atlas.png",
         "loop":1

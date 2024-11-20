@@ -21,7 +21,7 @@
             "models/enemies/zombie/ZombieDeath0017.obj",
             "models/enemies/zombie/ZombieDeath0018.obj",
             "models/enemies/zombie/ZombieDeath0019.obj",
-            "models/enemies/zombie/ZombieDeath0020.obj",
+            "models/enemies/zombie/ZombieDeath0020.obj"
             ]
         "texture":"models/enemies/zombie/Zombie_Atlas.png",
         "loop":1

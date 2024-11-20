@@ -17,7 +17,7 @@
             "models/enemies/zombie/ZombieRun0013.obj",
             "models/enemies/zombie/ZombieRun0014.obj",
             "models/enemies/zombie/ZombieRun0015.obj",
-            "models/enemies/zombie/ZombieRun0016.obj",
+            "models/enemies/zombie/ZombieRun0016.obj"
             ]
         "texture":"models/enemies/zombie/Zombie_Atlas.png",
         "loop":1

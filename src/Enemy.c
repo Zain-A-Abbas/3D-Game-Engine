@@ -82,12 +82,17 @@ void dyingEnter(struct Entity_S* self, struct State_S* state, StateMachine* stat
 }
 
 void dyingThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
-
+	if (self->entityAnimation) {
+		if (self->entityAnimation->animationFinished) {
+			enemyDelete(self);
+		}
+	}
 }
 
 void dyingUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
 
 }
+
 
 void enemyDelete(Entity* self) {
 	EnemyData* enemyData = (EnemyData*)self->data;

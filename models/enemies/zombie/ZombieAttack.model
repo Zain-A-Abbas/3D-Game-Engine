@@ -41,7 +41,7 @@
             "models/enemies/zombie/ZombieAttack0037.obj",
             "models/enemies/zombie/ZombieAttack0038.obj",
             "models/enemies/zombie/ZombieAttack0039.obj",
-            "models/enemies/zombie/ZombieAttack0040.obj",
+            "models/enemies/zombie/ZombieAttack0040.obj"
             ]
         "texture":"models/enemies/zombie/Zombie_Atlas.png",
         "loop":1
