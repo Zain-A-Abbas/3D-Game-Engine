@@ -12,6 +12,10 @@ const float CHASE_SPEED = 7;
 const float CHASE_TURN_SPEED = 8;
 const float CHASE_AI_INTERVAL = 0.12;
 
+const float ATTACK_TURN_SPEED = 4;
+const float ATTACK_STARTUP = 0.25;
+const float ATTACK_COOLDOWN = 2;
+
 Entity* createZombie(Entity* player) {
 	Entity* newZombie = enemyEntityNew();
 	if (!newZombie) {
@@ -39,19 +43,25 @@ Entity* createZombie(Entity* player) {
         }
     );
 	animationPlay(newZombie, "ZombieWalk", true);
-
+	
 	// AI
-		// Make and assign states
+
+	// Make and assign states
 	StateMachine* stateMachine = createStateMachine();
 	enemyData->enemyStateMachine = stateMachine;
 
 	State* wanderState = createState("Wander", stateMachine, wanderEnter, NULL, wanderThink, wanderUpdate, wanderOnHit, calloc(1, sizeof(WanderData)));
-	State* chaseState = createState("Chase", stateMachine, chaseEnter, NULL, chaseThink, chaseUpdate, NULL, calloc(1, sizeof(ChaseData)));
-	State* deathState = createState("Dying", stateMachine, dyingEnter, NULL, dyingThink, dyingUpdate, NULL, calloc(1, sizeof(DyingData)));
-	ChaseData* chaseData = (ChaseData*)chaseState->stateData;
-	chaseData->player = player;
 	WanderData* wanderData = (WanderData*)wanderState->stateData;
 	wanderData->player = player;
+	
+	State* chaseState = createState("Chase", stateMachine, chaseEnter, NULL, chaseThink, chaseUpdate, NULL, calloc(1, sizeof(ChaseData)));
+	ChaseData* chaseData = (ChaseData*)chaseState->stateData;
+	chaseData->player = player;
+
+	State* attackState = createState("Attack", stateMachine, attackEnter, NULL, attackThink, attackUpdate, NULL, calloc(1, sizeof(AttackData)));
+	AttackData* attackData = (AttackData*)attackState->stateData;
+
+	State* deathState = createState("Dying", stateMachine, dyingEnter, NULL, dyingThink, dyingUpdate, NULL, calloc(1, sizeof(DyingData)));
 	DyingData* dyingData = (DyingData*)deathState->stateData;
 	strcpy(dyingData->dyingAnimName, "ZombieDeath");
 
@@ -168,8 +178,39 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 		}
 
 		// Attack
-		if (fabsf(entityDirectionTo(self, chaseData->player)) < 0.4 && gfc_vector3d_magnitude_between( entityGlobalPosition(self), entityGlobalPosition(chaseData->player) ) < 15) {
-			printf("\nAttack!");
+		if (fabsf(entityDirectionTo(self, chaseData->player)) < 0.2 && gfc_vector3d_magnitude_between( entityGlobalPosition(self), entityGlobalPosition(chaseData->player) ) < 15) {
+			changeState(self, stateMachine, "Attack");
 		}
 	}
+}
+
+// ATTACK
+
+void attackEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
+	animationPlay(self, "ZombieAttack", false);
+	EnemyData* enemyData = (EnemyData*)self->data;
+}
+
+void attackUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
+	EnemyData* enemyData = (EnemyData*)self->data;
+
+	
+}
+
+void attackThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
+	EnemyData* enemyData = (EnemyData*)self->data;
+	AttackData* attackData = (AttackData*)state->stateData;
+	enemyData->aiTime += delta;
+	if (enemyData->aiTime > ATTACK_STARTUP && !attackData->attacking) {
+		attackData->attacking = true;
+		GFC_Sphere attackSphere = {0};
+		GFC_Vector3D attackPosition = entityGlobalPosition(self);
+		GFC_Vector3D attackOffset = gfc_vector3d(0, -2.5, 4);
+		gfc_vector3d_rotate_about_z(&attackOffset, entityGlobalRotation(self).z);
+		attackPosition = gfc_vector3d_added(attackPosition, attackOffset);
+		attackSphere.x = attackPosition.x; attackSphere.y = attackPosition.y; attackSphere.z = attackPosition.z;
+		attackSphere.r = 4;
+		enemyData->attackSphere = attackSphere;
+	}
+
 }

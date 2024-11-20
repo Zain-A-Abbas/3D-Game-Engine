@@ -28,6 +28,7 @@ Entity * enemyEntityNew() {
 	
 
 	enemyData->character3dData = newCharacter3dData();
+	enemyData->attackSphere = gfc_sphere(0, 0, 0, 0);
 
 	enemyEntity->collisionLayer = ENEMY_LAYERS;
 	return enemyEntity;

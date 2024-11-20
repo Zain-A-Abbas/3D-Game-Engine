@@ -1,4 +1,4 @@
-
+Calculate global position/scale/rotation once per frame?
 
 Can make it so weapons use the .mtl files using the provided functions
 
