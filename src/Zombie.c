@@ -22,7 +22,7 @@ Entity* createZombie(Entity* player) {
 		return;
 	}
 
-	newZombie->scale = gfc_vector3d(2, 2, 2);
+	newZombie->scale = gfc_vector3d(2.25, 2.25, 2.25);
 
 	enemySetCollision(newZombie, 8, 2);
 
@@ -60,10 +60,9 @@ Entity* createZombie(Entity* player) {
 
 	State* attackState = createState("Attack", stateMachine, attackEnter, NULL, attackThink, attackUpdate, NULL, calloc(1, sizeof(AttackData)));
 	AttackData* attackData = (AttackData*)attackState->stateData;
+	attackData->player = player;
 
-	State* deathState = createState("Dying", stateMachine, dyingEnter, NULL, dyingThink, dyingUpdate, NULL, calloc(1, sizeof(DyingData)));
-	DyingData* dyingData = (DyingData*)deathState->stateData;
-	strcpy(dyingData->dyingAnimName, "ZombieDeath");
+	giveDeathState(stateMachine, "ZombieDeath");
 
 	changeState(newZombie, stateMachine, "Wander");
 
@@ -178,7 +177,7 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 		}
 
 		// Attack
-		if (fabsf(entityDirectionTo(self, chaseData->player)) < 0.2 && gfc_vector3d_magnitude_between( entityGlobalPosition(self), entityGlobalPosition(chaseData->player) ) < 15) {
+		if (fabsf(entityDirectionTo(self, chaseData->player)) < 0.2 && gfc_vector3d_magnitude_between( entityGlobalPosition(self), entityGlobalPosition(chaseData->player) ) < 8) {
 			changeState(self, stateMachine, "Attack");
 		}
 	}
@@ -205,12 +204,15 @@ void attackThink(struct Entity_S* self, float delta, struct State_S* state, Stat
 		attackData->attacking = true;
 		GFC_Sphere attackSphere = {0};
 		GFC_Vector3D attackPosition = entityGlobalPosition(self);
-		GFC_Vector3D attackOffset = gfc_vector3d(0, -2.5, 4);
+		GFC_Vector3D attackOffset = gfc_vector3d(0, -3.5, 0);
 		gfc_vector3d_rotate_about_z(&attackOffset, entityGlobalRotation(self).z);
 		attackPosition = gfc_vector3d_added(attackPosition, attackOffset);
 		attackSphere.x = attackPosition.x; attackSphere.y = attackPosition.y; attackSphere.z = attackPosition.z;
-		attackSphere.r = 4;
+		attackSphere.r = 6;
 		enemyData->attackSphere = attackSphere;
+		if (gfc_point_in_sphere(entityGlobalPosition(attackData->player), attackSphere)) {
+			printf("\nPlayer attacked");
+		}
 	}
 
 }

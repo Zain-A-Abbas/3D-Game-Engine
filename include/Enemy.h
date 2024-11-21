@@ -29,6 +29,11 @@ void enemyUpdate(Entity* self, float delta);
 
 void enemyAttacked(Entity* self, int damage);
 
+/**
+* @brief Sets up a universal dying state for a given enemy
+* @param stateMachine: The enemy's state machine.
+* @param dyingAnimation: The animation to play when the enemy is killed.
+*/
 void giveDeathState(StateMachine* stateMachine, char dyingAnimation[32]);
 void dyingEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine);
 void dyingThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine);
