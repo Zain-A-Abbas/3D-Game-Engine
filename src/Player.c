@@ -438,3 +438,8 @@ void setWeapon(PlayerData* playerData, int weaponIndex) {
     playerData->currentWeapon = weaponIndex;
     playerSwitchWeapon((Weapon*)gfc_list_get_nth(playerData->playerWeapons, weaponIndex));
 }
+
+void playerTakeDamage(Entity * self, int damage) {
+    PlayerData *playerData = (PlayerData*) self->data;
+    playerData->hp = MAX(playerData->hp - damage, 0);
+}

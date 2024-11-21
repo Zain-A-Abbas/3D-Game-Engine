@@ -258,7 +258,7 @@ int main(int argc,char *argv[])
             //}
             //2D draws
 
-            /*EnemyData* enemyData = (EnemyData*)enemy1->data;
+            EnemyData* enemyData = (EnemyData*)enemy1->data;
             if (enemyData != NULL) {
 		    //printf("\nAttack sphere: %f, %f, %f, %f", enemyData->attackSphere.x, enemyData->attackSphere.y, enemyData->attackSphere.z, enemyData->attackSphere.r);
                 gf3d_draw_sphere_solid(
@@ -269,7 +269,7 @@ int main(int argc,char *argv[])
                     gfc_color(0.7, 0, 0, 0.5),
                     gfc_color(1, 1, 1, 1)
                 );
-            }*/
+            }
 
                 //gf2d_mouse_draw();
                 drawUI();

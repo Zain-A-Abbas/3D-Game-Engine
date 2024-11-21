@@ -101,4 +101,9 @@ void setWeapon(PlayerData* playerData, int weaponIndex);
 */
 void giveWeapon(Entity* self, PlayerData* playerData, const char* weapon);
 
+/**
+ * @brief Damages the player by X amount.
+ */
+void playerTakeDamage(Entity * self, int damage);
+
 #endif

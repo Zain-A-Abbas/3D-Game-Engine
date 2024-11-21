@@ -1,6 +1,7 @@
 #include "Zombie.h"
 #include "simple_logger.h"
 #include "TypesExtra.h"
+#include "Player.h"
 
 const int HP = 30;
 const float AGGRO_RANGE = 16;
@@ -15,6 +16,7 @@ const float CHASE_AI_INTERVAL = 0.12;
 const float ATTACK_TURN_SPEED = 4;
 const float ATTACK_STARTUP = 0.25;
 const float ATTACK_COOLDOWN = 2;
+const int MELEE_DAMAGE = 16;
 
 Entity* createZombie(Entity* player) {
 	Entity* newZombie = enemyEntityNew();
@@ -177,7 +179,7 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 		}
 
 		// Attack
-		if (fabsf(entityDirectionTo(self, chaseData->player)) < 0.2 && gfc_vector3d_magnitude_between( entityGlobalPosition(self), entityGlobalPosition(chaseData->player) ) < 8) {
+		if (fabsf(entityDirectionTo(self, chaseData->player)) < 0.3 && gfc_vector3d_magnitude_between( entityGlobalPosition(self), entityGlobalPosition(chaseData->player) ) < 12) {
 			changeState(self, stateMachine, "Attack");
 		}
 	}
@@ -210,9 +212,11 @@ void attackThink(struct Entity_S* self, float delta, struct State_S* state, Stat
 		attackSphere.x = attackPosition.x; attackSphere.y = attackPosition.y; attackSphere.z = attackPosition.z;
 		attackSphere.r = 6;
 		enemyData->attackSphere = attackSphere;
+		printf("\nAAA");
 		if (gfc_point_in_sphere(entityGlobalPosition(attackData->player), attackSphere)) {
-			printf("\nPlayer attacked");
+			playerTakeDamage(attackData->player, MELEE_DAMAGE);
 		}
+		printf("\nBBB");
 	}
 
 }
