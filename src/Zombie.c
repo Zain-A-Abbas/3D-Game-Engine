@@ -194,8 +194,6 @@ void attackEnter(struct Entity_S* self, struct State_S* state, StateMachine* sta
 
 void attackUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
 	EnemyData* enemyData = (EnemyData*)self->data;
-
-	
 }
 
 void attackThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {

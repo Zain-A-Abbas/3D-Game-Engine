@@ -33,6 +33,7 @@
 #include "Interactable.h"
 #include "Structure.h"
 #include "Zombie.h"
+#include "Level.h"
 
 extern int __DEBUG;
 
@@ -66,8 +67,7 @@ void draw_origin()
 int main(int argc,char *argv[])
 {
     //local variables
-    Model *sky;
-    GFC_Matrix4 skyMat,dinoMat;
+    GFC_Matrix4 dinoMat;
     //initializtion    
     parse_arguments(argc,argv);
     init_logger("gf3d.log",0);
@@ -94,9 +94,6 @@ int main(int argc,char *argv[])
     //armatures
     gf3d_armature_system_init(256);
 
-
-    sky = gf3d_model_load("models/sky.model");
-    gfc_matrix4_identity(skyMat);
     gfc_matrix4_identity(dinoMat);
 
     //camera
@@ -112,13 +109,13 @@ int main(int argc,char *argv[])
     // Setup audio
     gfc_audio_init(128, 1, 1, 1, 0, 0);
     
-    // Create player
-    Entity * player = createPlayer();
-    assignCamera(player, gf3dGetCamera());
-    player->position.z = 0;
-    
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
+    // Create player
+    Entity * player;
+    // Create level
+    LevelData *levelData = createForestLevel(player);
+    
     // UI setup
     initializeUI();
 
@@ -129,26 +126,16 @@ int main(int argc,char *argv[])
     /*Entity* enemy2 = enemyEntityNew();
     enemy2->position = gfc_vector3d(-4, 4, 0);*/
     
-    // Create land
-    Entity* testGround = terrainEntityNew();
-    //testGround->model = gf3d_model_load("models/primitives/testground.model");
-    testGround->model = gf3d_model_load("models/structures/Ground1.model");
-    //testGround->scale = gfc_vector3d(4, 4, 1);
-    testGround->position = gfc_vector3d(0, 0, -8);
-    EntityCollision* groundCollision = (EntityCollision*)malloc(sizeof(EntityCollision));
-    memset(groundCollision, 0, sizeof(EntityCollision));
-    testGround->entityCollision = groundCollision;
-    GFC_Box testGroundbox = gfc_box(-375, -375, -20, 750, 750, 40);
-    newQuadTree(testGround, testGroundbox, 4);
+  
 
     // Create house
-    Entity* testHouse = structureNew(HOUSE);
-    testHouse->position = gfc_vector3d(0, 64, 2);
-    testHouse->scale = gfc_vector3d(1, 1, 1);
+    //Entity* testHouse = structureNew(HOUSE);
+    //testHouse->position = gfc_vector3d(0, 64, 2);
+    //testHouse->scale = gfc_vector3d(1, 1, 1);
 
 
     // Create Tree
-    TerrainData*treeData;
+    /*TerrainData*treeData;
     int treeCount = 160 + gfc_random_int(40);
     for (int i = 0; i < treeCount; i++) {
         float treeX = -375 + gfc_random_int(750);
@@ -178,7 +165,7 @@ int main(int argc,char *argv[])
 
         testTree->entityCollision = treeCollision;
         //printf("\nTree location: %f, %f, %f", treeX, treeY, treeZ);
-    }
+    }*/
 
 
 
@@ -213,7 +200,7 @@ int main(int argc,char *argv[])
         
 
 
-            gf3d_model_draw_sky(sky,skyMat,GFC_COLOR_WHITE);
+            levelDraw(levelData);
             entityDrawAll();
             draw_origin();
 
@@ -317,7 +304,7 @@ void game_frame_delay(float * delta)
         SDL_Delay(frame_delay - diff);
     }
     fps = 1000.0/MAX(SDL_GetTicks() - then,0.001);
-    //slog("fps: %f", fps);
-    //slog("Delta: %f", *delta);
+    printf("\nfps: %f", fps);
+    printf("\nDelta: %f", *delta);
 }
 /*eol@eof*/
