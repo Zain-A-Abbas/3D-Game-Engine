@@ -1,0 +1,8 @@
+{
+    "model":
+    {
+        "gltf" : "models/enemies/arm/ArmRun.gltf",
+        "texture":"models/enemies/zombie/Zombie_Atlas.png",
+        "loop":1
+    }
+}

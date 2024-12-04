@@ -32,6 +32,7 @@ typedef struct EntityAnimation_S {
     Bool                loopAnimation;
     int                 animationFrame;
     int                 animationFrameCount;
+    float               animationTime;
     Bool                animationFinished;
     GFC_List            *animationList;
 } EntityAnimation;

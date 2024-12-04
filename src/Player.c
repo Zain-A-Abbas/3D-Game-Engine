@@ -15,8 +15,8 @@ const int LOWEST_X_DEGREES = -30;
 
 const float INTERACT_DISTANCE = 8;
 
-const GFC_Vector3D BASE_CAMERA_OFFSET = { -2, 12, 12 };
-const GFC_Vector3D ZOOM_CAMERA_OFFSET = { -1.75, 8, 11.75 };
+const GFC_Vector3D BASE_CAMERA_OFFSET = { -4, 16, 10 };
+const GFC_Vector3D ZOOM_CAMERA_OFFSET = { -2.75, 14, 9.75 };
 GFC_Vector3D actualCameraOffset;
 GFC_Vector3D zoomCameraOffset;
 
@@ -88,12 +88,11 @@ Entity * createPlayer() {
         "models/player/", 
         (char *[]){
             "PlayerIdle",
-            "PlayerWalkForward",
             NULL
         }
     );
     animationPlay(playerEntity, "PlayerIdle", true);
-    playerEntity->scale = gfc_vector3d(0.075, 0.075, 0.075);
+    playerEntity->scale = gfc_vector3d(8, 8, 8);
 
     // Collision
     EntityCollision* collision = (EntityCollision*) malloc(sizeof(EntityCollision));
@@ -103,7 +102,7 @@ Entity * createPlayer() {
     GFC_ExtendedPrimitive* collisionPrimitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
     memset(collisionPrimitive, 0, sizeof(GFC_ExtendedPrimitive));
     collisionPrimitive->type = E_Capsule;
-    GFC_Capsule playerCapsule = gfc_capsule(106, 27);
+    GFC_Capsule playerCapsule = gfc_capsule(8, 2);
     collisionPrimitive->s.c = playerCapsule;
     collision->collisionPrimitive = collisionPrimitive;
     

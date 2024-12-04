@@ -1,7 +1,7 @@
 {
     "model":
     {
-        "gltf":"models/player/Idle.gltf",
+        "gltf":"models/player/PlayerIdle.gltf",
         "texture":"models/player/PlayerTexture.png",
         "loop":1
     }

@@ -6,15 +6,19 @@
 
 typedef struct {
 	Entity			*player;
+	float			turnTime;
+	float			aggroTime;
 } WanderData;
 
 typedef struct {
 	Entity			*player;
+	float			attackCheckTime;
 } ChaseData;
 
 typedef struct {
 	Entity			*player;
 	Bool			attacking;
+	float			attackStartupTime;
 } AttackData;
 
 Entity * createZombie(Entity *player);

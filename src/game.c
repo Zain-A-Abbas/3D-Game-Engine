@@ -112,16 +112,13 @@ int main(int argc,char *argv[])
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
     // Create player
-    Entity * player;
+    Entity *player = NULL;
     // Create level
-    LevelData *levelData = createForestLevel(player);
+    LevelData *levelData = createForestLevel(&player);
     
     // UI setup
     initializeUI();
 
-    // Create dummy enemies
-    Entity* enemy1 = createZombie(player);
-    enemy1->position = gfc_vector3d(0, -40, 0);
     //entityScalePreserveModel(enemy1, gfc_vector3d(0.08, 0.08, 0.08));
     /*Entity* enemy2 = enemyEntityNew();
     enemy2->position = gfc_vector3d(-4, 4, 0);*/
@@ -180,6 +177,13 @@ int main(int argc,char *argv[])
     float delta = 0.0;
     game_frame_delay(&delta);
 
+    Entity* enemy1 = NULL;
+    for (int i = 0; i < entityManager.entityMax; i++) {
+        if (entityManager.entityList[i].type == ENEMY) {
+            enemy1 = &entityManager.entityList[i];
+            break;
+        }
+    }
 
     // main game loop
     while(!_done)
@@ -245,17 +249,19 @@ int main(int argc,char *argv[])
             //}
             //2D draws
 
-            EnemyData* enemyData = (EnemyData*)enemy1->data;
-            if (enemyData != NULL) {
-		    //printf("\nAttack sphere: %f, %f, %f, %f", enemyData->attackSphere.x, enemyData->attackSphere.y, enemyData->attackSphere.z, enemyData->attackSphere.r);
-                gf3d_draw_sphere_solid(
-                    enemyData->attackSphere,
-                    gfc_vector3d(0, 0, 0),
-                    gfc_vector3d(0, 0, 0),
-                    gfc_vector3d(1, 1, 1),
-                    gfc_color(0.7, 0, 0, 0.5),
-                    gfc_color(1, 1, 1, 1)
-                );
+            if (enemy1) {
+                EnemyData* enemyData = (EnemyData*)enemy1->data;
+                if (enemyData != NULL) {
+		        //printf("\nAttack sphere: %f, %f, %f, %f", enemyData->attackSphere.x, enemyData->attackSphere.y, enemyData->attackSphere.z, enemyData->attackSphere.r);
+                    gf3d_draw_sphere_solid(
+                        enemyData->attackSphere,
+                        gfc_vector3d(0, 0, 0),
+                        gfc_vector3d(0, 0, 0),
+                        gfc_vector3d(1, 1, 1),
+                        gfc_color(0.7, 0, 0, 0.5),
+                        gfc_color(1, 1, 1, 1)
+                    );
+                }
             }
 
                 //gf2d_mouse_draw();
@@ -304,7 +310,7 @@ void game_frame_delay(float * delta)
         SDL_Delay(frame_delay - diff);
     }
     fps = 1000.0/MAX(SDL_GetTicks() - then,0.001);
-    printf("\nfps: %f", fps);
-    printf("\nDelta: %f", *delta);
+    //printf("\nfps: %f", fps);
+    //printf("\nDelta: %f", *delta);
 }
 /*eol@eof*/

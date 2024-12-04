@@ -1,28 +1,7 @@
 {
     "model":
     {
-        "obj_list": [
-            "models/enemies/zombie/ZombieDeath0001.obj",
-            "models/enemies/zombie/ZombieDeath0002.obj",
-            "models/enemies/zombie/ZombieDeath0003.obj",
-            "models/enemies/zombie/ZombieDeath0004.obj",
-            "models/enemies/zombie/ZombieDeath0005.obj",
-            "models/enemies/zombie/ZombieDeath0006.obj",
-            "models/enemies/zombie/ZombieDeath0007.obj",
-            "models/enemies/zombie/ZombieDeath0008.obj",
-            "models/enemies/zombie/ZombieDeath0009.obj",
-            "models/enemies/zombie/ZombieDeath0010.obj",
-            "models/enemies/zombie/ZombieDeath0011.obj",
-            "models/enemies/zombie/ZombieDeath0012.obj",
-            "models/enemies/zombie/ZombieDeath0013.obj",
-            "models/enemies/zombie/ZombieDeath0014.obj",
-            "models/enemies/zombie/ZombieDeath0015.obj",
-            "models/enemies/zombie/ZombieDeath0016.obj",
-            "models/enemies/zombie/ZombieDeath0017.obj",
-            "models/enemies/zombie/ZombieDeath0018.obj",
-            "models/enemies/zombie/ZombieDeath0019.obj",
-            "models/enemies/zombie/ZombieDeath0020.obj"
-            ]
+        "gltf" : "models/enemies/zombie/ZombieDeath.gltf",
         "texture":"models/enemies/zombie/Zombie_Atlas.png",
         "loop":1
     }

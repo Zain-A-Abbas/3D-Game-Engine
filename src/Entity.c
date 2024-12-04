@@ -157,16 +157,20 @@ void _entityUpdate(Entity * self, float delta) {
     if (!self) return;
 
     if (self->entityAnimation) {
-        if (self->entityAnimation->animationFrame+1 >= self->entityAnimation->animationFrameCount) {
-            if (self->entityAnimation->loopAnimation) {
-                self->entityAnimation->animationFrame = 0;
+        self->entityAnimation->animationTime += delta;
+        if (self->entityAnimation->animationTime >= 0.0416) {
+            self->entityAnimation->animationTime = 0;
+            if (self->entityAnimation->animationFrame+1 >= self->entityAnimation->animationFrameCount) {
+                if (self->entityAnimation->loopAnimation) {
+                    self->entityAnimation->animationFrame = 0;
+                }
+                else if (!self->entityAnimation->animationFinished) {
+                    self->entityAnimation->animationFinished = true;
+                }
             }
-            else if (!self->entityAnimation->animationFinished) {
-                self->entityAnimation->animationFinished = true;
+            else {
+                self->entityAnimation->animationFrame += 1;
             }
-        }
-        else {
-            self->entityAnimation->animationFrame += 1;
         }
     }
     
@@ -422,6 +426,11 @@ void animationPlay(Entity* self, const char* animName, Bool loop) {
         }
     }
     else {
+        GFC_List *actionList = self->model->armature->actions;
+        for (int i = 0; i < gfc_list_get_count(actionList); i++) {
+
+            printf("\nAction: %s", gfc_list_get_nth(actionList, i));
+        }
         self->entityAnimation->animationFrameCount = MAX(0, self->model->armature->maxFrames);
     }
     self->entityAnimation->animationFrame = 0;

@@ -20,14 +20,10 @@ the enemy will approach the player. If the player is too far, the enemy will mak
 
 DELIVERABLES:
 
-UI Elements reflecting in game information - DONE
-Functioning Entity System - DONE
-Basic Collision Detection - DONE
-Basic User Controls - DONE
 A contained game world - DONEish
 
 10 weapons - 9/10
-5 enemy types - 1/5
+5 enemy types - 2/5
 2 stages with a shop between them - 1/2
 5 powerups - 0/5
 	Infinite ammo
@@ -35,9 +31,17 @@ A contained game world - DONEish
 	Half cooldown
 	Invincible
 	Double speed
-5 map interactable elements
-    Interact button DONE
-    Doors that can be opened DONE
-    Ammo that can be found in abandoned houses? DONE
-    Reload DONE
-    The shop
+5 map interactable elements - DONE
+
+Animated 3D Models - DONE
+Audio - HALF DONE
+Multiple levels Loading / entity stats from Config - HALF DONE
+A Main Menu / Landing Screen - 
+Custom Pipeline - Animated prite particles
+Custom Research Component - DONE
+
+A boss fight with advanced AI and a visible health bar
+Particle effects on enemies when they get hit
+???
+???
+Random environmental visuals, so mixing and matching shader and noise effects to create unique environments on runtime

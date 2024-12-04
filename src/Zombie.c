@@ -4,14 +4,16 @@
 #include "Player.h"
 
 const int HP = 30;
-const float AGGRO_RANGE = 16;
+const float AGGRO_RANGE = 40;
 
 const float WANDER_SPEED = 4;
 const float WANDER_AI_INTERVAL = 4.0;
+const float WANDER_TURN_INTERVAL = 4.0;
+const float WANDER_AGGRO_INTERVAL = 0.2;
 
 const float CHASE_SPEED = 7;
 const float CHASE_TURN_SPEED = 8;
-const float CHASE_AI_INTERVAL = 0.12;
+const float CHASE_ATTACK_INTERVAL = 0.12;
 
 const float ATTACK_TURN_SPEED = 4;
 const float ATTACK_STARTUP = 0.25;
@@ -24,9 +26,10 @@ Entity* createZombie(Entity* player) {
 		return;
 	}
 
-	newZombie->scale = gfc_vector3d(2.25, 2.25, 2.25);
+	newZombie->parent = NULL;
+	newZombie->scale = gfc_vector3d(10, 10, 10);
 
-	enemySetCollision(newZombie, 8, 2);
+	enemySetCollision(newZombie, 18, 4.5);
 
 	EnemyData* enemyData = (EnemyData*)newZombie->data;
 	enemyData->hp = HP;
@@ -68,7 +71,6 @@ Entity* createZombie(Entity* player) {
 
 	changeState(newZombie, stateMachine, "Wander");
 
-
 	return newZombie;
 }
 
@@ -79,7 +81,6 @@ void wanderEnter(struct Entity_S* self, struct State_S* state, StateMachine* sta
 	//printf("\nHELLO MOTHERFUCKERS!");
 	animationPlay(self, "ZombieWalk", true);
 	EnemyData* enemyData = (EnemyData*)self->data;
-	enemyData->aiTime = WANDER_AI_INTERVAL;
 }
 
 void wanderUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
@@ -93,18 +94,23 @@ void wanderUpdate(struct Entity_S* self, float delta, struct State_S* state, Sta
 void wanderThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
 	EnemyData* enemyData = (EnemyData*)self->data;
 	WanderData* wanderData = (WanderData*)state->stateData;
-	enemyData->aiTime += delta;
+	wanderData->aggroTime += delta;
+	wanderData->turnTime += delta;
 
-	if (enemyData->aiTime >= WANDER_AI_INTERVAL) {
+	if (wanderData->aggroTime >= WANDER_AGGRO_INTERVAL) {
 		if (gfc_vector3d_distance_between_less_than(entityGlobalPosition(wanderData->player), entityGlobalPosition(self), AGGRO_RANGE)) {
 			changeState(self, stateMachine, "Chase");
 			return;
 		}
-		enemyData->aiTime = 0;
+	}
+
+	if (wanderData->turnTime >= WANDER_TURN_INTERVAL) {
+		wanderData->turnTime = 0;
 		enemyData->character3dData->rotation.z = gfc_random() * GFC_HALF_PI * 2 - GFC_HALF_PI; // Rotate by up to 90 degrees in either direction randomly
 		enemyData->character3dData->velocity = gfc_vector3d(0, -WANDER_SPEED, 0);
 		gfc_vector3d_rotate_about_z(&enemyData->character3dData->velocity, enemyData->character3dData->rotation.z);
 	}
+
 }
 
 
@@ -117,7 +123,6 @@ void wanderOnHit(struct Entity_S* self, struct State_S* state, StateMachine* sta
 void chaseEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
 	animationPlay(self, "ZombieWalk", true);
 	EnemyData* enemyData = (EnemyData*)self->data;
-	enemyData->aiTime = CHASE_AI_INTERVAL;
 }
 
 void chaseUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
@@ -131,10 +136,10 @@ void chaseUpdate(struct Entity_S* self, float delta, struct State_S* state, Stat
 void chaseThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
 	EnemyData* enemyData = (EnemyData*)self->data;
 	ChaseData* chaseData = (ChaseData*)state->stateData;
-	enemyData->aiTime += delta;
-	if (enemyData->aiTime >= CHASE_AI_INTERVAL) {
+	chaseData->attackCheckTime += delta;
+	if (chaseData->attackCheckTime >= CHASE_ATTACK_INTERVAL) {
 
-		enemyData->aiTime = 0;
+		chaseData->attackCheckTime = 0;
 
 		GFC_Vector2D positionDifference = gfc_vector2d(chaseData->player->position.x - self->position.x, chaseData->player->position.y - self->position.y);
 		gfc_vector2d_normalize(&positionDifference);
@@ -190,6 +195,9 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 void attackEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
 	animationPlay(self, "ZombieAttack", false);
 	EnemyData* enemyData = (EnemyData*)self->data;
+	AttackData* attackData = (AttackData*)state->stateData;
+	attackData->attacking = false;
+	attackData->attackStartupTime = 0;
 }
 
 void attackUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
@@ -199,8 +207,8 @@ void attackUpdate(struct Entity_S* self, float delta, struct State_S* state, Sta
 void attackThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
 	EnemyData* enemyData = (EnemyData*)self->data;
 	AttackData* attackData = (AttackData*)state->stateData;
-	enemyData->aiTime += delta;
-	if (enemyData->aiTime > ATTACK_STARTUP && !attackData->attacking) {
+	attackData->attackStartupTime += delta;
+	if (attackData->attackStartupTime > ATTACK_STARTUP && !attackData->attacking) {
 		attackData->attacking = true;
 		GFC_Sphere attackSphere = {0};
 		GFC_Vector3D attackPosition = entityGlobalPosition(self);
@@ -210,11 +218,13 @@ void attackThink(struct Entity_S* self, float delta, struct State_S* state, Stat
 		attackSphere.x = attackPosition.x; attackSphere.y = attackPosition.y; attackSphere.z = attackPosition.z;
 		attackSphere.r = 6;
 		enemyData->attackSphere = attackSphere;
-		printf("\nAAA");
 		if (gfc_point_in_sphere(entityGlobalPosition(attackData->player), attackSphere)) {
 			playerTakeDamage(attackData->player, MELEE_DAMAGE);
 		}
-		printf("\nBBB");
+	}
+
+	if (self->entityAnimation->animationFinished) {
+		changeState(self, stateMachine, "Chase");
 	}
 
 }

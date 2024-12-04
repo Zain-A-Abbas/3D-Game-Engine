@@ -10,9 +10,9 @@ void setCapsuleFinalRadius(GFC_Capsule* c, Entity* ent) {
 		return;
 	}
 	float finalRadius = c->radius;
-	GFC_Vector3D entityScale = entityGlobalScale(ent);
-	float horizontalScale = (entityScale.x + entityScale.y) / 2.0;
-	finalRadius *= horizontalScale;
+	//GFC_Vector3D entityScale = entityGlobalScale(ent);
+	//float horizontalScale = (entityScale.x + entityScale.y) / 2.0;
+	//finalRadius *= horizontalScale;
 	c->finalRadius = finalRadius;
 }
 
@@ -28,7 +28,7 @@ void setCapsuleFinalBase(GFC_Capsule* c, Entity* ent) {
 void setCapsuleFinalTip(GFC_Capsule* c, Entity* ent) {
 	GFC_Vector3D finalTip = { 0, 0, c->height };
 	if (ent) {
-		finalTip = gfc_vector3d_multiply(finalTip, entityGlobalScale(ent));
+		//finalTip = gfc_vector3d_multiply(finalTip, entityGlobalScale(ent));
 		GFC_Vector3D entityRotation = entityGlobalRotation(ent);
 		gfc_vector3d_rotate_about_x(&finalTip, c->rotation_x);
 		gfc_vector3d_rotate_about_x(&finalTip, entityRotation.x);
@@ -91,12 +91,10 @@ short capsuleToCapsuleTest(GFC_Capsule a, GFC_Capsule b, GFC_Vector3D* intersect
 
 	//printf("\nBest A: %f, %f, %f", bestA.x, bestA.y, bestA.z);
 	//printf("\nBest B: %f, %f, %f", bestB.x, bestB.y, bestB.z);
-	GFC_Vector3D _penetrationNormal = gfc_vector3d_subbed(bestA, bestB);
-	float len = sqrt(gfc_vector3d_dot_product(_penetrationNormal, _penetrationNormal));
-	_penetrationNormal.x /= len;
-	_penetrationNormal.y /= len;
-	_penetrationNormal.z /= len;
-	*penetrationNormal = _penetrationNormal;
+	*penetrationNormal = gfc_vector3d_subbed(bestA, bestB);
+	float len = gfc_vector3d_magnitude(*penetrationNormal);
+	penetrationNormal->x /= len; penetrationNormal->y /= len; penetrationNormal->z /= len;
+	gfc_vector3d_normalize(penetrationNormal);
 	*penetrationDepth = a.finalRadius + b.finalRadius - len;
 
 
@@ -260,7 +258,7 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 			}
 		}
 
-		intersectionVector = gfc_vector3d_subbed(sphereCenter, bestPoint);
+		//intersectionVector = gfc_vector3d_subbed(sphereCenter, bestPoint);
 
 
 		//printf("\nSphere center: %f, %f, %f", sphereCenter.x, sphereCenter.y, sphereCenter.z);
@@ -268,8 +266,11 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 		float lenSquare = gfc_vector3d_dot_product(intersectionVector, intersectionVector);
 		float len = sqrt(lenSquare);
 
-		*intersectionPoint = intersectionVector;
-		*penetrationNormal = gfc_vector3d_multiply(intersectionVector, gfc_vector3d(1 / len, 1 / len, 1 / len));
+		*intersectionPoint = bestPoint;
+		*penetrationNormal = intersectionVector;
+		penetrationNormal->x /= len;
+		penetrationNormal->y /= len;
+		penetrationNormal->z /= len;
 
 		*penetrationDepth = sphere.r - len;
 

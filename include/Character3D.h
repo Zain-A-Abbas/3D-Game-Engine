@@ -2,6 +2,7 @@
 #define __CHARACTER_3D__
 
 #include "Entity.h"
+#include "stdbool.h"
 
 /* This file handles 3D collisions and updates on entities meant to represent individual characters. 
 Not suited for unique circumstances such as tiny swarms. */
@@ -21,6 +22,8 @@ Not suited for unique circumstances such as tiny swarms. */
 typedef struct  {
     GFC_Vector3D        rotation; // Used if the character needs a separate rotation for gameplay purposes than entity visuals
     GFC_Vector3D        velocity; // Applied to position every frame
+    GFC_Vector3D        appliedVelocity; // Forced applied every frame
+    GFC_Vector3D        appliedVelocityDamp; // Is subtracted from appliedVelocity every frame until appliedVelocity is 0,0,0
     float               previousFloorAngle; // Vertical angle of the floor the character was on last frame
     float               gravityRaycastHeight; // The difference between the entity's origin point and the end of the "is on floor" raycast
     int                 zSnap; // Determines if the Z position should snap the next frame
@@ -38,6 +41,8 @@ Character3DData* newCharacter3dData();
 * @Brief moves the character while sliding them across walls.
 */
 void moveAndSlide(Entity* self, Character3DData* character3dData, float delta);
+
+void collide(Entity* self, Character3DData* character3dData, float delta, bool* isOnFloor);
 
 /**
 * @brief Adjusts the speed and direction of the character if pushing against a wall

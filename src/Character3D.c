@@ -1,8 +1,9 @@
 #include "Character3D.h"
 #include "simple_logger.h"
 #include "Player.h"
+#include "Debugger.h"
 
-const float BASE_GRAVITY = -1;
+const float BASE_GRAVITY = -9.8;
 const float BASE_HORIZONTAL_COLLISION_RADIUS = 2;
 
 
@@ -26,22 +27,91 @@ Character3DData* newCharacter3dData() {
 }
 
 void moveAndSlide(Entity* self, Character3DData* character3dData, float delta) {
-    verticalVectorMovement(self, character3dData, delta);
-    horizontalWallSlide(self, character3dData, delta);
+    bool isOnFloor = false;
+    collide(self, character3dData, delta, &isOnFloor);
+    
+    if (isOnFloor && character3dData->velocity.z < 0) {
+        character3dData->velocity.z = 0;
+    }
+    else {
+       character3dData->velocity.z += BASE_GRAVITY * delta;
+    }
+
+    printVector3D("Final velocity", character3dData->velocity);
     self->position.x += character3dData->velocity.x * delta;
     self->position.y += character3dData->velocity.y * delta;
     self->position.z += character3dData->velocity.z * delta;
-    if (character3dData->zSnap) {
-        //slog("Pos z: %f", self->position.z);
-        //slog("Snap z: %f", snapZ);
-        self->position.z = character3dData->zSnapTarget;
-        character3dData->zSnap = false;
-    }
 
 }
 
-void horizontalWallSlide(Entity* self, Character3DData* character3dData, float delta) {
+void collide(Entity* self, Character3DData* character3dData, float delta, bool* isOnFloor) {
     GFC_Vector3D velocity = character3dData->velocity;
+    GFC_Vector3D intersectionPoint = { 0 };
+    GFC_Vector3D penetrationNormal = { 0 };
+    float penetrationDepth = 0;
+
+    PlayerData* playerData = NULL;
+
+    for (int i = 0; i < entityManager.entityMax; i++) {
+        // Filter out inactive entities, non-collideable, and collideable out of range
+        Entity* currEntity = &entityManager.entityList[i];
+        if (!currEntity->_in_use) {
+            continue;
+        }
+        if (currEntity->entityCollision) {
+            if (!gfc_box_overlap(self->entityCollision->AABB, currEntity->entityCollision->AABB)) {
+                continue;
+            }
+        }
+        if (!isOnLayer(currEntity, 3) && !isOnLayer(currEntity, 2) && !isOnLayer(currEntity, 1)) {
+            continue;
+        }
+        if (currEntity == self) {
+            continue;
+        }
+        if (!gfc_vector3d_distance_between_less_than(entityGlobalPosition(self), entityGlobalPosition(currEntity), character3dData->horizontalCollisionRadius * 24)) {
+            continue;
+        }
+
+
+        if (entityCapsuleTest(currEntity, self->entityCollision->collisionPrimitive->s.c, &intersectionPoint, &penetrationNormal, &penetrationDepth, NULL)) {
+
+            float velocityMagnitude = gfc_vector3d_magnitude(velocity);
+            GFC_Vector3D normalizedVelocity = velocity;
+            gfc_vector3d_normalize(&normalizedVelocity);
+
+            float normalDot = gfc_vector3d_dot_product(normalizedVelocity, penetrationNormal);
+            GFC_Vector3D undesiredMotion = gfc_vector3d_multiply(penetrationNormal, gfc_vector3d(normalDot, normalDot, normalDot));
+            GFC_Vector3D desiredMotion = gfc_vector3d_subbed(normalizedVelocity, undesiredMotion);
+
+            velocity = gfc_vector3d_multiply(desiredMotion, gfc_vector3d(velocityMagnitude, velocityMagnitude, velocityMagnitude));
+            float pushBack = (penetrationDepth + GFC_EPSILON);
+            GFC_Vector3D pushbackVector = gfc_vector3d(pushBack, pushBack, pushBack);
+            self->position = gfc_vector3d_added(
+                self->position,
+                gfc_vector3d_multiply(
+                    penetrationNormal,
+                    pushbackVector
+                )
+            );
+
+            printf("\nPenetraion depth: %f", penetrationDepth);
+
+
+            if (!*isOnFloor) {
+                if (gfc_vector3d_dot_product(penetrationNormal, gfc_vector3d(0, 0, 1)) > 0.3) {
+                    *isOnFloor = true;
+                }
+            }
+
+        }
+
+    }
+    character3dData->velocity = velocity;
+}
+
+void horizontalWallSlide(Entity* self, Character3DData* character3dData, float delta) {
+    GFC_Vector3D velocity = character3dData->velocity;  
     GFC_Vector3D intersectionPoint = { 0 };
     GFC_Vector3D penetrationNormal = { 0 };
     float penetrationDepth = 0;
@@ -81,6 +151,7 @@ void horizontalWallSlide(Entity* self, Character3DData* character3dData, float d
             pushBack.x *= penetrationDepth / delta;// *0.01;
             pushBack.y *= penetrationDepth / delta;// *0.01;
             pushBack.z *= penetrationDepth / delta;// *0.01;
+            printVector3D("Pushback", pushBack);
             velocity = gfc_vector3d_added(velocity, pushBack);
         }
 

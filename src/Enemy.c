@@ -22,9 +22,8 @@ Entity * enemyEntityNew() {
 		free(enemyEntity);
         return NULL;
     }
-	enemyEntity->data = enemyData;
 	memset(enemyData, 0, sizeof(enemyData));
-	enemyData->aiTime = 0.0;
+	enemyEntity->data = enemyData;
 	
 
 	enemyData->character3dData = newCharacter3dData();

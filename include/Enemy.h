@@ -13,7 +13,6 @@ typedef struct {
 typedef struct EnemyData_S {
     StateMachine        *enemyStateMachine;
     Character3DData     *character3dData;
-    float               aiTime; // The time used to gauge gaps between AI decisions
     int                 hp;
     GFC_Sphere          attackSphere;
 } EnemyData;
