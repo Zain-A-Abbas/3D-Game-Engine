@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "simple_logger.h"
 #include "Quadtree.h"
+#include "Debugger.h"
 
 void setCapsuleFinalRadius(GFC_Capsule* c, Entity* ent) {
 	if (!ent) {
@@ -44,6 +45,8 @@ void setCapsuleFinalTip(GFC_Capsule* c, Entity* ent) {
 	c->finalTip.y = finalTip.y;
 	c->finalTip.z = finalTip.z;
 }
+
+
 //SOURCE: https://wickedengine.net/2020/04/capsule-collision-detection
 //ACCESSED: 11/10/2024
 
@@ -231,8 +234,7 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 		GFC_Vector3D bestPoint = point0;
 		GFC_Vector3D intersectionVector;
 		if (inside) {
-			// If triangle is wholly inside sphere, then set the intersection point to where they meet
-			intersectionVector = gfc_vector3d_subbed(sphereCenter, point0);
+			// If triangle is wholly inside sphere, then set the intersection poi
 		}
 		else {
 			GFC_Vector3D d = gfc_vector3d_subbed(sphereCenter, point1);
@@ -258,11 +260,9 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 			}
 		}
 
-		//intersectionVector = gfc_vector3d_subbed(sphereCenter, bestPoint);
+		intersectionVector = gfc_vector3d_subbed(sphereCenter, bestPoint);
 
 
-		//printf("\nSphere center: %f, %f, %f", sphereCenter.x, sphereCenter.y, sphereCenter.z);
-		//printf("\nBest point: %f, %f, %f", bestPoint.x, bestPoint.y, bestPoint.z);
 		float lenSquare = gfc_vector3d_dot_product(intersectionVector, intersectionVector);
 		float len = sqrt(lenSquare);
 
@@ -272,7 +272,12 @@ short sphereTriangleTest(GFC_Sphere sphere, GFC_Triangle3D triangle, GFC_Vector3
 		penetrationNormal->y /= len;
 		penetrationNormal->z /= len;
 
+		//printVector3D("Intersection vector", intersectionVector);
+
 		*penetrationDepth = sphere.r - len;
+		//printf("\nDepth: %f", *penetrationDepth);
+		//printf("\nR: %f", sphere.r);
+		//printf("\nDepth: %f", len);
 
 		return true;
 	}

@@ -15,7 +15,7 @@ const int LOWEST_X_DEGREES = -30;
 
 const float INTERACT_DISTANCE = 8;
 
-const GFC_Vector3D BASE_CAMERA_OFFSET = { -4, 16, 10 };
+const GFC_Vector3D BASE_CAMERA_OFFSET = { -4, 26, 10 };
 const GFC_Vector3D ZOOM_CAMERA_OFFSET = { -2.75, 14, 9.75 };
 GFC_Vector3D actualCameraOffset;
 GFC_Vector3D zoomCameraOffset;
@@ -189,9 +189,9 @@ void _playerControls(Entity * self, float delta) {
     movementVelocity.x *= -1;
     movementVelocity.y *= -1;
 
-    playerData->character3dData->velocity.x = movementVelocity.x;
-    playerData->character3dData->velocity.y = movementVelocity.y;
-
+    playerData->character3dData->motionVelocity.x = movementVelocity.x;
+    playerData->character3dData->motionVelocity.y = movementVelocity.y;
+    
     // Mouse rotation
     int xRel, yRel;
     float mouseX, mouseY;
@@ -264,8 +264,8 @@ void _playerUpdate(Entity * self, float delta) {
     
     Character3DData* character3dData = playerData->character3dData;
 
-    character3dData->velocity.x *= speedMod;
-    character3dData->velocity.y *= speedMod;
+    character3dData->motionVelocity.x *= speedMod;
+    character3dData->motionVelocity.y *= speedMod;
 
     moveAndSlide(self, character3dData, delta);
 

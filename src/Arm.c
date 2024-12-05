@@ -11,7 +11,7 @@ const float ARM_WANDER_TURN_INTERVAL = 4.0;
 const float ARM_WANDER_AGGRO_INTERVAL = 0.2;
 
 const float ARM_CHASE_SPEED = 24;
-const float ARM_CHASE_TURN_SPEED = 12;
+const float ARM_CHASE_TURN_SPEED = 32;
 const float ARM_CHASE_TURN_INTERVAL = 0.04;
 const float ARM_CHASE_ATTACK_INTERVAL = 0.12;
 
@@ -106,8 +106,8 @@ void armWanderThink(struct Entity_S* self, float delta, struct State_S* state, S
 	if (wanderData->turnTime >= ARM_WANDER_TURN_INTERVAL) {
 		wanderData->turnTime = 0;
 		enemyData->character3dData->rotation.z = gfc_random() * GFC_HALF_PI * 2 - GFC_HALF_PI; // Rotate by up to 90 degrees in either direction randomly
-		enemyData->character3dData->velocity = gfc_vector3d(0, -ARM_WANDER_SPEED, 0);
-		gfc_vector3d_rotate_about_z(&enemyData->character3dData->velocity, enemyData->character3dData->rotation.z);
+		enemyData->character3dData->motionVelocity = gfc_vector3d(0, -ARM_WANDER_SPEED, 0);
+		gfc_vector3d_rotate_about_z(&enemyData->character3dData->motionVelocity, enemyData->character3dData->rotation.z);
 	}
 
 }
@@ -169,11 +169,11 @@ void armChaseThink(struct Entity_S* self, float delta, struct State_S* state, St
 
 
 		if (fabsf(angleDifference) < GFC_PI / 16.0) {
-			if (enemyData->character3dData->velocity.x + enemyData->character3dData->velocity.y == 0) {
+			if (enemyData->character3dData->motionVelocity.x + enemyData->character3dData->motionVelocity.y == 0) {
 				animationPlay(self, "ArmRun", true);
 			}
-			enemyData->character3dData->velocity = gfc_vector3d(0, -ARM_CHASE_SPEED, 0);
-			gfc_vector3d_rotate_about_z(&enemyData->character3dData->velocity, self->rotation.z);
+			enemyData->character3dData->motionVelocity = gfc_vector3d(0, -ARM_CHASE_SPEED, 0);
+			gfc_vector3d_rotate_about_z(&enemyData->character3dData->motionVelocity, self->rotation.z);
 		}
 
 	}

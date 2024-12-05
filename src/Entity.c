@@ -210,7 +210,7 @@ void entityThinkAll(float delta) {
 void _entityFree(Entity *self) {
     if (!self) return;
     animationFree(self);
-    gf3d_model_free(self->model);
+    //gf3d_model_free(self->model);
     free(self->entityAnimation);
     if (self->entityCollision) {
         entityCollisionFree(self, self->entityCollision);
@@ -415,7 +415,7 @@ void animationPlay(Entity* self, const char* animName, Bool loop) {
     //printf("\nModel index is: %d", modelIndex);
     self->model = gfc_list_get_nth(self->entityAnimation->animationList, modelIndex);
 
-    if (!self->model->armature) {
+;    if (!self->model->armature) {
         // TODO: Add support for non-armatures in this animation format
         if (self->model->mesh_as_frame) {
             printf("\nFrame count: %d", gfc_list_get_count(self->model->mesh_list));

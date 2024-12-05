@@ -21,7 +21,9 @@ Not suited for unique circumstances such as tiny swarms. */
 
 typedef struct  {
     GFC_Vector3D        rotation; // Used if the character needs a separate rotation for gameplay purposes than entity visuals
-    GFC_Vector3D        velocity; // Applied to position every frame
+    GFC_Vector3D        motionVelocity; // Gotten from inputs/AI
+    GFC_Vector3D        gravityVelocity; // Acted upon the enemy
+    GFC_Vector3D        velocity; // Composited every frame from the above two
     GFC_Vector3D        appliedVelocity; // Forced applied every frame
     GFC_Vector3D        appliedVelocityDamp; // Is subtracted from appliedVelocity every frame until appliedVelocity is 0,0,0
     float               previousFloorAngle; // Vertical angle of the floor the character was on last frame
@@ -30,6 +32,8 @@ typedef struct  {
     float               zSnapTarget; // The Z position to snap to next frame
     float               gravity; // Automatically set to negative 1 on creation
     float               horizontalCollisionRadius; // The character's collision radius
+    GFC_Edge3D          gravityRaycast;
+    bool                isOnFloor;
 } Character3DData;
 
 /**
@@ -42,7 +46,7 @@ Character3DData* newCharacter3dData();
 */
 void moveAndSlide(Entity* self, Character3DData* character3dData, float delta);
 
-void collide(Entity* self, Character3DData* character3dData, float delta, bool* isOnFloor);
+void collide(Entity* self, Character3DData* character3dData, float delta, bool* isOnFloor, GFC_Vector3D* collisionPushback, GFC_Capsule capsule, bool floorCollisions);
 
 /**
 * @brief Adjusts the speed and direction of the character if pushing against a wall

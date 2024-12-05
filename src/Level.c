@@ -46,7 +46,7 @@ LevelData *createForestLevel(Entity **player) {
         return NULL;
     }
     assignCamera(playerEntity, gf3dGetCamera());
-    playerEntity->position.z = -4;
+    playerEntity->position.z = -8;
     *player = playerEntity;
 
     // Create trees
@@ -90,8 +90,29 @@ LevelData *createForestLevel(Entity **player) {
     cubeEntity->position.y = -20;
 
     // Setup enemy
-    //Entity* enemy1 = createArm(playerEntity);
-    //enemy1->position = gfc_vector3d(0, -40, 0);
+    Entity* enemy1 = createArm(playerEntity);
+    enemy1->position = gfc_vector3d(0, -40, 0);
+
+    /*Entity* enemy2 = createArm(playerEntity);
+    enemy2->position = gfc_vector3d(0, 40, 0);
+
+    Entity* enemy3 = createArm(playerEntity);
+    enemy3->position = gfc_vector3d(-40, 0, 0);
+
+    Entity* enemy4 = createArm(playerEntity);
+    enemy4->position = gfc_vector3d(28, 28, 0);
+
+    Entity* enemy5 = createArm(playerEntity);
+    enemy5->position = gfc_vector3d(28, -28, 0);
+
+    Entity* enemy6 = createArm(playerEntity);
+    enemy6->position = gfc_vector3d(-28, 28, 0);
+
+    Entity* enemy7 = createArm(playerEntity);
+    enemy7->position = gfc_vector3d(-28, -28, 0);
+
+    Entity* enemy8 = createArm(playerEntity);
+    enemy8->position = gfc_vector3d(28, 28, 0);*/
 
     return data;
 }

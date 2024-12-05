@@ -209,11 +209,11 @@ int main(int argc,char *argv[])
             draw_origin();
 
                 // Draw last player raycast
-              /*PlayerData* playerData = getPlayerData(player);
+              PlayerData* playerData = getPlayerData(player);
                 if (playerData != NULL) {
                     if (playerData->raycastTests) {
                         int i = 0;
-                        for (i = 0; i < playerData->raycastTests->count; i++) {
+                        for (i = 0; i < 1; i++) {
                             GFC_Edge3D drawEdge;
                             GFC_Edge3D* edgeptr = (GFC_Edge3D*)gfc_list_get_nth(playerData->raycastTests, i);
                             drawEdge.a = edgeptr->a;
@@ -231,11 +231,22 @@ int main(int argc,char *argv[])
                         }
                     }
 
+                    Character3DData* playerChar3dData = playerData->character3dData;
+
+                    GFC_Edge3D drawEdge = playerChar3dData->gravityRaycast;
+                    gf3d_draw_edge_3d(
+                        drawEdge,
+                        gfc_vector3d(0, 0, 0),
+                        gfc_vector3d(0, 0, 0),
+                        gfc_vector3d(1, 1, 1),
+                        0.25,
+                        gfc_color(1.0, 1.0, 0.0, 1.0)
+                    );
 
                     //if (playerData->boundingBoxTest.x != 0) {
                       //  gf3d_draw_cube_solid(playerData->boundingBoxTest, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), gfc_color(0.5, 0.2, 0.2, 0.8));
                     //}
-                }*/
+                }
 
             /*for (int i = 0; i < gfc_list_get_count(testGround->entityCollision->quadTree->leaves); i++) {
                 QuadtreeNode* currentLeaf = (QuadtreeNode*)gfc_list_get_nth(testGround->entityCollision->quadTree->leaves, i);
@@ -310,7 +321,7 @@ void game_frame_delay(float * delta)
         SDL_Delay(frame_delay - diff);
     }
     fps = 1000.0/MAX(SDL_GetTicks() - then,0.001);
-    //printf("\nfps: %f", fps);
-    //printf("\nDelta: %f", *delta);
+    printf("\nfps: %f", fps);
+    printf("\nDelta: %f", *delta);
 }
 /*eol@eof*/
