@@ -36,12 +36,12 @@ A contained game world - DONEish
 Animated 3D Models - DONE
 Audio - HALF DONE
 Multiple levels Loading / entity stats from Config - HALF DONE
-A Main Menu / Landing Screen - 
+A Main Menu / Landing Screen - DONE
 Custom Pipeline - Animated prite particles
 Custom Research Component - DONE
 
 A boss fight with advanced AI and a visible health bar
-Particle effects on enemies when they get hit
+???
 ???
 ???
 Random environmental visuals, so mixing and matching shader and noise effects to create unique environments on runtime

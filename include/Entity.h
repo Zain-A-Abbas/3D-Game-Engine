@@ -17,7 +17,8 @@ typedef enum {
     TERRAIN,
     OBJECT,
     STRUCTURE,
-    PROJECTILE
+    PROJECTILE,
+    POWERUP
 } EntityType;
 
 typedef struct EntityCollision_S {

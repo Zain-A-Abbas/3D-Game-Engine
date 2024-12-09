@@ -5,6 +5,8 @@
         "limits": "c",
         "*.tcc": "c",
         "enemy.h": "c",
-        "extra_primitives.h": "c"
+        "extra_primitives.h": "c",
+        "gf3d_vgraphics.h": "c",
+        "gf2d_font.h": "c"
     }
 }

@@ -34,12 +34,20 @@
 #include "Structure.h"
 #include "Zombie.h"
 #include "Level.h"
+#include "Title.h"
 
 extern int __DEBUG;
 
 static int _done = 0;
 static Uint32 frame_delay = 16;
 static float fps = 0;
+
+enum GameState {
+    GS_NONE,
+    GS_TITLE,
+    GS_LOADING,
+    GS_GAME
+};
 
 void parse_arguments(int argc,char *argv[]);
 void game_frame_delay(float* delta);
@@ -111,73 +119,31 @@ int main(int argc,char *argv[])
     
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
+    enum GameState gameState = GS_TITLE;
+    createTitle();
+
+
     // Create player
     Entity *player = NULL;
     // Create level
-    LevelData *levelData = createForestLevel(&player);
+    LevelData* levelData = NULL;
     
     // UI setup
-    initializeUI();
+    //initializeUI();
 
+    // Create dummy enemies
+    Entity* enemy1 = NULL;// = createZombie(player);
+    //enemy1->position = gfc_vector3d(0, -40, 0);
     //entityScalePreserveModel(enemy1, gfc_vector3d(0.08, 0.08, 0.08));
     /*Entity* enemy2 = enemyEntityNew();
     enemy2->position = gfc_vector3d(-4, 4, 0);*/
     
   
 
-    // Create house
-    //Entity* testHouse = structureNew(HOUSE);
-    //testHouse->position = gfc_vector3d(0, 64, 2);
-    //testHouse->scale = gfc_vector3d(1, 1, 1);
-
-
-    // Create Tree
-    /*TerrainData*treeData;
-    int treeCount = 160 + gfc_random_int(40);
-    for (int i = 0; i < treeCount; i++) {
-        float treeX = -375 + gfc_random_int(750);
-        float treeY = -375 + gfc_random_int(750);
-        float treeZ = -16 + gfc_random_int(4);
-        Entity* testTree = terrainEntityNew();
-        testTree->model = gf3d_model_load("models/structures/Tree.model");
-        testTree->position = gfc_vector3d(treeX, treeY, treeZ);
-        testTree->rotation.z = gfc_random() * GFC_2PI;
-        testTree->collisionLayer = 0b00000100;
-        treeData = (TerrainData*)testTree->data;
-        
-        EntityCollision* treeCollision = (EntityCollision*)malloc(sizeof(EntityCollision));
-        memset(treeCollision, 0, sizeof(EntityCollision));
-
-        GFC_ExtendedPrimitive* primitive = (GFC_ExtendedPrimitive*)malloc(sizeof(GFC_ExtendedPrimitive));
-        memset(primitive, 0, sizeof(GFC_ExtendedPrimitive));
-        primitive->type = E_Capsule;
-        GFC_Capsule treeCapsule = gfc_capsule(16, 2);
-                primitive->s.c = treeCapsule;
-        treeCollision->collisionPrimitive = primitive;
-
-        GFC_Box boundingBox = { 0 };
-        boundingBox.x = -2; boundingBox.y = -2; boundingBox.z = -2;
-        boundingBox.w = 4; boundingBox.d = 4; boundingBox.h = 4;
-        treeCollision->AABB = boundingBox;
-
-        testTree->entityCollision = treeCollision;
-        //printf("\nTree location: %f, %f, %f", treeX, treeY, treeZ);
-    }*/
-
-
-
-    // Create interactable
-    //Entity* testInteractable = interactableNew(SPINNING_BOX, gfc_vector3d(0, 0, 0));
-    //testInteractable->position = gfc_vector3d(0, -24, 0);
-    //testInteractable->scale = gfc_vector3d(2, 2, 2);
-   // testInteractable->rotation.z = 0.707;
-
-
     //Delta time
     float delta = 0.0;
     game_frame_delay(&delta);
 
-    Entity* enemy1 = NULL;
     for (int i = 0; i < entityManager.entityMax; i++) {
         if (entityManager.entityList[i].type == ENEMY) {
             enemy1 = &entityManager.entityList[i];
@@ -200,16 +166,25 @@ int main(int argc,char *argv[])
 
         gf3d_vgraphics_render_start();
 
-            //3D draws
-        
+            if (gameState == GS_TITLE) {
+                processTitle();
+                if (titleOption() == 1) {
+                    levelData = createForestLevel(&player);
+                    initializeUI();
+                    gameState = GS_GAME;
 
+                } else if (titleOption() == 2) {
+                    gameState = GS_NONE;
+                    _done = 1;
+                }
+            }
+            else if (gameState == GS_GAME) {
+                levelDraw(levelData);
+                entityDrawAll();
+                draw_origin();
 
-            levelDraw(levelData);
-            entityDrawAll();
-            draw_origin();
-
-                // Draw last player raycast
-              PlayerData* playerData = getPlayerData(player);
+                   // Draw last player raycast
+                PlayerData* playerData = getPlayerData(player);
                 if (playerData != NULL) {
                     if (playerData->raycastTests) {
                         int i = 0;
@@ -248,35 +223,41 @@ int main(int argc,char *argv[])
                     //}
                 }
 
-            /*for (int i = 0; i < gfc_list_get_count(testGround->entityCollision->quadTree->leaves); i++) {
-                QuadtreeNode* currentLeaf = (QuadtreeNode*)gfc_list_get_nth(testGround->entityCollision->quadTree->leaves, i);
-                drawBoundingBox(currentLeaf->AABB, gfc_color(0.3, 0.3, 0.3, 0.4), 1);
-            }*/
+                /*for (int i = 0; i < gfc_list_get_count(testGround->entityCollision->quadTree->leaves); i++) {
+                    QuadtreeNode* currentLeaf = (QuadtreeNode*)gfc_list_get_nth(testGround->entityCollision->quadTree->leaves, i);
+                    drawBoundingBox(currentLeaf->AABB, gfc_color(0.3, 0.3, 0.3, 0.4), 1);
+                }*/
 
-            //drawBoundingBox(capsuleToBox(enemy1->entityCollision->collisionPrimitive->s.c), gfc_color(0.1, 0.3, 0.3, 0.5), 0);
+                //drawBoundingBox(capsuleToBox(enemy1->entityCollision->collisionPrimitive->s.c), gfc_color(0.1, 0.3, 0.3, 0.5), 0);
 
-            //if (gfc_box_overlap(testBox, player->entityCollision->AABB)) {
-            //    printf("klasjsd");
-            //}
-            //2D draws
+                //if (gfc_box_overlap(testBox, player->entityCollision->AABB)) {
+                //    printf("klasjsd");
+                //}
+                //2D draws
 
-            if (enemy1) {
-                EnemyData* enemyData = (EnemyData*)enemy1->data;
-                if (enemyData != NULL) {
-		        //printf("\nAttack sphere: %f, %f, %f, %f", enemyData->attackSphere.x, enemyData->attackSphere.y, enemyData->attackSphere.z, enemyData->attackSphere.r);
-                    gf3d_draw_sphere_solid(
-                        enemyData->attackSphere,
-                        gfc_vector3d(0, 0, 0),
-                        gfc_vector3d(0, 0, 0),
-                        gfc_vector3d(1, 1, 1),
-                        gfc_color(0.7, 0, 0, 0.5),
-                        gfc_color(1, 1, 1, 1)
-                    );
+                if (enemy1) {
+                    EnemyData* enemyData = (EnemyData*)enemy1->data;
+                    if (enemyData != NULL) {
+                    //printf("\nAttack sphere: %f, %f, %f, %f", enemyData->attackSphere.x, enemyData->attackSphere.y, enemyData->attackSphere.z, enemyData->attackSphere.r);
+                        gf3d_draw_sphere_solid(
+                            enemyData->attackSphere,
+                            gfc_vector3d(0, 0, 0),
+                            gfc_vector3d(0, 0, 0),
+                            gfc_vector3d(1, 1, 1),
+                            gfc_color(0.7, 0, 0, 0.5),
+                            gfc_color(1, 1, 1, 1)
+                        );
+                    }
                 }
+
+                    //gf2d_mouse_draw();
+                    drawUI();
             }
 
-                //gf2d_mouse_draw();
-                drawUI();
+            //3D draws
+        
+
+
 
                 gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
         gf3d_vgraphics_render_end();
@@ -321,7 +302,7 @@ void game_frame_delay(float * delta)
         SDL_Delay(frame_delay - diff);
     }
     fps = 1000.0/MAX(SDL_GetTicks() - then,0.001);
-    printf("\nfps: %f", fps);
-    printf("\nDelta: %f", *delta);
+    //printf("\nfps: %f", fps);
+    //printf("\nDelta: %f", *delta);
 }
 /*eol@eof*/

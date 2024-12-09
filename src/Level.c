@@ -90,8 +90,8 @@ LevelData *createForestLevel(Entity **player) {
     cubeEntity->position.y = -20;
 
     // Setup enemy
-    Entity* enemy1 = createArm(playerEntity);
-    enemy1->position = gfc_vector3d(0, -40, 0);
+    //Entity* enemy1 = createArm(playerEntity);
+    //enemy1->position = gfc_vector3d(0, -40, 0);
 
     /*Entity* enemy2 = createArm(playerEntity);
     enemy2->position = gfc_vector3d(0, 40, 0);
