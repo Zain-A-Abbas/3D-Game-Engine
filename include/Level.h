@@ -17,7 +17,7 @@ typedef struct {
     
 } LevelData;
 
-LevelData *createForestLevel(Entity *player);
+LevelData *createForestLevel(Entity **player);
 
 void *levelDraw(LevelData *levelData);
 

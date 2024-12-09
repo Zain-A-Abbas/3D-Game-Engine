@@ -2,8 +2,10 @@
 #include "simple_logger.h"
 #include "Player.h"
 #include "TerrainManager.h"
+#include "Powerup.h"
 #include "Zombie.h"
 #include "Arm.h"
+
 
 LevelData *createForestLevel(Entity **player) {
     LevelLayout *layout = (LevelLayout*) malloc(sizeof(LevelLayout));
@@ -46,7 +48,7 @@ LevelData *createForestLevel(Entity **player) {
         return NULL;
     }
     assignCamera(playerEntity, gf3dGetCamera());
-    playerEntity->position.z = -8;
+    playerEntity->position.z = 0;
     *player = playerEntity;
 
     // Create trees
@@ -113,6 +115,12 @@ LevelData *createForestLevel(Entity **player) {
 
     Entity* enemy8 = createArm(playerEntity);
     enemy8->position = gfc_vector3d(28, 28, 0);*/
+
+
+    /* Powerup debugging */
+    Entity *testPowerup = powerupEntityNew(playerEntity);
+    testPowerup->model = gf3d_model_load("models/dino.model");
+    testPowerup->position = gfc_vector3d(16, 16, -8);
 
     return data;
 }
