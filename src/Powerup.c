@@ -1,5 +1,8 @@
 #include "Powerup.h"
 #include "simple_logger.h"
+#include "Player.h"
+
+const float powerupDuration = 8;
 
 Entity *powerupEntityNew(Entity *player) {
     Entity *newPowerup = entityNew();
@@ -15,7 +18,7 @@ Entity *powerupEntityNew(Entity *player) {
         return NULL;
     }
     memset(powerupData, 0, sizeof(powerupData));
-    powerupData->type = gfc_random_int(4);
+    powerupData->type = gfc_random_int(SPEED_BOOST);
     powerupData->player = player;
     newPowerup->data = powerupData;
 
@@ -28,11 +31,14 @@ Entity *powerupEntityNew(Entity *player) {
 
 void *powerupThink(struct Entity_S *self, float delta) {
     PowerupData *powerupData = (PowerupData*)self->data;
-    if (fabsf(self->position.x - powerupData->player->position.x) > 8 || fabsf(self->position.y - powerupData->player->position.y) > 8) {
-        printf("\nToo far");
-        return NULL;
+    if (fabsf(self->position.x - powerupData->player->position.x) <= 4 && fabsf(self->position.y - powerupData->player->position.y) <= 4) {
+        PlayerData* playerData = (PlayerData*) powerupData->player->data;
+        playerData->powerups[powerupData->type] = 1;
+        playerData->powerupTimers[powerupData->type] = powerupDuration;
+        free(powerupData);
+        _entityFree(self);
+
     }
-    printf("\nNot far");
 }
 
 void *powerupUpdate(struct Entity_S *self, float delta) {

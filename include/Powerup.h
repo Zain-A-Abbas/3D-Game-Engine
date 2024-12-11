@@ -8,7 +8,7 @@ typedef enum {
     NO_RECOIL,
     HALF_RELOAD_TIME,
     INVINCIBLE,
-    DOUBLE_SPEED
+    SPEED_BOOST
 }PowerupType;
 
 typedef struct {

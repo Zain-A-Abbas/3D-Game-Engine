@@ -2,6 +2,7 @@
 #include "gf2d_mouse.h"
 #include "Character3D.h"
 #include "UI.h"
+#include "Powerup.h"
 #include "TypesExtra.h"
 
 const Uint8 PLAYER_LAYERS = 0b10000000;
@@ -63,6 +64,8 @@ Entity * createPlayer() {
     giveWeapon(playerEntity, playerData, "GameData/WeaponData/RocketLauncher.json");
     giveWeapon(playerEntity, playerData, "GameData/WeaponData/Crossbow.json");
 
+    playerData->reload = false;
+    playerData->reloadTimer = 0.0;
 
     playerData->cameraTrauma = gfc_vector3d(0, 0, 0);
     playerData->cameraTraumaDecay = gfc_vector3d(0, 0, 0);
@@ -140,7 +143,21 @@ void playerFree(Entity * self) {
 }
 
 void think(Entity * self, float delta) {
-    speedMod = 1.0;
+    PlayerData * playerData = getPlayerData(self);
+    for (int i = 0; i < 5; ++i) {
+        if (playerData->powerups[i]) {
+            playerData->powerupTimers[i] -= delta;
+            //printf("\n%f", playerData->powerupTimers[i]);
+            if (playerData->powerupTimers[i] <= 0.0) {
+                playerData->powerups[i] = false;
+                //slog("\nPowerup timed out.");
+            }
+        }
+    }
+    speedMod = 1.0 + 0.7 * playerData->powerups[SPEED_BOOST];
+    if (playerData->reload) {
+        reloadProcess(self, playerData, delta);
+    }
     _playerControls(self, delta);
 }
 
@@ -218,7 +235,7 @@ void _playerControls(Entity * self, float delta) {
     // Zoom
     aimZoom = gf2d_mouse_button_held(2);
 
-    int weaponSwitch = (int)gfc_input_mouse_wheel_up() - (int)gfc_input_mouse_wheel_down();
+    int weaponSwitch = (!playerData->reload) && (int)gfc_input_mouse_wheel_up() - (int)gfc_input_mouse_wheel_down();
     if (weaponSwitch) {
         //printf("\nWeapon count: %d", gfc_list_get_count(playerData->playerWeapons));
         //printf("\nCurrent weapon: %d", playerData->currentWeapon);
@@ -378,6 +395,9 @@ GFC_Vector3D getCameraPosition(Entity *self) {
 }
 
 void addCameraTrauma(PlayerData* playerData, GFC_Vector3D trauma, GFC_Vector3D traumaDecay) {
+    if (playerData->powerups[NO_RECOIL]) {
+        return;
+    }
     if (gfc_vector3d_magnitude(trauma) > gfc_vector3d_magnitude(playerData->cameraTrauma)) {
         playerData->cameraTrauma = trauma;
         playerData->cameraTraumaDecay = traumaDecay;
@@ -390,11 +410,13 @@ void attack(Entity * self, PlayerData * playerData, Character3DData * character3
     }
 
     Weapon* weaponData = gfc_list_get_nth(playerData->playerWeapons, playerData->currentWeapon);
-    if (weaponData->currentAmmo <= 0) {
+    if (weaponData->currentAmmo <= 0 && !playerData->powerups[INFINITE_AMMO]) {
         return;
     }
 
-    weaponData->currentAmmo -= 1;
+    if (!playerData->powerups[INFINITE_AMMO]) {
+        weaponData->currentAmmo -= 1;
+    }
 
     addCameraTrauma(playerData, gfc_vector3d(-0.08, 0, 0), gfc_vector3d(1.0, 0, 0));
     if (gf2d_mouse_button_held(2)) {
@@ -405,25 +427,38 @@ void attack(Entity * self, PlayerData * playerData, Character3DData * character3
 }
 
 void reload(Entity * self, PlayerData * playerData) {
-    if (reloading) {
+    if (playerData->reload) {
         return;
     }
-    reloading = true;
+    
     Weapon* weaponData = gfc_list_get_nth(playerData->playerWeapons, playerData->currentWeapon);
     int ammoIndex = weaponData->reserveAmmoIndex;
 
     int reloadAmount = MIN(weaponData->cartridgeSize - weaponData->currentAmmo, MIN(weaponData->cartridgeSize, playerData->ammo[ammoIndex]));
     
     if (reloadAmount == 0) {
-        reloading = false;
         return;
     }
 
-    playerData->ammo[ammoIndex] -= reloadAmount;
-    weaponData->currentAmmo += reloadAmount;
-    
-    reloading = false;
+    playerData->reload = true;
+    playerData->reloadTimer = 2.0;
+}
 
+void reloadProcess(Entity * self, PlayerData * playerData, float delta) {
+    playerData->reloadTimer -= delta + 3 * delta * playerData->powerups[QUARTER_RELOAD_TIME];
+    printf("\nTimer: %f", playerData->reloadTimer);
+    if (playerData->reloadTimer <= 0.0) {
+        Weapon* weaponData = gfc_list_get_nth(playerData->playerWeapons, playerData->currentWeapon);
+        int ammoIndex = weaponData->reserveAmmoIndex;
+
+        int reloadAmount = MIN(weaponData->cartridgeSize - weaponData->currentAmmo, MIN(weaponData->cartridgeSize, playerData->ammo[ammoIndex]));
+        playerData->reload = true;
+        playerData->reloadTimer = 2.0;
+
+        playerData->ammo[ammoIndex] -= reloadAmount;
+        weaponData->currentAmmo += reloadAmount;
+        playerData->reload = false;
+    } 
 }
 
 void giveWeapon(Entity* self, PlayerData* playerData, const char *weapon) {
@@ -440,5 +475,8 @@ void setWeapon(PlayerData* playerData, int weaponIndex) {
 
 void playerTakeDamage(Entity * self, int damage) {
     PlayerData *playerData = (PlayerData*) self->data;
+    if (playerData->powerups[INVINCIBLE]) {
+        return;
+    }
     playerData->hp = MAX(playerData->hp - damage, 0);
 }

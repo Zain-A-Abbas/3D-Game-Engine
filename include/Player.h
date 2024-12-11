@@ -32,11 +32,12 @@ typedef struct PlayerData_S {
     GFC_Vector3D        cameraTraumaDecay;
     Character3DData     *character3dData;
     Interactable        *currentInteractable;
-
-
     GFC_Box             boundingBoxTest;
     GFC_List            *raycastTests;
-
+    bool                powerups[5];
+    float               powerupTimers[5];
+    bool                reload;
+    float               reloadTimer;
 } PlayerData;
 
 
@@ -90,6 +91,8 @@ void interact(Entity * self, PlayerData* playerData);
 void attack(Entity* self, PlayerData* playerData, Character3DData* character3dData);
 
 void reload(Entity* self, PlayerData* playerData);
+
+void reloadProcess(Entity * self, PlayerData * playerData, float delta);
 
 /**
 * @brief Sets the current weapon to the following one in the array. Also updates the UI.

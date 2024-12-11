@@ -25,7 +25,7 @@ A contained game world - DONEish
 10 weapons - 9/10
 5 enemy types - 2/5
 2 stages with a shop between them - 1/2
-5 powerups - 0/5
+5 powerups - 5/5 - DONE
 	Infinite ammo
 	No jerk
 	Half cooldown
@@ -41,7 +41,7 @@ Custom Pipeline - Animated prite particles
 Custom Research Component - DONE
 
 A boss fight with advanced AI and a visible health bar
-???
-???
-???
+Statemachine
+Day/night cycle
+Procedurally generated area
 Random environmental visuals, so mixing and matching shader and noise effects to create unique environments on runtime

@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "Debugger.h"
 
-const float BASE_GRAVITY = -49;
+const float BASE_GRAVITY = -20;
 const float BASE_HORIZONTAL_COLLISION_RADIUS = 2;
 
 
