@@ -6,7 +6,7 @@
 typedef enum {
     INFINITE_AMMO,
     NO_RECOIL,
-    HALF_RELOAD_TIME,
+    QUARTER_RELOAD_TIME,
     INVINCIBLE,
     SPEED_BOOST
 }PowerupType;
@@ -20,5 +20,6 @@ Entity *powerupEntityNew();
 
 void *powerupThink(struct Entity_S *self, float delta);
 void *powerupUpdate(struct Entity_S *self, float delta);
+void *powerupDraw(Entity * self);
 
 #endif
