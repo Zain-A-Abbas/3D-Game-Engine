@@ -5,6 +5,7 @@
 #include "Powerup.h"
 #include "Zombie.h"
 #include "Arm.h"
+#include "light.h"
 
 
 LevelData *createForestLevel(Entity **player) {
@@ -41,6 +42,9 @@ LevelData *createForestLevel(Entity **player) {
     testGround->entityCollision = groundCollision;
     GFC_Box testGroundbox = gfc_box(-375, -375, -20, 750, 750, 40);
     newQuadTree(testGround, testGroundbox, 4);
+
+    // Setup lights
+    addDirectionalLight(gfc_color_to_vector4(gfc_color(0.00, 0.00, 0.4, 1.0)), gfc_vector4d(0.707, 0, -0.707, 0.0), 0.2);
 
     // Setup player
     Entity* playerEntity = createPlayer();
@@ -92,8 +96,8 @@ LevelData *createForestLevel(Entity **player) {
     cubeEntity->position.y = -20;
 
     // Setup enemy
-    //Entity* enemy1 = createArm(playerEntity);
-    //enemy1->position = gfc_vector3d(0, -40, 0);
+    Entity* enemy1 = createArm(playerEntity);
+    enemy1->position = gfc_vector3d(0, -40, 0);
 
     /*Entity* enemy2 = createArm(playerEntity);
     enemy2->position = gfc_vector3d(0, 40, 0);

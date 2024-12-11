@@ -30,6 +30,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "UI.h"
+#include "light.h"
 #include "Interactable.h"
 #include "Structure.h"
 #include "Zombie.h"
@@ -117,6 +118,9 @@ int main(int argc,char *argv[])
     // Setup audio
     gfc_audio_init(128, 1, 1, 1, 0, 0);
     
+    // Setup lights
+    initLights();
+
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
     enum GameState gameState = GS_TITLE;

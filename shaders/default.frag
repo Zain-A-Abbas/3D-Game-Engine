@@ -85,7 +85,7 @@ void main()
 
             float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight));
 
-            vec3 diffuse = diffuseCoefficient * surfaceColor.rgb * ubo.lights.lights[i].lightColor.rgb;
+            vec3 diffuse = diffuseCoefficient * surfaceColor.rgb * ubo.lights.lights[i].lightColor.rgb * ubo.lights.lights[i].brightness;
 
             compositeLight += vec4(diffuse, 0);
         }

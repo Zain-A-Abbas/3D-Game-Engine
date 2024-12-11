@@ -670,9 +670,7 @@ void gf3d_model_draw_index(
         gfc_vector4d_scale_by(uboData.material.diffuse,uboData.material.diffuse,modColor);
     }
     else uboData.material = gf3d_material_make_basic_ubo(colorMod);
-    if (lights) {
-        memcpy(&uboData.lights, lights, sizeof(lights));
-    }
+
 
     if (model->armature)
     {

@@ -7,6 +7,7 @@
 #include "TerrainManager.h"
 #include "Projectile.h"
 #include "gf3d_draw.h"
+#include "light.h"
 
 EntityManager entityManager = { 0 };
 
@@ -53,11 +54,11 @@ void entitySystemClose() {
 }
 
 
-void _entityDraw(Entity * self) {
+void _entityDraw(Entity * self, LightUBO *lights) {
     if (!self) return;
     
     if (self->draw) {
-        self->draw(self);
+        self->draw(self, lights);
         return;
     }
 
@@ -95,7 +96,7 @@ void _entityDraw(Entity * self) {
         self->model,
         matrix,
         GFC_COLOR_WHITE,
-        NULL,
+        lights,
         animFrame
     );
     //entityDebugDraw(self, matrix);
@@ -181,9 +182,10 @@ void _entityUpdate(Entity * self, float delta) {
 }
 
 void entityDrawAll() {
+    LightUBO* lights = gf3d_light_get_global_lights_ubo();
     for (int i = 0; i < entityManager.entityMax; ++i) {
         if (!entityManager.entityList[i]._in_use) continue;
-        _entityDraw(&entityManager.entityList[i]);
+        _entityDraw(&entityManager.entityList[i], lights);
     }
 }
 

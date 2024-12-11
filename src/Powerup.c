@@ -46,7 +46,7 @@ void *powerupUpdate(struct Entity_S *self, float delta) {
     self->rotation.z += 1 * delta;
 }
 
-void *powerupDraw(Entity * self) {
+void *powerupDraw(Entity * self, LightUBO *lights) {
     if (!self) return;
     
     GFC_Matrix4 matrix;
@@ -58,7 +58,7 @@ void *powerupDraw(Entity * self) {
     );
 
     PowerupData *powerupData = (PowerupData*) self->data;
-    GFC_Color color;
+    GFC_Color color = { 0 };
     if (powerupData->type == INFINITE_AMMO) {
         color = GFC_COLOR_RED;
     } else if (powerupData->type == NO_RECOIL)

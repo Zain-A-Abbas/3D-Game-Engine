@@ -3,6 +3,10 @@
     {
         "gltf":"models/player/PlayerIdle.gltf",
         "texture":"models/player/PlayerTexture.png",
-        "loop":1
+        "loop":1,
+        "material":
+        {
+            "name":"player_material",
+        }
     }
 }
