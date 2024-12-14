@@ -62,9 +62,15 @@ void moveAndSlide(Entity* self, Character3DData* character3dData, float delta) {
     self->position.x += character3dData->velocity.x * delta;
     self->position.y += character3dData->velocity.y * delta;
     self->position.z += character3dData->velocity.z * delta;
-    
+
+    //printVector3D("Collision pushback", collisionPushback);
     self->position = gfc_vector3d_added(self->position, collisionPushback);
     
+    // Honestly this just stops everything from breaking
+    if (self->position.z < -20) {
+        self->position.z = 0;
+        character3dData->gravityVelocity.z = 0;
+    }
 
 }
 
@@ -114,18 +120,17 @@ void collide(Entity* self, Character3DData* character3dData, float delta, bool* 
                     )
                 );
 
-                //printf("\nPushback: %f", pushBack);
-                //printVector3D("Pushback Vector", penetrationNormal);
+                collisionPushback->z = fmaxf(collisionPushback->z, 0.0);
             }
             else {
-                *isOnFloor = gfc_vector3d_dot_product(penetrationNormal, gfc_vector3d(0, 0, 1));
+                *isOnFloor = (*isOnFloor) || gfc_vector3d_dot_product(penetrationNormal, gfc_vector3d(0, 0, 1));
             }
         }
 
     }
 
     if (!floorCollisions) {
-        character3dData->motionVelocity = velocity;
+        //character3dData->motionVelocity = velocity;
     }
 
 }

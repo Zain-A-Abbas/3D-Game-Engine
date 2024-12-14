@@ -21,7 +21,7 @@ const float ARM_ATTACK_COOLDOWN = 2;
 const int ARM_MELEE_DAMAGE = 24;
 
 Entity* createArm(Entity* player) {
-	Entity* newArm = enemyEntityNew();
+	Entity* newArm = enemyEntityNew(player);
 	if (!newArm) {
 		return;
 	}
@@ -66,7 +66,7 @@ Entity* createArm(Entity* player) {
 	ArmAttackData* attackData = (ArmAttackData*)attackState->stateData;
 	attackData->player = player;
 
-	giveDeathState(stateMachine, "ArmDeath");
+	giveDeathState(stateMachine, "ArmDeath", player);
 
 	changeState(newArm, stateMachine, "Wander");
 

@@ -1,17 +1,23 @@
 #include "light.h"
 #include "simple_logger.h"
+#include "gfc_types.h"
 
 typedef struct {
 	GFC_List	*lights;
+	Bool		gunfireLight;
+	float		gunfireLightTime;
 } LightManager;
 
 static LightManager lightManager = { 0 };
+
+const float GUNFIRE_LIGHT_TIME = 0.08;
 
 void initLights() {
 	lightManager.lights = gfc_list_new();
 	if (!lightManager.lights) {
 		slog("Failed to allocate light manager.");
 	}
+	addGunfireLight();
 	atexit(closeLightManager);
 }
 
@@ -50,9 +56,45 @@ void addDirectionalLight(GFC_Vector4D color, GFC_Vector4D direction, float brigh
 	gfc_list_append(lightManager.lights, newLight);
 }
 
-Light* getLights() {
-	return gfc_list_get_nth(lightManager.lights, 0);
+void gunfireLightProcess(float delta) {
+	if (lightManager.gunfireLight) {
+		lightManager.gunfireLightTime -= delta;
+		printf("%f", lightManager.gunfireLightTime);
+		if (lightManager.gunfireLightTime < 0.0) {
+			lightManager.gunfireLight = false;
+			Light* gunfireLight = (Light*)gfc_list_get_nth(lightManager.lights, 0);
+			gunfireLight->lightActive = 0.0;
+		}
+	}
 }
+
+void activateGunfireLight(GFC_Vector3D position) {
+	Light* gunfireLight = (Light*)gfc_list_get_nth(lightManager.lights, 0);
+	lightManager.gunfireLight = true;
+	lightManager.gunfireLightTime = GUNFIRE_LIGHT_TIME;
+	gunfireLight->lightPos = gfc_vector4d(position.x, position.y, position.z, 1.0);
+	gunfireLight->lightActive = 1.0;
+}
+
+void addGunfireLight() {
+	if (!lightManager.lights) {
+		return;
+	}
+
+	Light* newLight = gfc_allocate_array(sizeof(Light), 1);
+	if (!newLight) {
+		return;
+	}
+
+	newLight->lightColor = gfc_vector4d(1.0, 0.55, 0.26, 1.0);
+	newLight->falloff = 0.02;
+	newLight->lightPos = gfc_vector4d(0.0, 0.0, 0.0, 1.0);
+	newLight->brightness = 32.0;
+	newLight->lightActive = 0.0;
+	gfc_list_insert(lightManager.lights, newLight, 0);
+	printf("\nwahahah");
+}
+
 
 LightUBO *gf3d_light_get_global_lights_ubo() {
 	LightUBO *ubo = { 0 };

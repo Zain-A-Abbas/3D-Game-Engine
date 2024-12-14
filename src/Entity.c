@@ -159,7 +159,7 @@ void _entityUpdate(Entity * self, float delta) {
 
     if (self->entityAnimation) {
         self->entityAnimation->animationTime += delta;
-        if (self->entityAnimation->animationTime >= 0.0416) {
+        if (self->entityAnimation->animationTime >= 0.0208) {
             self->entityAnimation->animationTime = 0;
             if (self->entityAnimation->animationFrame+1 >= self->entityAnimation->animationFrameCount) {
                 if (self->entityAnimation->loopAnimation) {
@@ -181,12 +181,14 @@ void _entityUpdate(Entity * self, float delta) {
     }
 }
 
-void entityDrawAll() {
+void entityDrawAll(float delta) {
+    gunfireLightProcess(delta);
     LightUBO* lights = gf3d_light_get_global_lights_ubo();
     for (int i = 0; i < entityManager.entityMax; ++i) {
         if (!entityManager.entityList[i]._in_use) continue;
         _entityDraw(&entityManager.entityList[i], lights);
     }
+    free(lights);
 }
 
 void entityUpdateAll(float delta) {

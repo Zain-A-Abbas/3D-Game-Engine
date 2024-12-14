@@ -182,6 +182,7 @@
     <ClCompile Include="src\Powerup.c" />
     <ClCompile Include="src\Projectile.c" />
     <ClCompile Include="src\Quadtree.c" />
+    <ClCompile Include="src\ShopItem.c" />
     <ClCompile Include="src\StateMachine.c" />
     <ClCompile Include="src\Structure.c" />
     <ClCompile Include="src\TerrainManager.c" />
@@ -266,6 +267,7 @@
     <ClInclude Include="include\Powerup.h" />
     <ClInclude Include="include\Projectile.h" />
     <ClInclude Include="include\Quadtree.h" />
+    <ClInclude Include="include\ShopItem.h" />
     <ClInclude Include="include\StateMachine.h" />
     <ClInclude Include="include\Structure.h" />
     <ClInclude Include="include\TerrainManager.h" />

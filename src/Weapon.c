@@ -165,6 +165,7 @@ void singleFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_V
     PlayerData* playerData = (PlayerData*)self->data;
     playerData->boundingBoxTest = boundingBox;
     
+    /*
     gfc_list_clear(playerData->raycastTests);
     playerData->raycastTests = gfc_list_new_size(8);
 
@@ -173,6 +174,7 @@ void singleFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_V
     testRaycast->a = raycast.a;
     testRaycast->b = raycast.b;
     gfc_list_append(playerData->raycastTests, testRaycast);
+    */
 
 
     Entity* hitEntity = shotCollided(raycast, &boundingBox);
@@ -212,11 +214,13 @@ void shotgunFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_
         raycastVector = gfc_vector3d_added(raycastStart, raycastAdd);
         raycast = gfc_edge3d_from_vectors(raycastStart, raycastVector);
 
+        /*
         GFC_Edge3D* testRaycast = (GFC_Edge3D*)malloc(sizeof(GFC_Edge3D));
         memset(testRaycast, 0, sizeof(testRaycast));
         testRaycast->a = raycast.a;
         testRaycast->b = raycast.b;
         gfc_list_append(playerData->raycastTests, testRaycast);
+        */
         
             
         Entity* hitEntity = shotCollided(raycast, &boundingBox);

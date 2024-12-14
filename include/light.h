@@ -10,8 +10,8 @@ typedef struct
 {
     /* data */
     GFC_Vector4D    lightColor;
-    GFC_Vector4D    lightPos;
-    GFC_Vector4D    lightDir;
+    GFC_Vector4D    lightPos; // //where the light is from.  w determines if its a directional light or attenuated light
+    GFC_Vector4D    lightDir; // Only used for directional lights   
     float           angle;
     float           brightness;
     float           falloff;
@@ -30,5 +30,8 @@ void addDirectionalLight(GFC_Vector4D color, GFC_Vector4D direction, float brigh
 LightUBO *gf3d_light_get_global_lights_ubo();
 void gf3d_light_build_ubo_from_list(LightUBO* ubo, GFC_List* lights);
 void gf3d_light_add_light_to_ubo(LightUBO* ubo, Light* light);
+void gunfireLightProcess(float delta);
+void activateGunfireLight(GFC_Vector3D position);
+void addGunfireLight();
 
 #endif

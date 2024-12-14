@@ -4,6 +4,7 @@
 #include "UI.h"
 #include "Powerup.h"
 #include "TypesExtra.h"
+#include "light.h"
 
 const Uint8 PLAYER_LAYERS = 0b10000000;
 
@@ -48,7 +49,6 @@ Entity * createPlayer() {
     playerData->hp = 100;
     playerData->playerWeapons = gfc_list_new();
     
-
     
     playerData->weaponsUnlocked = 0;
     playerData->ammo[0] = 0;
@@ -56,13 +56,13 @@ Entity * createPlayer() {
     playerData->ammo[2] = 20;
     giveWeapon(playerEntity, playerData, "GameData/WeaponData/Pistol.json");
     giveWeapon(playerEntity, playerData, "GameData/WeaponData/Shotgun.json");
-    giveWeapon(playerEntity, playerData, "GameData/WeaponData/Magnum.json");
-    giveWeapon(playerEntity, playerData, "GameData/WeaponData/AssaultRifle.json");
-    giveWeapon(playerEntity, playerData, "GameData/WeaponData/SMG.json");
-    giveWeapon(playerEntity, playerData, "GameData/WeaponData/AutoShotgun.json");
-    giveWeapon(playerEntity, playerData, "GameData/WeaponData/Minigun.json");
-    giveWeapon(playerEntity, playerData, "GameData/WeaponData/RocketLauncher.json");
-    giveWeapon(playerEntity, playerData, "GameData/WeaponData/Crossbow.json");
+    //giveWeapon(playerEntity, playerData, "GameData/WeaponData/Magnum.json");
+    //giveWeapon(playerEntity, playerData, "GameData/WeaponData/AssaultRifle.json");
+    //giveWeapon(playerEntity, playerData, "GameData/WeaponData/SMG.json");
+    //giveWeapon(playerEntity, playerData, "GameData/WeaponData/AutoShotgun.json");
+    //giveWeapon(playerEntity, playerData, "GameData/WeaponData/Minigun.json");
+    //giveWeapon(playerEntity, playerData, "GameData/WeaponData/RocketLauncher.json");
+    //giveWeapon(playerEntity, playerData, "GameData/WeaponData/Crossbow.json");
 
     playerData->reload = false;
     playerData->reloadTimer = 0.0;
@@ -413,6 +413,11 @@ void attack(Entity * self, PlayerData * playerData, Character3DData * character3
     if (weaponData->currentAmmo <= 0 && !playerData->powerups[INFINITE_AMMO]) {
         return;
     }
+
+    GFC_Vector3D gunfirePosition = gfc_vector3d(0, -4, 0);
+    gfc_vector3d_rotate_about_z(&gunfirePosition, self->rotation.z);
+    gunfirePosition = gfc_vector3d_added(gunfirePosition, self->position);
+    activateGunfireLight(gunfirePosition);
 
     if (!playerData->powerups[INFINITE_AMMO]) {
         weaponData->currentAmmo -= 1;

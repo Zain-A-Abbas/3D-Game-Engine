@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/weapons/AutoShotgun.obj",
+        "texture":"images/gun.png"
+    }
+}

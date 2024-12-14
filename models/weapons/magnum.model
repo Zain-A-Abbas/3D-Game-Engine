@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/weapons/Magnum.obj",
+        "texture":"images/gun.png"
+    }
+}

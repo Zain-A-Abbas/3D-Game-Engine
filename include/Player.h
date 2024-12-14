@@ -28,6 +28,7 @@ typedef struct PlayerData_S {
     int                 weaponsUnlocked;
     int                 ammo[5]; // 0 is handgun, 1 is shotgun, 2 is AR, 3 is rocket, 4 is bolts
     float               attackCooldown;
+    GFC_Vector3D        preShopPosition;
     GFC_Vector3D        cameraTrauma;
     GFC_Vector3D        cameraTraumaDecay;
     Character3DData     *character3dData;
@@ -38,6 +39,7 @@ typedef struct PlayerData_S {
     float               powerupTimers[5];
     bool                reload;
     float               reloadTimer;
+    int                 money;
 } PlayerData;
 
 

@@ -1,10 +1,11 @@
 #include "simple_logger.h"
 #include "gfc_matrix.h"
 #include "Enemy.h"
+#include "Player.h"
 
 const Uint8 ENEMY_LAYERS = 0b00000100;
 
-Entity * enemyEntityNew() {
+Entity * enemyEntityNew(Entity *player) {
 	Entity* enemyEntity = entityNew();
 	if (enemyEntity == NULL) {
 		slog("Enemy Entity could not be created");
@@ -25,7 +26,7 @@ Entity * enemyEntityNew() {
 	memset(enemyData, 0, sizeof(enemyData));
 	enemyEntity->data = enemyData;
 	
-
+	enemyData->player = player;
 	enemyData->character3dData = newCharacter3dData();
 	enemyData->attackSphere = gfc_sphere(0, 0, 0, 0);
 
@@ -34,6 +35,9 @@ Entity * enemyEntityNew() {
 };
 
 void enemyThink(Entity* self, float delta) {
+	if (entityManager.disableEnemies) {
+		return;
+	}
 	EnemyData* enemyData = (EnemyData*)self->data;
 	if (enemyData->enemyStateMachine) {
 		enemyData->enemyStateMachine->currentState->think(self, delta, enemyData->enemyStateMachine->currentState, enemyData->enemyStateMachine);
@@ -43,6 +47,9 @@ void enemyThink(Entity* self, float delta) {
 
 
 void enemyUpdate(Entity* self, float delta) {
+	if (entityManager.disableEnemies) {
+		return;
+	}
 	EnemyData* enemyData = (EnemyData*)self->data;
 	if (enemyData->enemyStateMachine) {
 		if (enemyData->enemyStateMachine->currentState) {
@@ -69,15 +76,18 @@ void enemyAttacked(Entity* self, int damage) {
 	}
 }
 
-void giveDeathState(StateMachine* stateMachine, char dyingAnimation[32]) {
+void giveDeathState(StateMachine* stateMachine, char dyingAnimation[32], Entity *player) {
 	State* deathState = createState("Dying", stateMachine, dyingEnter, NULL, dyingThink, dyingUpdate, NULL, calloc(1, sizeof(DyingData)));
 	DyingData* dyingData = (DyingData*)deathState->stateData;
+	dyingData->player = player;
 	strcpy(dyingData->dyingAnimName, dyingAnimation);
 }
 
 void dyingEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine) {
 	self->collisionLayer = 0b00000000;
 	DyingData* dyingData = (DyingData*)state->stateData;
+	PlayerData* playerData = (PlayerData*)dyingData->player->data;
+	playerData->money += 5 + gfc_random_int(10);
 	animationPlay(self, dyingData->dyingAnimName, false);
 }
 
@@ -95,7 +105,7 @@ void dyingUpdate(struct Entity_S* self, float delta, struct State_S* state, Stat
 
 
 void enemyDelete(Entity* self) {
-	EnemyData* enemyData = (EnemyData*)self->data;
+	EnemyData *enemyData = (EnemyData*)self->data;
 	if (enemyData->enemyStateMachine) {
 		stateMachineFree(enemyData->enemyStateMachine);
 	}

@@ -5,6 +5,9 @@
 #include "Powerup.h"
 #include "Zombie.h"
 #include "Arm.h"
+#include "Interactable.h"
+#include "ShopItem.h"
+#include "Structure.h"
 #include "light.h"
 
 
@@ -44,7 +47,16 @@ LevelData *createForestLevel(Entity **player) {
     newQuadTree(testGround, testGroundbox, 4);
 
     // Setup lights
-    addDirectionalLight(gfc_color_to_vector4(gfc_color(0.00, 0.00, 0.4, 1.0)), gfc_vector4d(0.707, 0, -0.707, 0.0), 0.2);
+    addDirectionalLight(
+        gfc_color_to_vector4(gfc_color(0.02, 0.0, 0.1, 1.0)),
+        gfc_vector4d(0.707, 0, -0.707, 0.0),
+        0.1
+    );
+    addDirectionalLight(
+        gfc_color_to_vector4(gfc_color(0.08, 0.0, 0.01, 1.0)),
+        gfc_vector4d(-0.707, 0, 0.707, 0.0),
+        0.05
+    );
 
     // Setup player
     Entity* playerEntity = createPlayer();
@@ -88,16 +100,10 @@ LevelData *createForestLevel(Entity **player) {
         //printf("\nTree location: %f, %f, %f", treeX, treeY, treeZ);
     }
 
-    // Cube collision test
-    Entity *cubeEntity = entityNew();
-    cubeEntity->model = gf3d_model_load("models/primitives/cube.model");
-    cubeEntity->collisionLayer = 0b00000010;
-    cubeEntity->position.z = 0;
-    cubeEntity->position.y = -20;
 
     // Setup enemy
-    Entity* enemy1 = createArm(playerEntity);
-    enemy1->position = gfc_vector3d(0, -40, 0);
+    //Entity* enemy1 = createZombie(playerEntity);
+    //enemy1->position = gfc_vector3d(0, -40, 0);
 
     /*Entity* enemy2 = createArm(playerEntity);
     enemy2->position = gfc_vector3d(0, 40, 0);
@@ -125,6 +131,35 @@ LevelData *createForestLevel(Entity **player) {
     Entity *testPowerup = powerupEntityNew(playerEntity);
     testPowerup->model = gf3d_model_load("models/dino.model");
     testPowerup->position = gfc_vector3d(16, 16, -8);
+
+    /*Shop debugging*/
+    Entity* shop = structureNew(STORE);
+    shop->position = gfc_vector3d(0, 0, 1000);
+    Entity* shopEntryDoor = createShopEntryDoor();
+    Entity* shopExitDoor = createShopExitDoor(shop);
+
+    Entity* shopMagnum = shopItemNew(MAGNUM);
+    shopMagnum->position = gfc_vector3d(42, -48, 4);
+    Entity* shopAutoShotgun = shopItemNew(AUTO_SHOTGUN);
+    shopAutoShotgun->position = gfc_vector3d(28, -48, 4);
+    Entity* shopAssaultRifle = shopItemNew(ASSAULT_RIFLE);
+    shopAssaultRifle->position = gfc_vector3d(14, -48, 4);
+    Entity* shopSMG = shopItemNew(SMG);
+    shopSMG->position = gfc_vector3d(0, -48, 4);
+    Entity* shopMinigun = shopItemNew(MINIGUN);
+    shopMinigun->position = gfc_vector3d(-14, -48, 4);
+    Entity* shopRocketLauncher = shopItemNew(ROCKET_LAUNCHER);
+    shopRocketLauncher->position = gfc_vector3d(-28, -48, 4);
+    Entity* shopCrossbow = shopItemNew(CROSSBOW);
+    shopCrossbow->position = gfc_vector3d(-42, -48, 4);
+
+    shopMagnum->parent = shop;
+    shopAutoShotgun->parent = shop;
+    shopAssaultRifle->parent = shop;
+    shopSMG->parent = shop;
+    shopMinigun->parent = shop;
+    shopRocketLauncher->parent = shop;
+    shopCrossbow->parent = shop;
 
     return data;
 }

@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/weapons/Minigun.obj",
+        "texture":"images/gun.png"
+    }
+}

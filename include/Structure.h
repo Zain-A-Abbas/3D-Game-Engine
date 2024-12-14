@@ -4,7 +4,7 @@
 #include "Entity.h"
 
 typedef enum {
-	HOUSE
+	STORE
 } StructureType;
 
 typedef struct StructureData_S {

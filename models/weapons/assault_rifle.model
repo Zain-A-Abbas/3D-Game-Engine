@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/weapons/AssaultRifle.obj",
+        "texture":"images/gun.png"
+    }
+}

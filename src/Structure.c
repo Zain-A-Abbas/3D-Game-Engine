@@ -16,7 +16,7 @@ Entity* structureNew(StructureType type) {
 	}
 
 	newStructure->type = STRUCTURE;
-	newStructure->model = gf3d_model_load("models/structures/house.model");
+	newStructure->model = gf3d_model_load("models/structures/shop.model");
 
 	StructureData* structureData = (StructureData*)malloc(sizeof(StructureData));
 	if (!structureData) {
@@ -32,10 +32,10 @@ Entity* structureNew(StructureType type) {
 	structureData->structureType = type;
 
 	// Making a door
-	Entity* testDoor = createDoor(newStructure);
-	testDoor->position = gfc_vector3d(4, -20, 0);
-	Entity* testPickup = createAmmoPickup(newStructure, 0);
-	testPickup->position = gfc_vector3d(0, 4, 0);
+	//Entity* testDoor = createDoor(newStructure);
+	//testDoor->position = gfc_vector3d(4, -20, 0);
+	//Entity* testPickup = createAmmoPickup(newStructure, 0);
+	//testPickup->position = gfc_vector3d(0, 4, 0);
 
 	return newStructure;
 }

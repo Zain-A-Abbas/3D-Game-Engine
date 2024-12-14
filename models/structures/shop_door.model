@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/structures/ShopDoor.obj",
+        "texture":"images/door.png"
+    }
+}

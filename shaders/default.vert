@@ -43,6 +43,7 @@ struct Light {
 struct LightUBO
 {
     Light lights[MAX_SHADER_LIGHTS];       //list of all lights
+    vec4  flags;                    //.x is how many lights are used
 };
 
 

@@ -45,3 +45,16 @@ Statemachine - DONE
 Day/night cycle - 
 Procedurally generated area - DONE
 Random environmental visuals, so mixing and matching shader and noise effects to create unique environments on runtime - 
+
+---------------------------------------
+
+gf3d_material_load_mtl_file
+gf3d_material_get_by_file_name("Revolver.mtl")
+
+Magnum - C - DONE
+Assault Rifle - D - DONE
+SMG - J - DONE
+Auto Shotgun - H - DONE
+Minigun - A - DONE
+Rocket Launcher - L - DONE
+Crossbow - B - DONE

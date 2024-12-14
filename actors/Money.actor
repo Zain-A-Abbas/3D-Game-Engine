@@ -1,0 +1,22 @@
+{
+    "actor":
+    {
+        "sprite": "images/ui/MoneyIcon.png",
+        "frameWidth": 48,
+        "frameHeight": 48,
+        "framesPerLine": 1,
+        "scale": [1,1],
+        "drawOffset": [-24, -24],
+        "color": [255, 255, 255, 255],
+        "actionList":
+        [
+            {
+                "action": "default",
+                "startFrame": 0,
+                "endFrame": 0,
+                "frameRate": 0.05,
+                "type": "loop"
+            }
+        ]
+    }
+}

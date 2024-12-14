@@ -61,8 +61,9 @@ typedef struct Entity_S {
 } Entity;
 
 typedef struct {
-    Entity* entityList;
-    Uint32 entityMax;
+    Entity*     entityList;
+    Uint32      entityMax;
+    Bool        disableEnemies;
 } EntityManager;
 
 extern EntityManager entityManager;
@@ -85,7 +86,7 @@ void entitySystemInit(Uint32 maxEnts);
 /**
  * @brief Draw all the entities to screen
  */
-void entityDrawAll();
+void entityDrawAll(float delta);
 
 /**
 * @brief Draws any debug info needed, such as enemy collision boxes.

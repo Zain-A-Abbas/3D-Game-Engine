@@ -42,6 +42,7 @@ struct Light {
 struct LightUBO
 {
     Light lights[MAX_SHADER_LIGHTS];   //list of all lights
+    vec4  flags;                    //.x is how many lights are used
 };
 
 layout(binding = 0) uniform UniformBufferObject
@@ -72,26 +73,39 @@ void main()
 
     outColor = surfaceColor;
 
-    vec4 compositeLight = vec4(0);
+    vec4 compositeLight = surfaceColor;
 
     for (int i = 0; i < MAX_SHADER_LIGHTS; i++) {
         if (ubo.lights.lights[i].lightActive != 0.0) {
+            float attenuation = 1.0;
             vec3 surfaceToCamera = normalize(ubo.mesh.camera.xyz - position);
             vec3 surfaceToLight = -normalize(ubo.lights.lights[i].lightDirection.xyz);
 
             if (ubo.lights.lights[i].lightPosition.w > 0.0) {
                 surfaceToLight = normalize(ubo.lights.lights[i].lightPosition.xyz - position);
+                float distanceToLight = length(ubo.lights.lights[i].lightPosition.xyz - position);
+                
+                attenuation = 1.0 / (1.0 + (ubo.lights.lights[i].fallOff * distanceToLight * distanceToLight));
+                if (ubo.lights.lights[i].angle > 0) {
+                    float lightToSurfaceAngle = degrees(acos(dot(-surfaceToLight, normalize(ubo.lights.lights[i].lightDirection.xyz))));
+                    if (lightToSurfaceAngle > ubo.lights.lights[i].angle) {
+                        attenuation = 0.0;
+                    }
+                    else {
+                        attenuation *= ((180 - lightToSurfaceAngle) / ubo.lights.lights[i].angle);
+                    }
+                }
             }
 
             float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight));
 
             vec3 diffuse = diffuseCoefficient * surfaceColor.rgb * ubo.lights.lights[i].lightColor.rgb * ubo.lights.lights[i].brightness;
 
-            compositeLight += vec4(diffuse, 0);
-        }
-    }
+            compositeLight += attenuation * vec4(diffuse, 0);
+        };
+    };
 
-    outColor.xyz += compositeLight.xyz;
+    outColor = vec4(compositeLight.xyz, surfaceColor.w);
 
 }
 

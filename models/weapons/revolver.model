@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/weapons/blasterC.obj",
+        "texture":"images/gun.png"
+    }
+}

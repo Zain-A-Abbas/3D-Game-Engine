@@ -21,7 +21,7 @@ const float ATTACK_COOLDOWN = 2;
 const int MELEE_DAMAGE = 16;
 
 Entity* createZombie(Entity* player) {
-	Entity* newZombie = enemyEntityNew();
+	Entity* newZombie = enemyEntityNew(player);
 	if (!newZombie) {
 		return;
 	}
@@ -67,7 +67,7 @@ Entity* createZombie(Entity* player) {
 	AttackData* attackData = (AttackData*)attackState->stateData;
 	attackData->player = player;
 
-	giveDeathState(stateMachine, "ZombieDeath");
+	giveDeathState(stateMachine, "ZombieDeath", player);
 
 	changeState(newZombie, stateMachine, "Wander");
 
@@ -107,8 +107,8 @@ void wanderThink(struct Entity_S* self, float delta, struct State_S* state, Stat
 	if (wanderData->turnTime >= WANDER_TURN_INTERVAL) {
 		wanderData->turnTime = 0;
 		enemyData->character3dData->rotation.z = gfc_random() * GFC_HALF_PI * 2 - GFC_HALF_PI; // Rotate by up to 90 degrees in either direction randomly
-		enemyData->character3dData->velocity = gfc_vector3d(0, -WANDER_SPEED, 0);
-		gfc_vector3d_rotate_about_z(&enemyData->character3dData->velocity, enemyData->character3dData->rotation.z);
+		enemyData->character3dData->motionVelocity = gfc_vector3d(0, -WANDER_SPEED, 0);
+		gfc_vector3d_rotate_about_z(&enemyData->character3dData->motionVelocity, enemyData->character3dData->rotation.z);
 	}
 
 }
@@ -170,17 +170,17 @@ void chaseThink(struct Entity_S* self, float delta, struct State_S* state, State
 		
 
 		if (fabsf(angleDifference) < GFC_PI/16.0) {
-			if (enemyData->character3dData->velocity.x + enemyData->character3dData->velocity.y == 0) {
+			if (enemyData->character3dData->motionVelocity.x + enemyData->character3dData->motionVelocity.y == 0) {
 				animationPlay(self, "ZombieWalk", true);
 			}
-			enemyData->character3dData->velocity = gfc_vector3d(0, -CHASE_SPEED, 0);
-			gfc_vector3d_rotate_about_z(&enemyData->character3dData->velocity, enemyData->character3dData->rotation.z);
+			enemyData->character3dData->motionVelocity = gfc_vector3d(0, -CHASE_SPEED, 0);
+			gfc_vector3d_rotate_about_z(&enemyData->character3dData->motionVelocity, enemyData->character3dData->rotation.z);
 		}
 		else {
-			if (enemyData->character3dData->velocity.x + enemyData->character3dData->velocity.y != 0) {
+			if (enemyData->character3dData->motionVelocity.x + enemyData->character3dData->motionVelocity.y != 0) {
 				animationPlay(self, "ZombieIdle", true);
 			}
-			enemyData->character3dData->velocity = gfc_vector3d(0, 0, 0);
+			enemyData->character3dData->motionVelocity = gfc_vector3d(0, 0, 0);
 		}
 
 		// Attack

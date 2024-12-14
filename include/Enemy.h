@@ -7,12 +7,14 @@
 
 
 typedef struct {
-    char    dyingAnimName[32];
+    char        dyingAnimName[32];
+    Entity      *player;
 } DyingData;
 
 typedef struct EnemyData_S {
     StateMachine        *enemyStateMachine;
     Character3DData     *character3dData;
+    Entity              *player;
     int                 hp;
     GFC_Sphere          attackSphere;
 } EnemyData;
@@ -21,7 +23,7 @@ typedef struct EnemyData_S {
 /**
 * @brief Creates an enemy entity and assigns it the proper collision layer.
 */
-Entity * enemyEntityNew();
+Entity * enemyEntityNew(Entity* player);
 
 void enemyThink(Entity* self, float delta);
 void enemyUpdate(Entity* self, float delta);
@@ -33,7 +35,7 @@ void enemyAttacked(Entity* self, int damage);
 * @param stateMachine: The enemy's state machine.
 * @param dyingAnimation: The animation to play when the enemy is killed.
 */
-void giveDeathState(StateMachine* stateMachine, char dyingAnimation[32]);
+void giveDeathState(StateMachine* stateMachine, char dyingAnimation[32], Entity *player);
 void dyingEnter(struct Entity_S* self, struct State_S* state, StateMachine* stateMachine);
 void dyingThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine);
 void dyingUpdate(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine);

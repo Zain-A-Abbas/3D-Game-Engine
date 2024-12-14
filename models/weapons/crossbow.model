@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/weapons/Crossbow.obj",
+        "texture":"images/gun.png"
+    }
+}

@@ -184,7 +184,7 @@ int main(int argc,char *argv[])
             }
             else if (gameState == GS_GAME) {
                 levelDraw(levelData);
-                entityDrawAll();
+                entityDrawAll(delta);
                 draw_origin();
 
                    // Draw last player raycast
@@ -195,6 +195,9 @@ int main(int argc,char *argv[])
                         for (i = 0; i < 1; i++) {
                             GFC_Edge3D drawEdge;
                             GFC_Edge3D* edgeptr = (GFC_Edge3D*)gfc_list_get_nth(playerData->raycastTests, i);
+                            if (!edgeptr) {
+                                continue;
+                            }
                             drawEdge.a = edgeptr->a;
                             drawEdge.b = edgeptr->b;
                             gf3d_draw_edge_3d(

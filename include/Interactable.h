@@ -6,7 +6,8 @@ typedef enum {
 	NO_INTERACT,
 	SPINNING_BOX,
 	DOOR,
-	AMMO_PICKUP
+	AMMO_PICKUP,
+	SHOP_ITEM
 } InteractableType;
 
 typedef struct Interactable_S {
@@ -21,6 +22,7 @@ typedef struct Interactable_S {
 
 Entity* interactableNew(InteractableType type, GFC_Vector3D interactOffset);
 
+
 void interactableDelete(Entity* self);
 
 void setInteractText(Interactable* interactable, char* interactText);
@@ -28,5 +30,11 @@ void setInteractText(Interactable* interactable, char* interactText);
 void _interact(Entity *player, Entity* entity, Interactable* interactData);
 
 void baseInteract(Entity* player, Entity* entity, Interactable* interactData);
+
+
+Entity* createShopEntryDoor();
+Entity* createShopExitDoor(Entity* shop);
+void shopEntryDoorInteract(Entity* player, Entity* entity, Interactable* interactData);
+void shopExitDoorInteract(Entity* player, Entity* entity, Interactable* interactData);
 
 #endif

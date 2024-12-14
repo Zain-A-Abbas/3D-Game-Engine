@@ -1,11 +1,13 @@
 #include "UI.h"
 #include "Reticle.h"
 #include "gf2d_font.h"
+#include "gf2d_draw.h"
 
 const char* reticleActor = "actors/reticle.actor";
 const char* uiBGActor = "actors/WeaponBG.actor";
 const char* hpBorderActor = "actors/HPBorder.actor";
 const char* hpBarActor = "actors/HPBar.actor";
+const char* moneyActor = "actors/Money.actor";
 
 const GFC_Rect TEXT_RECT = {200, 200, 200, 200};
 
@@ -16,6 +18,7 @@ void initializeUI() {
 	actorLoad(&reticle.actor, reticleActor);
 	actorLoad(&uiData.hpBorderActor, hpBorderActor);
 	actorLoad(&uiData.hpBarActor, hpBarActor);
+	actorLoad(&uiData.moneyActor, moneyActor);
 	reticle.hidden = false;
 
 }
@@ -133,4 +136,31 @@ void drawPlayerUI(GFC_Vector2D resolution) {
 			NULL
 		);
 	}
+
+	// Money
+
+	GFC_Vector2D moneyUIPosition = hpUIPosition;
+	moneyUIPosition.x += 96;
+	GFC_Rect moneyRect = gfc_rect(moneyUIPosition.x - 26, moneyUIPosition.y - 32, 112, 60);
+	gf2d_draw_rect_filled(
+		moneyRect,
+		gfc_color(0.0, 0.0, 0.0, 0.5)
+	);
+
+	
+	gf2d_actor_draw(
+		uiData.moneyActor,
+		0,
+		moneyUIPosition,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL
+	);
+
+	GFC_Vector2D moneyTextPosition = moneyUIPosition; moneyTextPosition.x += 28; moneyTextPosition.y -= 8;
+	char* money[4];
+	sprintf(money, "%d", uiData.playerData->money);
+	gf2d_font_draw_line_tag(money, FT_Ammo, GFC_COLOR_WHITE, moneyTextPosition);
 }
