@@ -33,6 +33,7 @@ Entity* createArm(Entity* player) {
 
 	EnemyData* enemyData = (EnemyData*)newArm->data;
 	enemyData->hp = ARM_HP;
+	enemyData->character3dData->walkSoundTime = 0.2;
 
 	// Animation/Models
 

@@ -11,5 +11,6 @@ typedef struct TerrainData_S {
 * @brief Creates an entity and assigns it the proper collision layer.
 */
 Entity * terrainEntityNew();
+void *terrainFree(struct Entity_S* self);
 
 #endif

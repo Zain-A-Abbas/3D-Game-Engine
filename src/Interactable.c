@@ -37,10 +37,12 @@ Entity* interactableNew(InteractableType type, GFC_Vector3D interactOffset) {
 	interactable->interactEntity = newInteractable;
 	newInteractable->collisionLayer = INTERACTABLE_LAYERS;
 	newInteractable->data = interactable;
+	newInteractable->free = interactFree;
 
 	interactable->canInteract = true;
 	interactable->interact = baseInteract;
 	interactable->interactOrigin = interactOffset;
+	
 
 	setInteractText(interactable, "aaa");
 	return newInteractable;
@@ -114,4 +116,12 @@ void shopEntryDoorInteract(Entity* player, Entity* entity, Interactable* interac
 void shopExitDoorInteract(Entity* player, Entity* entity, Interactable* interactData) {
 	PlayerData* playerData = (PlayerData*)player->data;
 	player->position = playerData->preShopPosition;
+}
+
+void* interactFree(struct Entity_S* self) {
+	if (self->data) {
+		//Interactable* interactData = (Interactable*)self->data;
+		free(self->data);
+	}
+	_entityFree(self);
 }

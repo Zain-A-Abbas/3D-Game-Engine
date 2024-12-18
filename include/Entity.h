@@ -6,6 +6,7 @@
 #include "gfc_vector.h"
 #include "gf3d_model.h"
 #include "gfc_primitives.h"
+#include "gfc_audio.h"
 #include "Collision.h"
 #include "Quadtree.h"
 
@@ -64,6 +65,9 @@ typedef struct {
     Entity*     entityList;
     Uint32      entityMax;
     Bool        disableEnemies;
+    GFC_Sound   *hitSound;
+    GFC_Sound   *footstepSound;
+    Entity* player;
 } EntityManager;
 
 extern EntityManager entityManager;

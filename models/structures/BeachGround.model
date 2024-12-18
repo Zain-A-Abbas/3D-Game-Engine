@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/structures/Beach.obj",
+        "texture":"models/structures/BeachGround.png"
+    }
+}

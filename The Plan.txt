@@ -42,7 +42,7 @@ Custom Research Component - DONE
 
 A boss fight with advanced AI and a visible health bar - 
 Statemachine - DONE
-Day/night cycle - 
+Day/night cycle - DONE
 Procedurally generated area - DONE
 Random environmental visuals, so mixing and matching shader and noise effects to create unique environments on runtime - 
 

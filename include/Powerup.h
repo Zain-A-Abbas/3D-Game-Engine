@@ -22,5 +22,6 @@ Entity *powerupEntityNew();
 void *powerupThink(struct Entity_S *self, float delta);
 void *powerupUpdate(struct Entity_S *self, float delta);
 void *powerupDraw(Entity * self);
+void *powerupFree(struct Entity_S* self);
 
 #endif

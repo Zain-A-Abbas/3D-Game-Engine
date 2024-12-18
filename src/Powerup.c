@@ -2,7 +2,7 @@
 #include "simple_logger.h"
 #include "Player.h"
 
-const float POWERUP_DURATION = 8;
+const float POWERUP_DURATION = 16;
 const float POWERUP_LIFETIME = 20.0;
 
 Entity *powerupEntityNew(Entity *player) {
@@ -26,6 +26,7 @@ Entity *powerupEntityNew(Entity *player) {
     newPowerup->update = powerupUpdate;
     newPowerup->think = powerupThink;
     newPowerup->draw = powerupDraw;
+    newPowerup->free = powerupFree;
 
     return newPowerup;
 }
@@ -88,4 +89,11 @@ void *powerupDraw(Entity * self, LightUBO *lights) {
         NULL,
         0
     );
+}
+
+void* powerupFree(struct Entity_S* self) {
+    if (self->data) {
+        free(self->data);
+    }
+    _entityFree(self);
 }

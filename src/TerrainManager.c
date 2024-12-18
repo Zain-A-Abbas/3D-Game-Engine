@@ -18,6 +18,16 @@ Entity * terrainEntityNew() {
 	newData->terrainCollision = NULL;
 	terrainEntity->data = newData;
 	
+	terrainEntity->free = terrainFree;
 
 	return terrainEntity;
+}
+
+void *terrainFree(struct Entity_S* self) {
+	if (self->data) {
+		TerrainData* terrainData = (TerrainData*)self->data;
+		gf3d_model_free(terrainData->terrainCollision);
+		free(self->data);
+	}
+	_entityFree(self);
 }

@@ -32,7 +32,9 @@ Entity* newProjectile(Projectile* data, const char* filename) {
 }
 
 void projectileDelete(Entity* self) {
-	free(self->data);
+	if (self->data) {
+		free(self->data);
+	}
 	_entityFree(self);
 }
 

@@ -113,11 +113,11 @@ int main(int argc,char *argv[])
     gf3d_camera_set_rotate_step(0.05);
     
     gf3d_camera_enable_free_look(1);
+    // Setup audio
+    gfc_audio_init(128, 8, 1, 1, 0, 0);
+    
     entitySystemInit(2048);
 
-    // Setup audio
-    gfc_audio_init(128, 1, 1, 1, 0, 0);
-    
     // Setup lights
     initLights();
 
@@ -174,7 +174,7 @@ int main(int argc,char *argv[])
             if (gameState == GS_TITLE) {
                 processTitle();
                 if (titleOption() == 1) {
-                    levelData = createForestLevel(&player);
+                    createForestLevel(&player);
                     initializeUI();
                     gameState = GS_GAME;
 
@@ -184,13 +184,16 @@ int main(int argc,char *argv[])
                 }
             }
             else if (gameState == GS_GAME) {
-                levelDraw(levelData);
+                levelDraw();
                 entityDrawAll(delta);
                 draw_origin();
 
                    // Draw last player raycast
                 PlayerData* playerData = getPlayerData(player);
                 if (playerData != NULL) {
+                    if (playerData->hp <= 0) {
+                        _done = 1;
+                    }
                     if (playerData->raycastTests) {
                         int i = 0;
                         for (i = 0; i < 1; i++) {
@@ -267,7 +270,7 @@ int main(int argc,char *argv[])
 
 
 
-                gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
+                //gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
         gf3d_vgraphics_render_end();
 
 

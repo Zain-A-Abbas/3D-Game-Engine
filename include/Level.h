@@ -27,12 +27,16 @@ typedef struct {
     int                 time;
     int                 dayNight;
     float               enemySpawnTimer;
+    float               enemySpawnTime;
     float               powerupSpawnTimer;
     GFC_Vector3D        spawnLowerBound; // Lower xyz values for where things are able to spawn. Every value in this must not be higher than the corresponding axis in spawnUpperBound
     GFC_Vector3D        spawnUpperBound;
 
     float               dayNightTracker;
     int                 dayNightSeconds;
+
+    Bool                levelClear;
+    float               levelClearTimer; // How long the game should stay frozen before moving on to the next thing
 } LevelData;
 
 
@@ -40,11 +44,12 @@ extern LevelData *levelData;
 
 LevelData *createForestLevel(Entity **player);
 
-void *levelDraw(LevelData *levelData);
+void *levelDraw();
 void levelEnemyKilled();
 void levelProcess(float delta);
 void spawnEnemy();
 void spawnPowerup();
 void createForestBorder(GFC_Vector3D position, float zRotation);
+void clearForestLevel();
 
 #endif

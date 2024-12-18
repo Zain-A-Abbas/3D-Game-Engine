@@ -11,9 +11,12 @@
 
 EntityManager entityManager = { 0 };
 
+const char* HURT_SOUND = "sounds/Hit.wav";
+const char* FOOTSTEP_SOUND = "sounds/footstep.wav";
+
 Entity * entityNew() {
     for (int i = 0; i < entityManager.entityMax; ++i) {
-        if (entityManager.entityList[i]._in_use) continue; //Skil ones in use
+        if (entityManager.entityList[i]._in_use) continue; //Skip over ones in use
         memset(&entityManager.entityList[i], 0, sizeof(Entity)); // Clear out memory if something is there
         entityManager.entityList[i].scale = gfc_vector3d(1, 1, 1);
         entityManager.entityList[i]._in_use = true;
@@ -42,6 +45,8 @@ void entitySystemInit(Uint32 maxEnts) {
         return;
     }
     entityManager.entityMax = maxEnts;
+    entityManager.hitSound = gfc_sound_load(HURT_SOUND, 0.7, 1);
+    entityManager.footstepSound = gfc_sound_load(FOOTSTEP_SOUND, 0.7, 2);
     atexit(entitySystemClose);
 }
 
@@ -443,6 +448,7 @@ void animationPlay(Entity* self, const char* animName, Bool loop) {
 
 void entityAttacked(Entity* self, int damage) {
     if (self->type == ENEMY) {
+        gfc_sound_play(entityManager.hitSound, 0, 0.4, -1, -1);
         enemyAttacked(self, damage);
     }
 }

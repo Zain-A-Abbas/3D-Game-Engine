@@ -13,6 +13,8 @@ const char* moneyActor = "actors/Money.actor";
 const GFC_Rect TEXT_RECT = {200, 200, 200, 200};
 const GFC_Vector2D ENEMY_KILLS_LOCATION = { 450, 50 };
 const GFC_Vector2D ENEMY_KILLS_DROP_SHADOW_LOCATION = { 452, 52 };
+const GFC_Vector2D LEVEL_CLEAR_LOCATION = { 450, 250 };
+const GFC_Vector2D LEVEL_CLEAR_DROP_SHADOW_LOCATION = { 452, 252 };
 
 UIData uiData = { 0 };
 
@@ -170,6 +172,9 @@ void drawPlayerUI(GFC_Vector2D resolution) {
 	// Enemy kills/Boss hp
 	drawEnemyKills();
 
+
+	// Level clear text
+	drawLevelClear();
 }
 
 void drawEnemyKills() {
@@ -181,4 +186,18 @@ void drawEnemyKills() {
 	sprintf(enemyKills, "Enemy Kill Count: %d/%d", levelData->enemyKillCount, levelData->enemyTargetCount);
 	gf2d_font_draw_line_tag(enemyKills, FT_Large, GFC_COLOR_BLACK, ENEMY_KILLS_DROP_SHADOW_LOCATION);
 	gf2d_font_draw_line_tag(enemyKills, FT_Large, GFC_COLOR_WHITE, ENEMY_KILLS_LOCATION);
+}
+
+void drawLevelClear() {
+	if (!levelData) {
+		return;
+	}
+
+	if (!levelData->levelClear) {
+		return;
+	}
+
+	char* levelClear = "Level cleared!";
+	gf2d_font_draw_line_tag(levelClear, FT_Large, GFC_COLOR_BLACK, LEVEL_CLEAR_DROP_SHADOW_LOCATION);
+	gf2d_font_draw_line_tag(levelClear, FT_Large, GFC_COLOR_WHITE, LEVEL_CLEAR_LOCATION);
 }

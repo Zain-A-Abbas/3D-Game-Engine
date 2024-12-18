@@ -31,11 +31,16 @@ Entity* structureNew(StructureType type) {
 
 	structureData->structureType = type;
 
-	// Making a door
-	//Entity* testDoor = createDoor(newStructure);
-	//testDoor->position = gfc_vector3d(4, -20, 0);
-	//Entity* testPickup = createAmmoPickup(newStructure, 0);
-	//testPickup->position = gfc_vector3d(0, 4, 0);
+	newStructure->free = structureFree;
 
 	return newStructure;
+}
+
+void *structureFree(struct Entity_S* self) {
+	if (self->data) {
+		StructureData* structureData = (StructureData*)self->data;
+		gf3d_model_free(structureData->structureCollision);
+		free(self->data);
+	}
+	_entityFree(self);
 }

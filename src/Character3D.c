@@ -23,11 +23,13 @@ Character3DData* newCharacter3dData() {
     newData->rotation = gfc_vector3d(M_PI, 0, 0);
     newData->isOnFloor = false;
     newData->zSnap = 0;
+    newData->walkSoundTime = 0.6;
 
     newData->horizontalCollisionRadius = BASE_HORIZONTAL_COLLISION_RADIUS;
 
     GFC_Edge3D gravityRaycast = { 0 };
     newData->gravityRaycast = gravityRaycast;
+
 
     return newData;
 }
@@ -67,10 +69,20 @@ void moveAndSlide(Entity* self, Character3DData* character3dData, float delta) {
     self->position = gfc_vector3d_added(self->position, collisionPushback);
     
     // Honestly this just stops everything from breaking
-    if (self->position.z < -20) {
+    if (self->position.z < -64) {
         self->position.z = 0;
         character3dData->gravityVelocity.z = 0;
     }
+
+    /*if (fabsf(character3dData->velocity.x) + fabsf(character3dData->velocity.y) > 0) {
+        if (gfc_vector3d_distance_between_less_than(self->position, entityManager.player->position, 32)) {
+            character3dData->walkSoundTimer -= delta;
+            if (character3dData->walkSoundTimer <= 0) {
+                character3dData->walkSoundTimer = character3dData->walkSoundTime;
+                gfc_sound_play(entityManager.footstepSound, 0, 0.15, -1, -1);
+            }
+        }
+    }*/
 
 }
 

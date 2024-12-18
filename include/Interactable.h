@@ -31,6 +31,7 @@ void _interact(Entity *player, Entity* entity, Interactable* interactData);
 
 void baseInteract(Entity* player, Entity* entity, Interactable* interactData);
 
+void* interactFree(struct Entity_S* self);
 
 Entity* createShopEntryDoor();
 Entity* createShopExitDoor(Entity* shop);

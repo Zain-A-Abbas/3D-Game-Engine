@@ -118,6 +118,8 @@ Entity * createPlayer() {
 
     playerEntity->entityCollision = collision;
 
+    entityManager.player = playerEntity;
+
     return playerEntity;
 }
 
@@ -169,6 +171,7 @@ void update(Entity * self, float delta) {
 void _playerControls(Entity * self, float delta) {
     PlayerData * playerData = getPlayerData(self);
     if (playerData->state != PS_FREE) {
+        playerData->character3dData->motionVelocity = gfc_vector3d(0, 0, 0);
         return;
     }
     Character3DData* character3dData = playerData->character3dData;

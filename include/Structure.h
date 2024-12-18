@@ -13,5 +13,6 @@ typedef struct StructureData_S {
 } StructureData;
 
 Entity* structureNew(StructureType type);
+void *structureFree(struct Entity_S* self);
 
 #endif

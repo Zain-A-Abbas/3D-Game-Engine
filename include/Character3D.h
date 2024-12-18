@@ -34,6 +34,8 @@ typedef struct  {
     float               horizontalCollisionRadius; // The character's collision radius
     GFC_Edge3D          gravityRaycast;
     bool                isOnFloor;
+    float               walkSoundTime;
+    float               walkSoundTimer;
 } Character3DData;
 
 /**

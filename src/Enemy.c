@@ -115,12 +115,14 @@ void dyingUpdate(struct Entity_S* self, float delta, struct State_S* state, Stat
 
 void enemyDelete(Entity* self) {
 	EnemyData *enemyData = (EnemyData*)self->data;
-	if (enemyData->enemyStateMachine) {
-		stateMachineFree(enemyData->enemyStateMachine);
-	}
+	if (enemyData) {
+		if (enemyData->enemyStateMachine) {
+			stateMachineFree(enemyData->enemyStateMachine);
+		}
 
-	if (enemyData->character3dData) {
-		free(enemyData->character3dData);
+		if (enemyData->character3dData) {
+			free(enemyData->character3dData);
+		}
 	}
 	_entityFree(self);
 }

@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/structures/PalmTree.obj",
+        "texture":"models/structures/Palm.png"
+    }
+}
