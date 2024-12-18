@@ -302,6 +302,10 @@ void *levelDraw() {
     if (!levelData) {
         return;
     }
+    if (gfc_input_command_pressed("debugTimePass")) {
+        levelData->dayNightSeconds += 10;
+    }
+
     LevelLayout *layout = levelData->layout;
 
     int skyFileNumber = 1;
