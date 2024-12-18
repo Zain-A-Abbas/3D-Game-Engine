@@ -176,6 +176,7 @@
     <ClCompile Include="src\Enemy.c" />
     <ClCompile Include="src\Extra_Primitives.c" />
     <ClCompile Include="src\gf3d_armature.c" />
+    <ClCompile Include="src\Ghost.c" />
     <ClCompile Include="src\Interactable.c" />
     <ClCompile Include="src\Level.c" />
     <ClCompile Include="src\light.c" />
@@ -263,7 +264,9 @@
     <ClInclude Include="include\Extra_Primitives.h" />
     <ClInclude Include="include\gf3d_armature.h" />
     <ClInclude Include="include\gf3d_lights.h" />
+    <ClInclude Include="include\Ghost.h" />
     <ClInclude Include="include\Interactable.h" />
+    <ClInclude Include="include\Level.h" />
     <ClInclude Include="include\Powerup.h" />
     <ClInclude Include="include\Projectile.h" />
     <ClInclude Include="include\Quadtree.h" />

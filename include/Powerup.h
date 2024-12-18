@@ -14,6 +14,7 @@ typedef enum {
 typedef struct {
     PowerupType     type;
     Entity          *player;
+    float           powerupLifetime;
 }PowerupData;
 
 Entity *powerupEntityNew();

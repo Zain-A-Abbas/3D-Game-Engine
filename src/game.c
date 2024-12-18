@@ -161,6 +161,7 @@ int main(int argc,char *argv[])
         gfc_input_update();
         gf2d_mouse_update();
         gf2d_font_update();
+        levelProcess(delta);
         entityThinkAll(delta);
         entityUpdateAll(delta);
         //camera updaes

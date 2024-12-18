@@ -59,7 +59,7 @@ void addDirectionalLight(GFC_Vector4D color, GFC_Vector4D direction, float brigh
 void gunfireLightProcess(float delta) {
 	if (lightManager.gunfireLight) {
 		lightManager.gunfireLightTime -= delta;
-		printf("%f", lightManager.gunfireLightTime);
+		//printf("%f", lightManager.gunfireLightTime);
 		if (lightManager.gunfireLightTime < 0.0) {
 			lightManager.gunfireLight = false;
 			Light* gunfireLight = (Light*)gfc_list_get_nth(lightManager.lights, 0);

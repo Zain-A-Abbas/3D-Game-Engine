@@ -2,6 +2,7 @@
 #include "Reticle.h"
 #include "gf2d_font.h"
 #include "gf2d_draw.h"
+#include "Level.h"
 
 const char* reticleActor = "actors/reticle.actor";
 const char* uiBGActor = "actors/WeaponBG.actor";
@@ -10,6 +11,8 @@ const char* hpBarActor = "actors/HPBar.actor";
 const char* moneyActor = "actors/Money.actor";
 
 const GFC_Rect TEXT_RECT = {200, 200, 200, 200};
+const GFC_Vector2D ENEMY_KILLS_LOCATION = { 450, 50 };
+const GFC_Vector2D ENEMY_KILLS_DROP_SHADOW_LOCATION = { 452, 52 };
 
 UIData uiData = { 0 };
 
@@ -163,4 +166,19 @@ void drawPlayerUI(GFC_Vector2D resolution) {
 	char* money[4];
 	sprintf(money, "%d", uiData.playerData->money);
 	gf2d_font_draw_line_tag(money, FT_Ammo, GFC_COLOR_WHITE, moneyTextPosition);
+
+	// Enemy kills/Boss hp
+	drawEnemyKills();
+
+}
+
+void drawEnemyKills() {
+	if (!levelData) {
+		return;
+	}
+
+	char* enemyKills[25];
+	sprintf(enemyKills, "Enemy Kill Count: %d/%d", levelData->enemyKillCount, levelData->enemyTargetCount);
+	gf2d_font_draw_line_tag(enemyKills, FT_Large, GFC_COLOR_BLACK, ENEMY_KILLS_DROP_SHADOW_LOCATION);
+	gf2d_font_draw_line_tag(enemyKills, FT_Large, GFC_COLOR_WHITE, ENEMY_KILLS_LOCATION);
 }

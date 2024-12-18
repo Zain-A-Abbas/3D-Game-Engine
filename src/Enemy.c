@@ -2,8 +2,11 @@
 #include "gfc_matrix.h"
 #include "Enemy.h"
 #include "Player.h"
+#include "AmmoPickup.h"
+#include "Level.h"
 
 const Uint8 ENEMY_LAYERS = 0b00000100;
+
 
 Entity * enemyEntityNew(Entity *player) {
 	Entity* enemyEntity = entityNew();
@@ -89,11 +92,17 @@ void dyingEnter(struct Entity_S* self, struct State_S* state, StateMachine* stat
 	PlayerData* playerData = (PlayerData*)dyingData->player->data;
 	playerData->money += 5 + gfc_random_int(10);
 	animationPlay(self, dyingData->dyingAnimName, false);
+
+	// Ammo pickup
+	Entity* ammoPickup = createAmmoPickup(dyingData->player);
+	ammoPickup->position = self->position;
+	ammoPickup->position.z += 4;
 }
 
 void dyingThink(struct Entity_S* self, float delta, struct State_S* state, StateMachine* stateMachine) {
 	if (self->entityAnimation) {
 		if (self->entityAnimation->animationFinished) {
+			levelEnemyKilled();
 			enemyDelete(self);
 		}
 	}

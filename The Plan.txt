@@ -22,9 +22,9 @@ DELIVERABLES:
 
 A contained game world - DONEish
 
-10 weapons - 9/10
-5 enemy types - 2/5
-2 stages with a shop between them - 1/2
+10 weapons - 10/10
+5 enemy types - 3/5
+2 stages with a shop - 1/2
 5 powerups - 5/5 - DONE
 	Infinite ammo
 	No jerk

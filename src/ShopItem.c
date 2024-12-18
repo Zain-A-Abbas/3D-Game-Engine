@@ -26,43 +26,43 @@ Entity* shopItemNew(PurchaseableGuns gun) {
 	case MAGNUM:
 		shopItem->model = gf3d_model_load("models/weapons/magnum.model");
 		shopItemData->weaponFile = "GameData/WeaponData/Magnum.json";
-		shopItemData->weaponPrice = 0;
+		shopItemData->weaponPrice = 45;
 		weaponName = "Magnum";
 		break;
 	case AUTO_SHOTGUN:
 		shopItem->model = gf3d_model_load("models/weapons/auto_shotgun.model");
 		shopItemData->weaponFile = "GameData/WeaponData/AutoShotgun.json";
-		shopItemData->weaponPrice = 0;
+		shopItemData->weaponPrice = 60;
 		weaponName = "Auto Shotgun";
 		break;
 	case ASSAULT_RIFLE:
 		shopItem->model = gf3d_model_load("models/weapons/assault_rifle.model");
 		shopItemData->weaponFile = "GameData/WeaponData/AssaultRifle.json";
-		shopItemData->weaponPrice = 0;
+		shopItemData->weaponPrice = 70;
 		weaponName = "Assault Rifle";
 		break;
 	case SMG:
 		shopItem->model = gf3d_model_load("models/weapons/smg.model");
 		shopItemData->weaponFile = "GameData/WeaponData/SMG.json";
-		shopItemData->weaponPrice = 0;
+		shopItemData->weaponPrice = 40;
 		weaponName = "SMG";
 		break;
 	case MINIGUN:
 		shopItem->model = gf3d_model_load("models/weapons/minigun.model");
 		shopItemData->weaponFile = "GameData/WeaponData/Minigun.json";
-		shopItemData->weaponPrice = 0;
+		shopItemData->weaponPrice = 50;
 		weaponName = "Minigun";
 		break;
 	case ROCKET_LAUNCHER:
 		shopItem->model = gf3d_model_load("models/weapons/rocket_launcher.model");
 		shopItemData->weaponFile = "GameData/WeaponData/RocketLauncher.json";
-		shopItemData->weaponPrice = 0;
+		shopItemData->weaponPrice = 100;
 		weaponName = "Rocket Launcher";
 		break;
 	case CROSSBOW:
 		shopItem->model = gf3d_model_load("models/weapons/crossbow.model");
 		shopItemData->weaponFile = "GameData/WeaponData/Crossbow.json";
-		shopItemData->weaponPrice = 0;
+		shopItemData->weaponPrice = 60;
 		weaponName = "Crossbow";
 		break;
 	}

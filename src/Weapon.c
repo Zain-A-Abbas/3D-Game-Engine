@@ -154,12 +154,12 @@ void singleFire(Entity* self, Weapon* weapon, GFC_Vector3D playerPosition, GFC_V
 
     //Uses a simple bounding box to filter out entities that cannoe possibly be hit
     GFC_Box boundingBox = { 0 };
-    boundingBox.x = MIN(self->position.x, raycastAdd.x) - 4;
-    boundingBox.y = MIN(self->position.y, raycastAdd.y) - 4;
-    boundingBox.z = MIN(self->position.z, raycastAdd.z) - 4;
-    boundingBox.w = MAX(self->position.x, raycastAdd.x) - boundingBox.x + 4;
-    boundingBox.d = MAX(self->position.y, raycastAdd.y) - boundingBox.y + 4;
-    boundingBox.h = MAX(self->position.z, raycastAdd.z) - boundingBox.z + 4;
+    boundingBox.x = MIN(self->position.x, raycastAdd.x) - 8;
+    boundingBox.y = MIN(self->position.y, raycastAdd.y) - 8;
+    boundingBox.z = MIN(self->position.z, raycastAdd.z) - 8;
+    boundingBox.w = MAX(self->position.x, raycastAdd.x) - boundingBox.x + 8;
+    boundingBox.d = MAX(self->position.y, raycastAdd.y) - boundingBox.y + 8;
+    boundingBox.h = MAX(self->position.z, raycastAdd.z) - boundingBox.z + 8;
 
 
     PlayerData* playerData = (PlayerData*)self->data;

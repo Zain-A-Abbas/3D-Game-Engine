@@ -9,7 +9,14 @@
 #include "ShopItem.h"
 #include "Structure.h"
 #include "light.h"
+#include "Ghost.h"
 
+const int FOREST_LEVEL_ENEMY_COUNT = 25;
+const int BEACH_LEVEL_ENEMY_COUNT = 30;
+const float ENEMY_SPAWN_TIME = 12.5;
+const float POWERUP_SPAWN_TIME = 20.0;
+
+LevelData *levelData = NULL;
 
 LevelData *createForestLevel(Entity **player) {
     LevelLayout *layout = (LevelLayout*) malloc(sizeof(LevelLayout));
@@ -19,6 +26,7 @@ LevelData *createForestLevel(Entity **player) {
     }
     memset(layout, 0, sizeof(LevelLayout));
 
+    // Level Data
     LevelData *data = (LevelData*) malloc(sizeof(LevelData));
     if (!data) {
         slog("Could not create level data");
@@ -27,12 +35,22 @@ LevelData *createForestLevel(Entity **player) {
     }
     memset(data, 0, sizeof(LevelData));
     data->layout = layout;
+    data->enemyTargetCount = FOREST_LEVEL_ENEMY_COUNT;
+    data->enemySpawnTimer = -5;
+    data->powerupSpawnTimer = -15;
+    data->spawnLowerBound = gfc_vector3d(-350, -350, -4);
+    data->spawnUpperBound = gfc_vector3d(350, 350, -4);
+    if (data->spawnLowerBound.x > data->spawnUpperBound.x || data->spawnLowerBound.y > data->spawnUpperBound.y || data->spawnLowerBound.z > data->spawnUpperBound.z) {
+        slog("Incorrect relationship between spawn bounds. Rejecting creating level");
+    }
 
     // Setup skybox
-    Model *sky;
-    sky = gf3d_model_load("models/sky.model");
+    Model *daySky, *nightSky;
+    daySky = gf3d_model_load("models/daysky.model");
+    nightSky = gf3d_model_load("models/nightsky.model");
     gfc_matrix4_identity(layout->skyMat);
-    layout->sky = sky;
+    layout->daySky = daySky;
+    layout->nightSky = nightSky;
 
     // Setup ground
     Entity* testGround = terrainEntityNew();
@@ -44,7 +62,7 @@ LevelData *createForestLevel(Entity **player) {
     memset(groundCollision, 0, sizeof(EntityCollision));
     testGround->entityCollision = groundCollision;
     GFC_Box testGroundbox = gfc_box(-375, -375, -20, 750, 750, 40);
-    newQuadTree(testGround, testGroundbox, 4);
+    newQuadTree(testGround, testGroundbox, 5);
 
     // Setup lights
     addDirectionalLight(
@@ -66,6 +84,17 @@ LevelData *createForestLevel(Entity **player) {
     assignCamera(playerEntity, gf3dGetCamera());
     playerEntity->position.z = 0;
     *player = playerEntity;
+    data->player = playerEntity;
+
+    // Create Level border
+    createForestBorder(gfc_vector3d(-200, 380, -16), 0);
+    createForestBorder(gfc_vector3d(200, 380, -16), 0);
+    createForestBorder(gfc_vector3d(-200, -380, -16), 0);
+    createForestBorder(gfc_vector3d(200, -380, -16), 0);
+    createForestBorder(gfc_vector3d(-380, 200, -16), GFC_HALF_PI);
+    createForestBorder(gfc_vector3d(380, 200, -16), GFC_HALF_PI);
+    createForestBorder(gfc_vector3d(-380, -200, -16), GFC_HALF_PI);
+    createForestBorder(gfc_vector3d(380, -200, -16), GFC_HALF_PI);
 
     // Create trees
     TerrainData*treeData;
@@ -73,11 +102,15 @@ LevelData *createForestLevel(Entity **player) {
     for (int i = 0; i < treeCount; i++) {
         float treeX = -375 + gfc_random_int(750);
         float treeY = -375 + gfc_random_int(750);
-        float treeZ = -16 + gfc_random_int(4);
+        float treeZ = -20 + gfc_random_int(4);
         Entity* testTree = terrainEntityNew();
         testTree->model = gf3d_model_load("models/structures/Tree.model");
         testTree->position = gfc_vector3d(treeX, treeY, treeZ);
         testTree->rotation.z = gfc_random() * GFC_2PI;
+        testTree->scale.z = 0.8 + 0.4 * gfc_random();
+        float xyScale = 0.9 + 0.2 * gfc_random();
+        testTree->scale.x = xyScale;
+        testTree->scale.y = xyScale;
         testTree->collisionLayer = 0b00000100;
         treeData = (TerrainData*)testTree->data;
 
@@ -101,37 +134,6 @@ LevelData *createForestLevel(Entity **player) {
     }
 
 
-    // Setup enemy
-    //Entity* enemy1 = createZombie(playerEntity);
-    //enemy1->position = gfc_vector3d(0, -40, 0);
-
-    /*Entity* enemy2 = createArm(playerEntity);
-    enemy2->position = gfc_vector3d(0, 40, 0);
-
-    Entity* enemy3 = createArm(playerEntity);
-    enemy3->position = gfc_vector3d(-40, 0, 0);
-
-    Entity* enemy4 = createArm(playerEntity);
-    enemy4->position = gfc_vector3d(28, 28, 0);
-
-    Entity* enemy5 = createArm(playerEntity);
-    enemy5->position = gfc_vector3d(28, -28, 0);
-
-    Entity* enemy6 = createArm(playerEntity);
-    enemy6->position = gfc_vector3d(-28, 28, 0);
-
-    Entity* enemy7 = createArm(playerEntity);
-    enemy7->position = gfc_vector3d(-28, -28, 0);
-
-    Entity* enemy8 = createArm(playerEntity);
-    enemy8->position = gfc_vector3d(28, 28, 0);*/
-
-
-    /* Powerup debugging */
-    Entity *testPowerup = powerupEntityNew(playerEntity);
-    testPowerup->model = gf3d_model_load("models/dino.model");
-    testPowerup->position = gfc_vector3d(16, 16, -8);
-
     /*Shop debugging*/
     Entity* shop = structureNew(STORE);
     shop->position = gfc_vector3d(0, 0, 1000);
@@ -139,36 +141,164 @@ LevelData *createForestLevel(Entity **player) {
     Entity* shopExitDoor = createShopExitDoor(shop);
 
     Entity* shopMagnum = shopItemNew(MAGNUM);
-    shopMagnum->position = gfc_vector3d(42, -48, 4);
+    shopMagnum->position = gfc_vector3d(36, -48, 4);
     Entity* shopAutoShotgun = shopItemNew(AUTO_SHOTGUN);
-    shopAutoShotgun->position = gfc_vector3d(28, -48, 4);
+    shopAutoShotgun->position = gfc_vector3d(24, -48, 4);
     Entity* shopAssaultRifle = shopItemNew(ASSAULT_RIFLE);
-    shopAssaultRifle->position = gfc_vector3d(14, -48, 4);
-    Entity* shopSMG = shopItemNew(SMG);
-    shopSMG->position = gfc_vector3d(0, -48, 4);
+    shopAssaultRifle->position = gfc_vector3d(12, -48, 4);
     Entity* shopMinigun = shopItemNew(MINIGUN);
-    shopMinigun->position = gfc_vector3d(-14, -48, 4);
+    shopMinigun->position = gfc_vector3d(-12, -48, 4);
     Entity* shopRocketLauncher = shopItemNew(ROCKET_LAUNCHER);
-    shopRocketLauncher->position = gfc_vector3d(-28, -48, 4);
+    shopRocketLauncher->position = gfc_vector3d(-24, -48, 4);
     Entity* shopCrossbow = shopItemNew(CROSSBOW);
-    shopCrossbow->position = gfc_vector3d(-42, -48, 4);
+    shopCrossbow->position = gfc_vector3d(-36, -48, 4);
 
     shopMagnum->parent = shop;
     shopAutoShotgun->parent = shop;
     shopAssaultRifle->parent = shop;
-    shopSMG->parent = shop;
     shopMinigun->parent = shop;
     shopRocketLauncher->parent = shop;
     shopCrossbow->parent = shop;
+
+    levelData = data;
 
     return data;
 }
 
 void *levelDraw(LevelData *levelData) {
     LevelLayout *layout = levelData->layout;
+
+    int skyFileNumber = 1;
+    if (levelData->dayNightSeconds >= 120 && levelData->dayNightSeconds < 180) {
+        skyFileNumber = 2 + (levelData->dayNightSeconds - 120) / 10;
+    }
+    else if (levelData->dayNightSeconds >= 180 && levelData->dayNightSeconds < 300) {
+        skyFileNumber = 8;
+    }
+    else if (levelData->dayNightSeconds >= 300 && levelData->dayNightSeconds < 360) {
+        skyFileNumber = 8 - 1 - (levelData->dayNightSeconds - 300) / 10;
+    }
+
+    char skyFile[20];
+    sprintf(skyFile, "models/sky/sky%d.png", skyFileNumber);
+    Texture* skyTexture = gf3d_texture_load(skyFile);
+    layout->daySky->texture = skyTexture;
     gf3d_model_draw_sky(
-        layout->sky,
+        layout->daySky,
         layout->skyMat,
         GFC_COLOR_WHITE
     );
+}
+
+void createForestBorder(GFC_Vector3D position, float zRotation) {
+    Entity* border = entityNew();
+    border->type = TERRAIN;
+    border->collisionLayer = 0b00000010;
+    border->model = gf3d_model_load("models/structures/tree_border.model");
+    border->position = position;
+    border->rotation.z = zRotation;
+}
+
+void levelEnemyKilled() {
+    levelData->enemyKillCount += 1;
+    levelData->aliveEnemies -= 1;
+    printf("\nEnemies killed: %d", levelData->enemyKillCount);
+
+    // If all enemies killed...
+    if (levelData->enemyKillCount >= levelData->enemyTargetCount) {
+        // Disable player input
+        PlayerData* playerData = getPlayerData(levelData->player);
+        playerData->state = PS_NONE;
+
+        // Erase all enemies
+        for (int i = 0; i < entityManager.entityMax; ++i) {
+            if (entityManager.entityList[i].type == ENEMY) {
+                enemyDelete(&entityManager.entityList[i]);
+            }
+        }
+
+
+    }
+}
+
+void levelProcess(float delta) {
+    if (!levelData) {
+        return;
+    }
+
+    levelData->enemySpawnTimer += delta;
+    levelData->powerupSpawnTimer += delta;
+    levelData->dayNightTracker += delta;
+
+    if (levelData->enemySpawnTimer > ( (ENEMY_SPAWN_TIME) - ENEMY_SPAWN_TIME * 0.33 * (levelData->dayNightSeconds > 180) ) ) {
+        int spawnCount = gfc_random_int(3) + 1;
+        for (int i = 0; i < spawnCount; ++i) {
+            spawnEnemy();
+        }
+        levelData->enemySpawnTimer = 0.0;
+    }
+
+    if (levelData->powerupSpawnTimer > POWERUP_SPAWN_TIME) {
+        spawnPowerup();
+        levelData->powerupSpawnTimer = 0.0;
+    }
+
+    if (levelData->dayNightTracker >= 1.0) {
+        levelData->dayNightSeconds += 1;
+        levelData->dayNightTracker = 0.0;
+        if (levelData->dayNightSeconds >= 360) {
+            levelData->dayNightSeconds = 0;
+        }
+        printf("\nSeconds: %d", levelData->dayNightSeconds);
+    }
+}
+
+void spawnEnemy() {
+    if (levelData->aliveEnemies >= 15) {
+        return;
+    }
+    int enemyType = gfc_random_int(4); // Based on EnemyType enum
+    GFC_Vector3D enemySpawnPosition = gfc_vector3d_added(
+        levelData->spawnLowerBound,
+        gfc_vector3d(
+            gfc_random_int(levelData->spawnUpperBound.x - levelData->spawnLowerBound.x),
+            gfc_random_int(levelData->spawnUpperBound.y - levelData->spawnLowerBound.y),
+            gfc_random_int(levelData->spawnUpperBound.z - levelData->spawnLowerBound.z)
+        )
+    );
+    Entity* newEnemy = NULL;
+    switch (enemyType)
+    {
+    case 0:
+    case 1:
+        newEnemy = createZombie(levelData->player);
+        break;
+    case 2:
+        newEnemy = createArm(levelData->player);
+        break;
+    case 3:
+        newEnemy = createGhost(levelData->player);
+        newEnemy->position.z += gfc_random_int(20) + 20;
+        break;
+    default:
+        break;
+    }
+
+    newEnemy->position = gfc_vector3d_added(newEnemy->position, enemySpawnPosition);
+    levelData->aliveEnemies += 1;
+}
+
+void spawnPowerup() {
+    GFC_Vector3D powerupSpawnPosition = gfc_vector3d_added(
+        levelData->spawnLowerBound,
+        gfc_vector3d(
+            gfc_random_int(levelData->spawnUpperBound.x - levelData->spawnLowerBound.x),
+            gfc_random_int(levelData->spawnUpperBound.y - levelData->spawnLowerBound.y),
+            gfc_random_int(levelData->spawnUpperBound.z - levelData->spawnLowerBound.z)
+        )
+    );
+
+    Entity* newPowerup = powerupEntityNew(levelData->player);
+    newPowerup->model = gf3d_model_load("models/dino.model");
+    newPowerup->position = powerupSpawnPosition;
 }

@@ -2,8 +2,8 @@
 #include "simple_logger.h"
 #include "Player.h"
 
-const float powerupDuration = 8;
-
+const float POWERUP_DURATION = 8;
+const float POWERUP_LIFETIME = 20.0;
 
 Entity *powerupEntityNew(Entity *player) {
     Entity *newPowerup = entityNew();
@@ -32,10 +32,16 @@ Entity *powerupEntityNew(Entity *player) {
 
 void *powerupThink(struct Entity_S *self, float delta) {
     PowerupData *powerupData = (PowerupData*)self->data;
+    powerupData->powerupLifetime += delta;
+    if (powerupData->powerupLifetime > POWERUP_LIFETIME) {
+        free(powerupData);
+        _entityFree(self);
+        return;
+    }
     if (fabsf(self->position.x - powerupData->player->position.x) <= 4 && fabsf(self->position.y - powerupData->player->position.y) <= 4) {
         PlayerData* playerData = (PlayerData*) powerupData->player->data;
         playerData->powerups[powerupData->type] = 1;
-        playerData->powerupTimers[powerupData->type] = powerupDuration;
+        playerData->powerupTimers[powerupData->type] = POWERUP_DURATION;
         free(powerupData);
         _entityFree(self);
 
@@ -74,10 +80,6 @@ void *powerupDraw(Entity * self, LightUBO *lights) {
     {
         color = GFC_COLOR_BLUE;
     }
-    
-    
-    
-    
 
     gf3d_model_draw(
         self->model,

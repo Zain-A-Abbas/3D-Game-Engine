@@ -5,6 +5,11 @@
 #include "Character3D.h"
 #include "StateMachine.h"
 
+typedef enum {
+    T_ZOMBIE,
+    T_ARM,
+    T_GHOST
+} EnemyTypes;
 
 typedef struct {
     char        dyingAnimName[32];

@@ -27,4 +27,5 @@ void drawUI();
 
 void drawPlayerUI(GFC_Vector2D resolution);
 
+void drawEnemyKills();
 #endif

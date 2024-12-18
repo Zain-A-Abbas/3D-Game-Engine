@@ -17,7 +17,7 @@ const int LOWEST_X_DEGREES = -30;
 
 const float INTERACT_DISTANCE = 8;
 
-const GFC_Vector3D BASE_CAMERA_OFFSET = { -4, 26, 10 };
+const GFC_Vector3D BASE_CAMERA_OFFSET = { -4, 18, 11.5 };
 const GFC_Vector3D ZOOM_CAMERA_OFFSET = { -2.75, 14, 9.75 };
 GFC_Vector3D actualCameraOffset;
 GFC_Vector3D zoomCameraOffset;
@@ -54,11 +54,11 @@ Entity * createPlayer() {
     playerData->ammo[0] = 0;
     playerData->ammo[1] = 0;
     playerData->ammo[2] = 20;
-    giveWeapon(playerEntity, playerData, "GameData/WeaponData/Pistol.json");
+    giveWeapon(playerEntity, playerData, "GameData/WeaponData/SMG.json");
     giveWeapon(playerEntity, playerData, "GameData/WeaponData/Shotgun.json");
+    giveWeapon(playerEntity, playerData, "GameData/WeaponData/Pistol.json");
     //giveWeapon(playerEntity, playerData, "GameData/WeaponData/Magnum.json");
     //giveWeapon(playerEntity, playerData, "GameData/WeaponData/AssaultRifle.json");
-    //giveWeapon(playerEntity, playerData, "GameData/WeaponData/SMG.json");
     //giveWeapon(playerEntity, playerData, "GameData/WeaponData/AutoShotgun.json");
     //giveWeapon(playerEntity, playerData, "GameData/WeaponData/Minigun.json");
     //giveWeapon(playerEntity, playerData, "GameData/WeaponData/RocketLauncher.json");
@@ -168,6 +168,9 @@ void update(Entity * self, float delta) {
 
 void _playerControls(Entity * self, float delta) {
     PlayerData * playerData = getPlayerData(self);
+    if (playerData->state != PS_FREE) {
+        return;
+    }
     Character3DData* character3dData = playerData->character3dData;
     
     if (gfc_input_command_pressed("interact")) {
@@ -268,9 +271,6 @@ void _playerControls(Entity * self, float delta) {
     if (gfc_input_command_pressed("reload")) {
         reload(self, playerData);
     }
-    if (playerData->state != PS_FREE) {
-        return;
-    }
 }
 
 void _playerUpdate(Entity * self, float delta) {
@@ -288,7 +288,6 @@ void _playerUpdate(Entity * self, float delta) {
 
 
     playerData->attackCooldown = fMoveTowards(playerData->attackCooldown, 0, delta);
-
 
 
     // Zoom

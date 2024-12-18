@@ -1,0 +1,8 @@
+{
+    "model":
+    {
+        "gltf" : "models/enemies/zombie/ZombieIdle.gltf",
+        "texture":"models/enemies/ghost/Ghost_Atlas.png",
+        "loop":1
+    }
+}

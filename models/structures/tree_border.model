@@ -1,0 +1,7 @@
+{
+    "model":
+    {
+        "obj":"models/structures/TreeBorder.obj",
+        "texture":"models/structures/TreeBorder.png"
+    }
+}

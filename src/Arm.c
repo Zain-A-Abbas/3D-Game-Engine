@@ -44,7 +44,7 @@ Entity* createArm(Entity* player) {
 			"ArmAttack",
 			"ArmDeath",
 			NULL
-	}
+		}
 	);
 	animationPlay(newArm, "ArmRun", true);
 

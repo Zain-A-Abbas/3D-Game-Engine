@@ -4,13 +4,14 @@
 #include "Weapon.h"
 
 
-
 typedef struct {
-	int		ammoType;
+	int			ammoType;
+	float		ammoSpeed;
+	Entity		*player;
 } AmmoPickupData;
 
-Entity* createAmmoPickup(Entity* parent, int ammoType);
+Entity* createAmmoPickup(Entity *player);
 
-void ammoPickupInteract(Entity* player, Entity* entity, Interactable* interact);
+void ammoPickupUpdate(struct Entity_S* self, float delta);
 
 #endif
