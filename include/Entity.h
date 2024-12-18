@@ -55,7 +55,7 @@ typedef struct Entity_S {
     // Behavior
     void (*think)       (struct Entity_S *self, float delta); // Called every frame on the entity
     void (*update)      (struct Entity_S *self, float delta); // Called every frame for entity state update
-    void (*draw)        (struct Entity_S *self); // Custom draw code
+    void (*draw)        (struct Entity_S *self, LightUBO *lights); // Custom draw code
     void (*free)        (struct Entity_S *self); // Cleans up custom data
     void                *data; // Custom entity data
 
